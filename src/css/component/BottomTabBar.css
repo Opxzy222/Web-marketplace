@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ────────────────────────────────────────────────
+   Premium 2026 Bottom Tab Bar
+   Glassmorphism + neumorphic active tab + glowing hover
+   Full dark/light mode with high visibility icons/content
+   ──────────────────────────────────────────────── */
+
+:root {
+  --bg-nav:          rgba(255, 255, 255, 0.88);
+  --border-nav:      rgba(226, 232, 240, 0.65);
+  --shadow-nav:      0 -8px 32px -12px rgba(0,0,0,0.12);
+  --text-primary:    #0f172a;
+  --text-secondary:  #475569;
+  --accent:          #3b82f6;
+  --accent-glow:     rgba(59, 130, 246, 0.35);
+  --active-bg:       rgba(59, 130, 246, 0.12);
+  --radius:          24px;
+  --transition:      0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.dark {
+  --bg-nav:          rgba(15, 23, 42, 0.82);
+  --border-nav:      rgba(51, 65, 85, 0.68);
+  --shadow-nav:      0 -10px 36px -12px rgba(0,0,0,0.55);
+  --text-primary:    #e2e8f0;
+  --text-secondary:  #94a3b8;
+  --accent:          #60a5fa;
+  --accent-glow:     rgba(96, 165, 250, 0.45);
+  --active-bg:       rgba(96, 165, 250, 0.18);
+}
+
+/* ── Bottom Nav Bar – sticky, glassmorphic ──────── */
+.bottom-tab-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  background: var(--bg-nav);
+  border-top: 1px solid var(--border-nav);
+  border-top-left-radius: var(--radius);
+  border-top-right-radius: var(--radius);
+  backdrop-filter: blur(24px) saturate(140%);
+  box-shadow: var(--shadow-nav);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  height: 78px; /* comfortable touch area */
+}
+
+/* ── Inner container ───────────────────────────────── */
+.bottom-tab-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
+  max-width: 480px; /* keeps it centered & mobile-like */
+  margin: 0 auto;
+  padding: 0 12px;
+}
+
+/* ── Tab Item ──────────────────────────────────────── */
+.tab-item {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: transparent;
+  border: none;
+  padding: 8px 4px 0;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.tab-item:hover {
+  transform: translateY(-2px);
+}
+
+/* Icon wrapper with lift & glow */
+.icon-wrapper {
+  position: relative;
+  margin-bottom: 4px;
+  transition: all var(--transition);
+}
+
+.tab-icon {
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+
+.tab-item.active .tab-icon,
+.tab-item:hover .tab-icon {
+  color: var(--accent);
+  filter: drop-shadow(0 2px 6px var(--accent-glow));
+}
+
+/* Badge */
+.badge {
+  position: absolute;
+  top: -8px;
+  right: -12px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 900;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 6px rgba(239,68,68,0.4);
+}
+
+/* Label – bright & visible */
+.tab-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  transition: all var(--transition);
+}
+
+.tab-item.active .tab-label,
+.tab-item:hover .tab-label {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Active indicator bar – glowing pill */
+.active-indicator {
+  position: absolute;
+  bottom: 6px;
+  width: 32px;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 999px;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+/* ── Dark mode tweaks ───────────────────────────────── */
+.dark .tab-icon {
+  color: var(--text-secondary);
+}
+
+.dark .tab-item.active .tab-icon,
+.dark .tab-item:hover .tab-icon {
+  filter: drop-shadow(0 2px 8px var(--accent-glow));
+}
+
+.dark .badge {
+  background: #f87171;
+  box-shadow: 0 2px 8px rgba(248,113,113,0.5);
+}
+
+/* ── Responsive & safe area ────────────────────────── */
+@media (min-width: 768px) {
+  .bottom-tab-nav {
+    display: none; /* optional: hide on desktop */
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .tab-item,
+  .icon-wrapper,
+  .tab-label,
+  .active-indicator {
+    transition: none;
+    transform: none !important;
+  }
+}
