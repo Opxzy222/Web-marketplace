@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from 'react';
 
 // ────────────────────────────────────────────────
 // Only import pages that actually exist right now
@@ -17,6 +18,7 @@ import CreateShopScreen from './pages/shop/CreateShopScreen';
 //import WelcomeWorkingHours from './pages/shop/WelcomeWorkingHours';
 import UpdateShopProducts from './pages/shop/UpdateProducts';
 import ShopProduct from './pages/shop/ShopProduct';
+import SearchResults from './pages/shop/SearchResults';
 
 import { ThemeProvider } from './contexts/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
@@ -38,6 +40,22 @@ import BottomTabBar from './components/BottomTabBar';
 
 function AppContent() {
   const location = useLocation();
+
+useEffect(() => {
+  const handleScroll = () => {
+    const header = document.querySelector('.gl-header');
+    if (header) {
+      if (window.scrollY > 20) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    }
+  };
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  return () => window.removeEventListener('scroll', handleScroll);
+}, []);
 
   // ────────────────────────────────────────────────
   // Hide bottom tab on landing page + all auth-related full-screen pages
@@ -75,6 +93,7 @@ function AppContent() {
           {/* <Route path="/shop/welcome-work-hours" element={<WelcomeWorkingHours />} /> */}
           <Route path="/update-products" element={<UpdateShopProducts />} />
           <Route path="/shop-products" element={<ShopProduct />} />
+          <Route path="/search-result" element={<SearchResults />} />
         </Routes>
       </main>
 

@@ -3,24 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
     <title>marketplace</title>
 
-    <!-- Prevent FOUC (Flash of Unstyled Content / wrong theme) -->
+    <!-- Status bar & address bar color -->
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a"   media="(prefers-color-scheme: dark)" />
+
+    <!-- Tells browsers we support both modes -->
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- iOS Safari status bar style (best compromise) -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- Prevent FOUC – apply dark class as early as possible -->
     <script>
-      // This runs before the body is painted
       (function() {
-        const savedTheme = localStorage.getItem('theme');
+        // This runs synchronously before paint
+        const saved = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
         let isDark = false;
 
-        if (savedTheme === 'dark') {
+        if (saved === 'dark') {
           isDark = true;
-        } else if (savedTheme === 'light') {
+        } else if (saved === 'light') {
           isDark = false;
         } else {
-          // 'system' or no saved preference
+          // 'system' or unset → follow system
           isDark = prefersDark;
         }
 

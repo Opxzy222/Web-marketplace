@@ -1,0 +1,83 @@
+/* ThemeToggle – modern glass segmented control */
+
+.theme-toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 6px;
+  border-radius: 999px;
+
+  /* Glassmorphism – matches header style */
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+  /* Dark mode adjustment */
+  @media (prefers-color-scheme: dark) {
+    background: rgba(30, 41, 59, 0.22);
+    border-color: rgba(241, 245, 249, 0.12);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  }
+}
+
+.theme-btn {
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #94a3b8; /* slate-400 – neutral default */
+
+  /* Default hover (subtle) */
+  &:hover {
+    background: rgba(255, 255, 255, 0.09);
+    transform: scale(1.12);
+  }
+
+  /* Active / pressed state */
+  &.active {
+    background: rgba(255, 255, 255, 0.85);
+    color: #1e40af; /* deep blue – visible & premium */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transform: scale(1.08);
+  }
+
+  /* Dark mode adjustments */
+  @media (prefers-color-scheme: dark) {
+    color: #cbd5e1; /* slate-300 */
+
+    &:hover {
+      background: rgba(241, 245, 249, 0.08);
+    }
+
+    &.active {
+      background: rgba(241, 245, 249, 0.92);
+      color: #1e40af; /* same blue works great */
+      box-shadow: 0 3px 14px rgba(0, 0, 0, 0.45);
+    }
+  }
+
+  /* Focus ring for accessibility */
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .theme-btn,
+  .theme-btn:hover,
+  .theme-btn.active {
+    transition: none;
+    transform: none;
+  }
+}

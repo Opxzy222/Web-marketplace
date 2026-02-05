@@ -1,75 +1,43 @@
 // src/components/ThemeToggle.tsx
 import { useTheme } from '../contexts/ThemeContext';
-
-// Material Design icons from react-icons/md
 import { MdLightMode, MdDarkMode, MdSettingsBrightness } from 'react-icons/md';
+import '../css/component/ThemeToggle.css';
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
+  const isLight = theme === 'light';
+  const isDark = theme === 'dark';
+  const isSystem = theme === 'system';
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        padding: '6px 10px',
-        borderRadius: '999px',
-        backgroundColor: 'rgba(0, 0, 0, 0.08)',
-        backdropFilter: 'blur(4px)',
-        border: '1px solid rgba(0, 0, 0, 0.1)',
-      }}
-    >
+    <div className="theme-toggle-container">
       <button
+        className={`theme-btn ${isLight ? 'active' : ''}`}
         onClick={() => setTheme('light')}
-        aria-pressed={theme === 'light'}
+        aria-pressed={isLight}
         title="Light mode"
-        style={{
-          background: theme === 'light' ? 'rgba(255,255,255,0.9)' : 'transparent',
-          border: 'none',
-          borderRadius: '50%',
-          padding: '8px',
-          cursor: 'pointer',
-          color: theme === 'light' ? '#1e3a8a' : '#64748b',
-          transition: 'all 0.2s ease',
-        }}
       >
         <MdLightMode size={20} />
       </button>
 
       <button
+        className={`theme-btn ${isDark ? 'active' : ''}`}
         onClick={() => setTheme('dark')}
-        aria-pressed={theme === 'dark'}
+        aria-pressed={isDark}
         title="Dark mode"
-        style={{
-          background: theme === 'dark' ? 'rgba(30, 41, 59, 0.9)' : 'transparent',
-          border: 'none',
-          borderRadius: '50%',
-          padding: '8px',
-          cursor: 'pointer',
-          color: theme === 'dark' ? '#e2e8f0' : '#64748b',
-          transition: 'all 0.2s ease',
-        }}
       >
         <MdDarkMode size={20} />
       </button>
 
-      <button
+      {/*<button
+        className={`theme-btn ${isSystem ? 'active' : ''}`}
         onClick={() => setTheme('system')}
-        aria-pressed={theme === 'system'}
-        title="System / Auto"
-        style={{
-          background: theme === 'system' ? 'rgba(100, 116, 139, 0.25)' : 'transparent',
-          border: 'none',
-          borderRadius: '50%',
-          padding: '8px',
-          cursor: 'pointer',
-          color: theme === 'system' ? '#1e293b' : '#64748b',
-          transition: 'all 0.2s ease',
-        }}
+        aria-pressed={isSystem}
+        title="Follow system"
       >
         <MdSettingsBrightness size={20} />
-      </button>
+      </button> */}
     </div>
   );
 }

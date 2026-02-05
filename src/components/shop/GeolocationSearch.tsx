@@ -53,7 +53,7 @@ export default function GeolocationSearch({ onSearch }: GeolocationSearchProps) 
       const limitedShops = shops.slice(0, 50);
       onSearch(limitedShops);
 
-      navigate('/shop/SearchResult', {
+      navigate('/search-result', {
         state: { searchTerm: query.trim(), shops: limitedShops },
       });
     } catch (err: any) {

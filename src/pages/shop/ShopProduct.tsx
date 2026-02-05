@@ -9,6 +9,7 @@ import {
   X,
 } from "lucide-react";
 import axios from "axios";
+import PageShell from "../../components/PageShell"; // ← new import
 import "../../css/shop/ShopProducts.css";
 
 const ShopProduct = () => {
@@ -18,18 +19,18 @@ const ShopProduct = () => {
 
   const [products, setProducts] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sessionId, setSessionId] = useState(null);
-  const [subscriptionStatus, setSubscriptionStatus] = useState(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
 
   // Gallery state
   const [galleryVisible, setGalleryVisible] = useState(false);
-  const [galleryImages, setGalleryImages] = useState([]);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [currentGalleryIndex, setCurrentGalleryIndex] = useState(0);
 
   const isMountedRef = useRef(true);
-  const debounceTimerRef = useRef(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load subscription status
   useEffect(() => {
@@ -45,11 +46,11 @@ const ShopProduct = () => {
   }, []);
 
   const isSubscribed = ["regular", "standard", "premium"].includes(
-    subscriptionStatus
+    subscriptionStatus || ""
   );
 
   // Simple custom debounce
-  const debouncedFetch = useCallback((callback) => {
+  const debouncedFetch = useCallback((callback: () => void) => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
@@ -125,7 +126,7 @@ const ShopProduct = () => {
     };
   }, [fetchSessionId, fetchShopProducts, debouncedFetch]);
 
-  const openImageGallery = (images, startIndex = 0) => {
+  const openImageGallery = (images: string[], startIndex = 0) => {
     if (!images?.length) return;
     setGalleryImages(images);
     setCurrentGalleryIndex(startIndex);
@@ -146,26 +147,26 @@ const ShopProduct = () => {
     if (!products) return [];
 
     return products
-      .map((categoryData) => {
+      .map((categoryData: any) => {
         const filteredSubs = categoryData.subcategories
-          .map((sub) => {
-            const filtered = sub.products.filter((p) =>
+          .map((sub: any) => {
+            const filtered = sub.products.filter((p: any) =>
               p.product_name.toLowerCase().includes(searchQuery.toLowerCase())
             );
             return { ...sub, products: filtered };
           })
-          .filter((sub) => sub.products.length > 0);
+          .filter((sub: any) => sub.products.length > 0);
 
         return { ...categoryData, subcategories: filteredSubs };
       })
-      .filter((cat) => cat.subcategories.length > 0);
+      .filter((cat: any) => cat.subcategories.length > 0);
   }, [products, searchQuery]);
 
   // ────────────────────────────────────────────────
   // Render Helpers
   // ────────────────────────────────────────────────
 
-  const renderProduct = (product) => {
+  const renderProduct = (product: any) => {
     const images = product.images || [];
     const primary = images[0];
 
@@ -184,7 +185,7 @@ const ShopProduct = () => {
                 className="product-img"
                 loading="lazy"
                 onError={(e) => {
-                  e.target.src = "/fallback-image.jpg"; // optional fallback
+                  (e.target as HTMLImageElement).src = "/fallback-image.jpg";
                 }}
               />
               {images.length > 1 && (
@@ -224,56 +225,21 @@ const ShopProduct = () => {
     );
   };
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <header className="header">
-          <button className="back-button" onClick={() => navigate(-1)}>
-            <ArrowLeft size={26} />
-          </button>
-          <h1 className="header-title">
-            {category === "Services" ? "Services" : "Products"}
-          </h1>
-        </header>
-        <div className="loader-container">
-          <div className="spinner large"></div>
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="error-container">
-        <header className="header">
-          <button className="back-button" onClick={() => navigate(-1)}>
-            <ArrowLeft size={26} />
-          </button>
-          <h1 className="header-title">
-            {category === "Services" ? "Services" : "Products"}
-          </h1>
-        </header>
-        <p className="error">{error}</p>
-        <button className="try-again-button" onClick={fetchShopProducts}>
-          Try Again
-        </button>
-      </div>
-    );
-  }
-
+  // ────────────────────────────────────────────────
+  // Single return using PageShell
+  // ────────────────────────────────────────────────
   return (
-    <div className="container">
-      <header className="header">
-        <button className="back-button" onClick={() => navigate(-1)}>
-          <ArrowLeft size={26} />
-        </button>
-        <h1 className="header-title">
-          {category === "Services" ? "Services" : "Products"} Listing
-        </h1>
-      </header>
-
+    <PageShell
+      title={`${category === "Services" ? "Services" : "Products"} Listing`}
+      isLoading={loading}
+      error={error}
+      onRetry={fetchShopProducts}
+    >
       <div className="content-wrapper">
+        <button className="update-button" onClick={handleUpdateProduct}>
+          Update {category === "Services" ? "services" : "products"}
+        </button>
+
         <input
           className="search-input"
           placeholder="Search products..."
@@ -281,17 +247,13 @@ const ShopProduct = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
 
-        <button className="update-button" onClick={handleUpdateProduct}>
-          Update {category === "Services" ? "services" : "products"}
-        </button>
-
         {(!products || products.length === 0) && (
           <p className="no-products">No products available.</p>
         )}
 
         <div className="content-container">
           <AnimatePresence>
-            {filteredProducts.map((categoryData) => (
+            {filteredProducts.map((categoryData: any) => (
               <motion.div
                 key={categoryData.category}
                 initial={{ opacity: 0, y: 20 }}
@@ -302,7 +264,7 @@ const ShopProduct = () => {
               >
                 <h2 className="category-title">{categoryData.category}</h2>
 
-                {categoryData.subcategories.map((sub) => (
+                {categoryData.subcategories.map((sub: any) => (
                   <div
                     key={sub.subcategory}
                     className="subcategory-section"
@@ -320,7 +282,7 @@ const ShopProduct = () => {
         </div>
       </div>
 
-      {/* Full-screen gallery */}
+      {/* Full-screen gallery overlay */}
       {galleryVisible && (
         <div className="gallery-overlay" onClick={closeGallery}>
           <div className="gallery-container" onClick={(e) => e.stopPropagation()}>
@@ -374,7 +336,7 @@ const ShopProduct = () => {
           </div>
         </div>
       )}
-    </div>
+    </PageShell>
   );
 };
 

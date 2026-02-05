@@ -1,0 +1,155 @@
+/* =============================================
+   HeaderGlobal – advanced glassmorphism + gradient 2026 style
+   Works excellently in light & dark mode
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Light mode – sophisticated soft blue-purple gradient */
+  --gl-bg-start:        #5b7fff;
+  --gl-bg-end:          #3b5998;
+  --gl-text:            #ffffff;
+  --gl-text-shadow:     0 1.5px 4px rgba(0,0,0,0.35);
+  --gl-hover-bg:        rgba(255,255,255,0.16);
+  --gl-border:          rgba(255,255,255,0.18);
+  --gl-shadow-base:     0 8px 32px rgba(0,0,0,0.20);
+  --gl-shadow-scrolled: 0 14px 48px rgba(0,0,0,0.28);
+  --gl-blur:            12px;
+  --gl-saturate:        1.18;
+}
+
+.dark {
+  /* Dark mode – deep, cinematic navy → black gradient */
+  --gl-bg-start:        #1e3a8a;
+  --gl-bg-end:          #0f172a;
+  --gl-text:            #f1f5f9;
+  --gl-text-shadow:     0 1.5px 4px rgba(0,0,0,0.55);
+  --gl-hover-bg:        rgba(241,245,249,0.11);
+  --gl-border:          rgba(241,245,249,0.14);
+  --gl-shadow-base:     0 10px 40px rgba(0,0,0,0.55);
+  --gl-shadow-scrolled: 0 16px 60px rgba(0,0,0,0.70);
+  --gl-blur:            16px;
+  --gl-saturate:        1.30;
+}
+
+.gl-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+
+  background: linear-gradient(135deg, var(--gl-bg-start) 0%, var(--gl-bg-end) 100%);
+  backdrop-filter: blur(var(--gl-blur)) saturate(var(--gl-saturate));
+  -webkit-backdrop-filter: blur(var(--gl-blur)) saturate(var(--gl-saturate));
+
+  box-shadow: var(--gl-shadow-base);
+  border-bottom: 1px solid var(--gl-border);
+
+  color: var(--gl-text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gl-header.scrolled {
+  box-shadow: var(--gl-shadow-scrolled);
+  backdrop-filter: blur(calc(var(--gl-blur) + 4px)) saturate(calc(var(--gl-saturate) + 0.15));
+}
+
+/* Layout */
+.gl-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: env(safe-area-inset-top, 0) 1.375rem env(safe-area-inset-bottom, 0) 1.375rem;
+  min-height: 4rem; /* Slightly taller → feels more premium */
+}
+
+/* Back button */
+.gl-header-left {
+  flex: 0 0 auto;
+}
+
+.gl-back-btn {
+  background: none;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 9999px;
+  color: var(--gl-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.28s ease;
+}
+
+.gl-back-btn:hover,
+.gl-back-btn:focus-visible {
+  background: var(--gl-hover-bg);
+  transform: scale(1.16) translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+
+/* Title – centered, readable on gradient */
+.gl-header-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  text-align: center;
+  flex: 1 1 auto;
+  color: var(--gl-text);
+  text-shadow: var(--gl-text-shadow);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 1.25rem;
+}
+
+/* Right side */
+.gl-header-right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.125rem;
+}
+
+/* ThemeToggle blending – glass pill style */
+.gl-header-right > * {
+  /* Optional: make ThemeToggle feel part of the glass header */
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .gl-header {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    min-height: 3.75rem;
+  }
+
+  .gl-header-title {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gl-header-title {
+    font-size: 1.125rem;
+    padding: 0 0.875rem;
+  }
+
+  .gl-back-btn {
+    padding: 0.625rem;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .gl-back-btn,
+  .gl-back-btn:hover {
+    transition: none;
+    transform: none;
+  }
+}

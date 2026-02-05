@@ -1,4 +1,4 @@
-/* UpdateShopProducts.css – Now with full dark/light mode support */
+/* UpdateShopProducts.css – Enhanced with fixes for visibility, demarcation, dark mode, price modal */
 
 :root {
   --bg-page: #F0F4F8;
@@ -20,6 +20,7 @@
   --hover-bg-light: #EFF6FF;
   --hover-bg-medium: #F8FAFC;
   --focus-ring: rgba(59, 130, 246, 0.1);
+  --table-header-bg: #E0F2FE;           /* light blue for table headers */
 }
 
 .dark {
@@ -42,6 +43,7 @@
   --hover-bg-light: rgba(96, 165, 250, 0.15);
   --hover-bg-medium: rgba(96, 165, 250, 0.08);
   --focus-ring: rgba(96, 165, 250, 0.25);
+  --table-header-bg: #1E293B;           /* darker slate for table headers in dark mode */
 }
 
 * {
@@ -55,54 +57,13 @@
   color: var(--text-primary);
 }
 
-/* Header */
-.header {
-  display: flex;
-  align-items: center;
-  padding: 16px 12px;
-  background: var(--bg-header);
-  border-bottom-left-radius: 35px;
-  border-bottom-right-radius: 35px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
+/* ── Header (now handled by PageShell / HeaderGlobal – keeping old styles commented if needed) ── */
+/* .header { ... } */
+/* .back-button { ... } */
+/* .header-title { ... } */
+/* .header-spacer { ... } */
 
-.back-button {
-  padding: 5px;
-  border-radius: 12px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border: none;
-  cursor: pointer;
-  color: var(--text-light);
-  font-size: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  margin-right: 12px;
-  transition: background-color 0.2s ease;
-}
-
-.back-button:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-.header-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-light);
-  margin: 0;
-  flex: 1;
-  text-align: center;
-}
-
-.header-spacer {
-  width: 42px;
-}
-
+/* Scroll Container */
 .scroll-container {
   max-width: 1000px;
   margin: 0 auto;
@@ -116,7 +77,7 @@
   gap: 24px;
 }
 
-/* Loading */
+/* ── Loading (now handled by PageShell – keeping for reference) ── */
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -152,7 +113,7 @@
   font-weight: 500;
 }
 
-/* Custom Product Section */
+/* ── Custom Product Section ──────────────────────────────────────── */
 .custom-product-container {
   background: var(--bg-card);
   border-radius: 16px;
@@ -162,35 +123,42 @@
 
 .table-wrapper {
   margin-bottom: 32px;
-  overflow-x: auto; /* Prevents overflow on small screens */
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: var(--bg-card);
 }
 
+/* Custom Table Title – now clearly visible in both modes */
 .custom-table-title {
   font-size: 18px;
   font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid var(--accent-blue);
+  color: var(--text-primary);           /* strong contrast */
+  margin: 0 0 16px 0;
+  padding-bottom: 10px;
+  border-bottom: 3px solid var(--accent-blue);
+  letter-spacing: -0.01em;
 }
 
+/* Product Table – improved demarcation */
 .product-table {
   width: 100%;
-  border-collapse: collapse;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-collapse: separate;
+  border-spacing: 0;
   background: var(--bg-card);
 }
 
 .product-table thead th {
-  background: var(--bg-header);
-  color: var(--text-light);
-  padding: 16px 12px;
+  background: var(--table-header-bg);
+  color: var(--text-primary);
+  padding: 14px 12px;
   font-weight: 600;
   font-size: 14px;
   text-align: left;
-  border: none;
+  border-bottom: 2px solid var(--border-subtle);  /* stronger separation */
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .product-table tbody td {
@@ -200,15 +168,15 @@
   color: var(--text-primary);
 }
 
-.product-table tbody tr:hover {
-  background-color: var(--hover-bg-medium);
-}
-
 .product-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-/* Editable Text */
+.product-table tbody tr:hover {
+  background-color: var(--hover-bg-medium);
+}
+
+/* ── Editable Text & Inputs ──────────────────────────────────────── */
 .editable-text {
   background: none;
   border: none;
@@ -243,7 +211,7 @@
   box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
-/* Category Display */
+/* ── Category Display ────────────────────────────────────────────── */
 .category-display {
   padding: 4px 0;
 }
@@ -266,7 +234,7 @@
   font-style: italic;
 }
 
-/* Checkbox */
+/* ── Checkbox ────────────────────────────────────────────────────── */
 .checkbox-container {
   position: relative;
   display: inline-block;
@@ -318,7 +286,7 @@
   transform: rotate(45deg);
 }
 
-/* Price Button */
+/* ── Price Button ────────────────────────────────────────────────── */
 .price-button {
   width: 100%;
   padding: 10px 12px;
@@ -339,7 +307,7 @@
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
-/* Remove Button */
+/* ── Remove Button ───────────────────────────────────────────────── */
 .remove-button {
   width: 32px;
   height: 32px;
@@ -361,7 +329,7 @@
   transform: scale(1.05);
 }
 
-/* Custom Product Inputs */
+/* ── Custom Product Inputs ───────────────────────────────────────── */
 .custom-product-inputs {
   display: flex;
   flex-direction: column;
@@ -435,7 +403,7 @@
   box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
 }
 
-/* Suggestions Section */
+/* ── Suggestions Section ─────────────────────────────────────────── */
 .suggestions-section {
   display: flex;
   flex-direction: column;
@@ -463,10 +431,10 @@
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
 }
 
-.category-title {
+.up-category-title {
   font-size: 20px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-primary); /* ensured visibility in dark mode */
   margin: 0;
 }
 
@@ -500,7 +468,7 @@
   border-bottom: none;
 }
 
-.subcategory-title {
+.up-subcategory-title {
   font-size: 16px;
   font-weight: 600;
   color: var(--text-primary);
@@ -509,7 +477,7 @@
   border-bottom: 2px solid var(--text-secondary);
 }
 
-/* Product Selection Modal */
+/* ── Product Selection Modal ─────────────────────────────────────── */
 .product-modal {
   max-height: 400px;
 }
@@ -581,7 +549,7 @@
   margin-top: 8px;
 }
 
-/* Submit Button */
+/* ── Submit Button ───────────────────────────────────────────────── */
 .submit-button {
   width: 100%;
   padding: 16px;
@@ -611,7 +579,7 @@
   transform: none;
 }
 
-/* Modals */
+/* ── Price Edit Modal – Fully styled now ─────────────────────────── */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -716,39 +684,71 @@
 }
 
 .price-input.full-width {
-  margin-bottom: 20px;
   width: 100%;
-  padding: 12px;
+  padding: 14px 16px;
   border: 2px solid var(--border-input);
-  border-radius: 8px;
+  border-radius: 10px;
+  font-size: 16px;
   background: var(--bg-card);
   color: var(--text-primary);
+  margin-bottom: 24px;
+}
+
+.price-input.full-width:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
 .modal-button-row {
   display: flex;
   gap: 12px;
+  margin-top: 16px;
 }
 
-.modal-confirm-button {
+.modal-confirm-button,
+.modal-cancel-button {
   flex: 1;
   padding: 14px;
-  background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-green-dark) 100%);
-  color: var(--text-light);
-  border: none;
   border-radius: 10px;
   font-weight: 600;
   font-size: 15px;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.2s ease;
+}
+
+.modal-confirm-button {
+  background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-green-dark) 100%);
+  color: var(--text-light);
+  border: none;
 }
 
 .modal-confirm-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
 }
 
-/* Animations */
+.modal-cancel-button {
+  background: transparent;
+  border: 2px solid var(--border-input);
+  color: var(--text-secondary);
+}
+
+.modal-cancel-button:hover {
+  background: var(--hover-bg-medium);
+  border-color: var(--accent-blue);
+}
+
+/* ── Delete Confirmation Modal ───────────────────────────────────── */
+.modal-title { /* shared */
+  /* already defined above */
+}
+
+.modal-text { /* shared */
+  /* already defined above */
+}
+
+/* ── Animations ──────────────────────────────────────────────────── */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -757,7 +757,7 @@
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -765,7 +765,7 @@
   }
 }
 
-/* Responsive */
+/* ── Responsive ──────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .scroll-container {
     padding: 16px;
@@ -790,15 +790,13 @@
 }
 
 @media (max-width: 480px) {
-  .header {
-    padding: 12px 16px;
-  }
-  
-  .category-header {
-    padding: 16px 20px;
-  }
-  
-  .subcategory-container {
+  .modal-content {
     padding: 20px;
+    width: 94vw;
+  }
+  
+  .modal-button-row {
+    flex-direction: column;
+    gap: 10px;
   }
 }
