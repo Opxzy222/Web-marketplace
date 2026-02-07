@@ -1,0 +1,112 @@
+/* FollowButton.css */
+.follow-button-wrapper {
+  border: none;
+  background: none;
+  padding: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  min-width: 110px;
+  position: relative;
+}
+
+.follow-button-wrapper.follow {
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+.follow-button-wrapper.following {
+  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+}
+
+.follow-button-wrapper:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.follow-button-wrapper.follow:hover {
+  box-shadow: 0 12px 24px rgba(59, 130, 246, 0.4);
+}
+
+.follow-button-wrapper.following:hover {
+  box-shadow: 0 12px 24px rgba(34, 197, 94, 0.4);
+}
+
+.follow-button-gradient {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 100%;
+}
+
+.follow-button-wrapper.follow .follow-button-gradient {
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.follow-button-wrapper.following .follow-button-gradient {
+  background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.follow-icon {
+  stroke-width: 2.5;
+  stroke: white;
+  flex-shrink: 0;
+}
+
+.button-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.follow-button-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 110px;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(107, 114, 128, 0.3);
+  border-top: 2px solid #374151;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .follow-button-wrapper {
+    min-width: 100px;
+  }
+  
+  .follow-button-gradient {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+}

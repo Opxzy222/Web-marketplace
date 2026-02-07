@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaEye, FaEyeSlash, FaExclamationTriangle, FaArrowRight } from "react-icons/fa";
 import axios from "axios";
-import '../css/shop/Login.css';
+import '../css/Login.css';
 
 // Replace with your actual backend login endpoint
 const API_URL = "https://retail-alvinia-goza-f6a0e4f7.koyeb.app/login/"; // ← CHANGE THIS

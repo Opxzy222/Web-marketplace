@@ -19,6 +19,7 @@ import CreateShopScreen from './pages/shop/CreateShopScreen';
 import UpdateShopProducts from './pages/shop/UpdateProducts';
 import ShopProduct from './pages/shop/ShopProduct';
 import SearchResults from './pages/shop/SearchResults';
+import ShopPage from './pages/shop/ShopPage';
 
 import { ThemeProvider } from './contexts/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
@@ -28,7 +29,7 @@ import BottomTabBar from './components/BottomTabBar';
 // Comment out everything that is not yet implemented
 // to prevent "undefined is not a function" or blank screen
 // ────────────────────────────────────────────────
-// import { CartProvider } from './contexts/CartContext';
+ import { CartProvider } from './contexts/CartContext';
 // import { AdProvider } from './contexts/AdContext';
 // import { AppResetProvider } from './contexts/AppResetContext';
 
@@ -94,6 +95,7 @@ useEffect(() => {
           <Route path="/update-products" element={<UpdateShopProducts />} />
           <Route path="/shop-products" element={<ShopProduct />} />
           <Route path="/search-result" element={<SearchResults />} />
+          <Route path="/shop-page" element={<ShopPage />} />
         </Routes>
       </main>
 
@@ -122,13 +124,13 @@ function App() {
     <BrowserRouter>
       <ThemeProvider>
         {/* Providers are commented out until you create the context files */}
-        {/* <CartProvider> */}
+         <CartProvider> 
         {/*   <AppResetProvider> */}
         {/*     <AdProvider> */}
               <AppContent />
         {/*     </AdProvider> */}
         {/*   </AppResetProvider> */}
-        {/* </CartProvider> */}
+         </CartProvider> 
       </ThemeProvider>
     </BrowserRouter>
   );

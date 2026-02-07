@@ -4,7 +4,7 @@ import GeolocationSearch from './GeolocationSearch';
 import LocationSearch from './LocationSearch';
 import ShopIdSearch from './ShopIdSearch';
 
-import '../../css/component/SearchBar.css';
+import '../../css/component/shop/SearchBar.css';
 
 const FILTERS = [
   { key: 'geolocation', label: 'Near Me' },

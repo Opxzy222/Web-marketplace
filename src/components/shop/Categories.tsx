@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import '../../css/component/Categories.css';
+import '../../css/component/shop/Categories.css';
 
 interface Category {
   id: number;

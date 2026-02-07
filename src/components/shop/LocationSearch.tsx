@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-import '../../css/component/LocationSearch.css';
+import '../../css/component/shop/LocationSearch.css';
 
 interface LocationSearchProps {
   onSearch: (shops: any[]) => void;

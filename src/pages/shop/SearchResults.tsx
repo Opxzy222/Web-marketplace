@@ -182,7 +182,7 @@ const SearchResults = () => {
   }, [allDistancesNull]);
 
   const goToShop = (shopId: string) => {
-    navigate('/shop/shop-page', { state: { shopId } });
+    navigate('/shop-page', { state: { shopId } });
   };
 
   const renderShopCard = useCallback(
@@ -249,7 +249,7 @@ const SearchResults = () => {
         </div>
       </motion.div>
     ),
-    [goToShop]
+    
   );
 
   return (
