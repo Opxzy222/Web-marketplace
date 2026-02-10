@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaMagnifyingGlass, FaImage, FaCartShopping, FaCircleCheck } from "react-icons/fa6";
+import { FaMagnifyingGlass, FaImage, FaCartShopping } from "react-icons/fa6";
 import { useCart } from "../../contexts/CartContext";
 import "../../css/component/shop/ShopProducts.css";
 
@@ -158,22 +158,22 @@ const ShopProduct: React.FC<Props> = ({ products = [], shopId, shopName }) => {
 
       return (
         <motion.div 
-          className="category-header"
+          className="spp-category-header"
           onClick={() => toggleCategory(cat.category)}
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.98 }}
         >
-          <div className="category-title-row">
-            <h2 className="category-title">{cat.category}</h2>
+          <div className="spp-category-title-row">
+            <h2 className="spp-category-title">{cat.category}</h2>
             <motion.div 
-              className="item-count-badge"
+              className="spp-item-count-badge"
               whileHover={{ scale: 1.1 }}
             >
               {count}
             </motion.div>
           </div>
           <motion.div 
-            className={`chevron ${isExpanded ? 'expanded' : ''}`}
+            className={`spp-chevron ${isExpanded ? 'expanded' : ''}`}
             animate={{ rotate: isExpanded ? 180 : 0 }}
             transition={{ duration: 0.3 }}
           >
@@ -186,7 +186,7 @@ const ShopProduct: React.FC<Props> = ({ products = [], shopId, shopName }) => {
     if (item.type === 'subcategory') {
       return (
         <motion.div 
-          className="subcategory-title"
+          className="spp-subcategory-title"
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.3 }}
@@ -204,7 +204,7 @@ const ShopProduct: React.FC<Props> = ({ products = [], shopId, shopName }) => {
 
       return (
         <motion.div 
-          className="product-card"
+          className="spp-product-card"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           whileHover={{ 
@@ -214,46 +214,46 @@ const ShopProduct: React.FC<Props> = ({ products = [], shopId, shopName }) => {
           transition={{ duration: 0.3 }}
         >
           <motion.div 
-            className="primary-image-wrapper"
+            className="spp-primary-image-wrapper"
             onClick={() => primaryImage && openGallery(images, 0)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
           >
             {primaryImage ? (
-              <div className="primary-image-container">
+              <div className="spp-primary-image-container">
                 <img 
                   src={primaryImage} 
                   alt={p.product_name}
-                  className="product-img"
+                  className="spp-product-img"
                   loading="lazy"
                 />
                 {hasMultiple && (
-                  <div className="image-count-badge">
+                  <div className="spp-image-count-badge">
                     +{images.length - 1}
                   </div>
                 )}
               </div>
             ) : (
-              <div className="placeholder-container">
+              <div className="spp-placeholder-container">
                 <FaImage />
-                <span className="placeholder-text">No Image</span>
+                <span className="spp-placeholder-text">No Image</span>
               </div>
             )}
           </motion.div>
 
-          <div className="text-column">
-            <h3 className="product-name">{p.product_name}</h3>
-            <div className="price-row">
-              <span className={`availability ${p.is_available ? 'available' : 'not-available'}`}>
+          <div className="spp-text-column">
+            <h3 className="spp-product-name">{p.product_name}</h3>
+            <div className="spp-price-row">
+              <span className={`spp-availability ${p.is_available ? 'available' : 'not-available'}`}>
                 {p.is_available ? 'Available' : 'Unavailable'}
               </span>
-              <span className="price-text">
+              <span className="spp-price-text">
                 {p.price != null ? `₦${Math.floor(p.price).toLocaleString()}` : 'N/A'}
               </span>
             </div>
 
             <motion.button
-              className={`add-to-cart-btn ${!p.is_available ? 'disabled' : ''}`}
+              className={`spp-add-to-cart-btn ${!p.is_available ? 'disabled' : ''}`}
               onClick={() => handleAddToCart(p)}
               disabled={!p.is_available}
               whileHover={!p.is_available ? {} : { scale: 1.1 }}
@@ -276,13 +276,13 @@ const ShopProduct: React.FC<Props> = ({ products = [], shopId, shopName }) => {
   if (loading) {
     return (
       <motion.div 
-        className="loader"
+        className="spp-loader"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         <motion.div 
-          className="spinner"
+          className="spp-spinner"
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
         >
@@ -295,13 +295,13 @@ const ShopProduct: React.FC<Props> = ({ products = [], shopId, shopName }) => {
   return (
     <>
       <motion.div 
-        className="container"
+        className="spp-container"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6 }}
       >
         <motion.div 
-          className="search-container"
+          className="spp-search-container"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.1 }}
@@ -312,11 +312,11 @@ const ShopProduct: React.FC<Props> = ({ products = [], shopId, shopName }) => {
             placeholder="Search products..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
+            className="spp-search-input"
           />
           {searchQuery.length > 0 && (
             <motion.button
-              className="clear-search"
+              className="spp-clear-search"
               onClick={() => setSearchQuery("")}
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 0.9 }}
@@ -326,7 +326,7 @@ const ShopProduct: React.FC<Props> = ({ products = [], shopId, shopName }) => {
           )}
         </motion.div>
 
-        <div className="list-content">
+        <div className="spp-list-content">
           <AnimatePresence>
             {flatData.map((item, index) => (
               <motion.div
@@ -343,13 +343,13 @@ const ShopProduct: React.FC<Props> = ({ products = [], shopId, shopName }) => {
 
           {flatData.length === 0 && (
             <motion.div 
-              className="empty-state"
+              className="spp-empty-state"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
             >
-              <FaMagnifyingGlass className="empty-icon" />
-              <h2 className="empty-title">No products found</h2>
-              <p className="empty-text">Try adjusting your search</p>
+              <FaMagnifyingGlass className="spp-empty-icon" />
+              <h2 className="spp-empty-title">No products found</h2>
+              <p className="spp-empty-text">Try adjusting your search</p>
             </motion.div>
           )}
         </div>
@@ -358,34 +358,34 @@ const ShopProduct: React.FC<Props> = ({ products = [], shopId, shopName }) => {
       <AnimatePresence>
         {galleryVisible && (
           <motion.div 
-            className="gallery-overlay"
+            className="spp-gallery-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={closeGallery}
           >
             <motion.div 
-              className="gallery-container"
+              className="spp-gallery-container"
               ref={galleryRef}
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.8 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="gallery-pages">
+              <div className="spp-gallery-pages">
                 {galleryImages.map((imgUrl, index) => (
                   <motion.div 
                     key={index}
-                    className="gallery-page"
+                    className="spp-gallery-page"
                     style={{ width: "100vw", height: "100vh" }}
                   >
                     <img 
                       src={imgUrl} 
                       alt={`Product ${index + 1}`}
-                      className="gallery-image"
+                      className="spp-gallery-image"
                     />
                     {galleryImages.length > 1 && (
-                      <div className="gallery-count">
+                      <div className="spp-gallery-count">
                         {index + 1} / {galleryImages.length}
                       </div>
                     )}
@@ -393,7 +393,7 @@ const ShopProduct: React.FC<Props> = ({ products = [], shopId, shopName }) => {
                 ))}
               </div>
               <motion.button
-                className="close-gallery"
+                className="spp-close-gallery"
                 onClick={closeGallery}
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.9 }}

@@ -287,7 +287,7 @@ const MyShop = () => {
                   <div className="myshop-actions">
                     <button
                       className="action-btn admin"
-                      onClick={() => navigate("/shop/AdminShopPage", { state: { shopId: shop.id } })}
+                      onClick={() => navigate("/admin-shop-page", { state: { shopId: shop.id } })}
                     >
                       <Store size={24} />
                       <span>Admin</span>

@@ -20,6 +20,7 @@ import UpdateShopProducts from './pages/shop/UpdateProducts';
 import ShopProduct from './pages/shop/ShopProduct';
 import SearchResults from './pages/shop/SearchResults';
 import ShopPage from './pages/shop/ShopPage';
+import AdminShopPage from './pages/shop/AdminShopPage';
 
 import { ThemeProvider } from './contexts/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
@@ -96,6 +97,7 @@ useEffect(() => {
           <Route path="/shop-products" element={<ShopProduct />} />
           <Route path="/search-result" element={<SearchResults />} />
           <Route path="/shop-page" element={<ShopPage />} />
+          <Route path="/admin-shop-page" element={<AdminShopPage />} />
         </Routes>
       </main>
 

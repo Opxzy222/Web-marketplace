@@ -1,92 +1,157 @@
-/* ReviewForm.css */
-.review-form-container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+/* ==============================================
+   ReviewForm.css – Full Dark/Light Mode Support
+   Premium review submission form
+   ============================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-page: #f9fafb;
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+  --bg-input: rgba(255, 255, 255, 0.8);
+
+  --text-primary: #1e293b;
+  --text-secondary: #374151;
+  --text-muted: #9ca3af;
+  --text-light: #ffffff;
+
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+  --accent-green-dark: #059669;
+  --accent-gold: #fbbf24;
+  --accent-red: #f87171;
+
+  --border-subtle: rgba(255, 255, 255, 0.6);
+  --border-input: #e5e7eb;
+  --border-focus: #93c5fd;
+
+  --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.12);
+  --shadow-hover: 0 20px 48px rgba(0, 0, 0, 0.18);
+  --shadow-button: 0 12px 32px rgba(16, 185, 129, 0.4);
+
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+  --bg-page: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.95);
+  --bg-gradient: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%);
+  --bg-input: rgba(30, 41, 59, 0.85);
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-light: #ffffff;
+
+  --accent-blue: #60a5fa;
+  --accent-green: #34d399;
+  --accent-green-dark: #10b981;
+  --accent-gold: #fcd34d;
+  --accent-red: #f87171;
+
+  --border-subtle: rgba(30, 41, 59, 0.6);
+  --border-input: #475569;
+  --border-focus: #60a5fa;
+
+  --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 20px 48px rgba(0, 0, 0, 0.6);
+  --shadow-button: 0 12px 32px rgba(52, 211, 153, 0.35);
+}
+
+/* Main container */
+.sprf-review-form-container {
+  background: var(--bg-gradient);
   backdrop-filter: blur(20px);
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   padding: 28px;
   margin-bottom: 24px;
-  box-shadow: 
-    0 16px 40px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-subtle);
   position: relative;
   overflow: hidden;
 }
 
-.review-form-container::before {
+.sprf-review-form-container::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #3B82F6, #8B5CF6, #EC4899);
-  border-radius: 24px 24px 0 0;
+  background: linear-gradient(90deg, var(--accent-blue), #8b5cf6, #ec4899);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
 
-.review-form {
+/* Form layout */
+.sprf-review-form {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-.form-group {
+.sprf-form-group {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.form-label {
+.sprf-form-label {
   font-size: 16px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   letter-spacing: -0.25px;
 }
 
-.text-input {
+/* Textarea */
+.sprf-text-input {
   width: 100%;
   min-height: 80px;
   max-height: 160px;
   padding: 16px 20px;
-  border: 2px solid #e5e7eb;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid var(--border-input);
+  border-radius: var(--radius-lg);
+  background: var(--bg-input);
   backdrop-filter: blur(10px);
   font-size: 15px;
   font-family: inherit;
-  color: #374151;
+  color: var(--text-primary);
   line-height: 1.6;
   resize: vertical;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--transition-normal);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.text-input:focus {
+.sprf-text-input:focus {
   outline: none;
-  border-color: #3B82F6;
+  border-color: var(--border-focus);
   box-shadow: 
-    0 0 0 4px rgba(59, 130, 246, 0.1),
+    0 0 0 4px rgba(59, 130, 246, 0.15),
     0 8px 20px rgba(0, 0, 0, 0.12);
   transform: translateY(-1px);
 }
 
-.text-input::placeholder {
-  color: #9ca3af;
+.sprf-text-input::placeholder {
+  color: var(--text-muted);
 }
 
-.text-input.error {
-  border-color: #f87171;
-  box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.1);
+.sprf-text-input.error {
+  border-color: var(--accent-red);
+  box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.15);
 }
 
-.star-rating-container {
+/* Star rating */
+.sprf-star-rating-container {
   display: flex;
   gap: 8px;
   justify-content: center;
   padding: 20px 0;
 }
 
-.star-button {
+.sprf-star-button {
   background: none;
   border: none;
   cursor: pointer;
@@ -96,45 +161,51 @@
   position: relative;
 }
 
-.star-button.filled {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(251, 191, 36, 0.1) 100%);
+.sprf-star-button.filled {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(251, 191, 36, 0.1) 100%);
 }
 
-.star-button svg {
+.sprf-star-button svg {
   color: #d1d5db !important;
   stroke-width: 1.5;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
-.star-button.filled svg {
-  color: #fbbf24 !important;
+.dark .sprf-star-button svg {
+  color: #475569 !important;
+}
+
+.sprf-star-button.filled svg {
+  color: var(--accent-gold) !important;
   filter: drop-shadow(0 2px 8px rgba(251, 191, 36, 0.4));
 }
 
-.error-message {
+/* Error message */
+.sprf-error-message {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #f87171;
+  color: var(--accent-red);
   font-size: 13px;
   font-weight: 500;
   padding: 8px 12px;
   background: rgba(248, 113, 113, 0.1);
   border-radius: 12px;
-  border-left: 4px solid #f87171;
+  border-left: 4px solid var(--accent-red);
 }
 
-.error-message svg {
+.sprf-error-message svg {
   flex-shrink: 0;
   stroke-width: 2;
 }
 
-.submit-button {
+/* Submit button */
+.sprf-submit-button {
   padding: 18px 32px;
   border: none;
   border-radius: 20px;
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-green-dark) 100%);
+  color: var(--text-light);
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
@@ -142,34 +213,33 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  box-shadow: 
-    0 12px 32px rgba(16, 185, 129, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-button);
+  transition: all var(--transition-normal);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   position: relative;
   overflow: hidden;
 }
 
-.submit-button:hover:not(:disabled) {
+.sprf-submit-button:hover:not(:disabled) {
   transform: translateY(-3px);
   box-shadow: 
     0 20px 48px rgba(16, 185, 129, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
-.submit-button:disabled {
+.sprf-submit-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none !important;
 }
 
-.submit-button svg {
+.sprf-submit-button svg {
   stroke-width: 2;
 }
 
-.spinner {
+/* Spinner */
+.sprf-spinner {
   width: 20px;
   height: 20px;
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -185,16 +255,16 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .review-form-container {
+  .sprf-review-form-container {
     padding: 24px 20px;
     margin: 0 12px 20px;
   }
   
-  .star-rating-container {
+  .sprf-star-rating-container {
     gap: 6px;
   }
   
-  .star-button svg {
+  .sprf-star-button svg {
     width: 28px;
     height: 28px;
   }

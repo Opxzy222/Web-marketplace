@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useAnimationControls } from 'framer-motion';
 import {
@@ -13,18 +13,16 @@ import {
   Store,
 } from 'lucide-react';
 import axios from 'axios';
-import ReviewForm from '../../components/shop/ReviewForm';
 import ShopReview from '../../components/shop/ShopReview';
-import FollowButton from '../../components/shop/FollowButton';
 import Followers from '../../components/shop/Followers';
 import ShopProduct from '../../components/shop/ShopProduct';
-import ShopPosts from '../../components/shop/ShopPost';
-import ShopLocation from '../../components/shop/MapFeatures';
+import AdminShopPosts from '../../components/shop/AdminShopPosts';
+import ShopPostForm from '../../components/shop/ShopPostForm';
 import { format, parseISO } from 'date-fns';
 import PageShell from '../../components/PageShell1';
 import '../../css/shop/ShopPage.css';
 
-const ShopPage = () => {
+const AdminShopPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const shopId = location.state?.shopId;
@@ -184,6 +182,27 @@ const ShopPage = () => {
   const openImageModal = () => shop?.image && setIsImageModalVisible(true);
   const closeImageModal = () => setIsImageModalVisible(false);
 
+  const handlePostCreated = useCallback(
+ (newPost) => {
+ console.log("New post created:", newPost);
+ setPosts((prevPosts) => [newPost, ...prevPosts]);
+
+ },
+ [shop, posts, reviews, followerCount, followers]
+ );
+ 
+ const handlePostDeleted = useCallback(
+ (postId) => {
+ console.log("Post deleted:", postId);
+ setPosts((prevPosts) => {
+ const updatedPosts = prevPosts.filter((post) => post.id !== postId);
+ 
+ return updatedPosts;
+ });
+ },
+ [shop, posts, reviews, followerCount, followers]
+ );
+
   const isFreeUser = !['standard', 'premium'].includes(plan || '');
 
   // ─── Loading / Error States ────────────────────────────────────────
@@ -212,10 +231,10 @@ const ShopPage = () => {
   return (
     <PageShell
       title={shop?.name || 'Business Space'}
+      shopId={shop?.shop_id || 'number'}
       isLoading={false}
       error={null}
       showBackButton={true}
-      shopId={shop?.shop_id || 'number'}
     >
       <div className="shop-page-container">
         <div className="gradient-background" />
@@ -281,28 +300,7 @@ const ShopPage = () => {
                 <p className="shop-address">{shop.address}</p>
               </div>
 
-              <div className="map-wrapper">
-                <ShopLocation shopLat={shop.latitude} shopLng={shop.longitude} />
-              </div>
-
               <p className="followers-text">{followers.length} Customers</p>
-
-              <div className="action-buttons-row">
-                <FollowButton shopId={shopId} />
-                <button
-                  className="message-btn"
-                  onClick={() =>
-                    navigate(
-                      `/shop/StartConversation?shopId=${shopId}&name=${encodeURIComponent(
-                        shop.name
-                      )}`
-                    )
-                  }
-                >
-                  <MessageCircle size={18} />
-                  Message
-                </button>
-              </div>
             </div>
           </div>
 
@@ -425,22 +423,26 @@ const ShopPage = () => {
             )}
 
             {activeTab === 'posts' && (
-              isFreeUser ? (
-                posts.length > 0 ? (
-                  <ShopPosts posts={[posts[0]]} scrollEnabled={false} />
-                ) : (
-                  <p className="empty-state">No posts available</p>
-                )
-              ) : (
-                <ShopPosts posts={posts} scrollEnabled={false} />
-              )
-            )}
+  <div className="posts-tab-content">
+    {/* ShopPostForm at the top – visible to everyone who can post */}
+    <ShopPostForm 
+      shopId={shopId} 
+      onPostCreated={handlePostCreated} 
+    />
+
+    <AdminShopPosts
+ posts={posts}
+ shopId={shopId}
+ onPostDeleted={handlePostDeleted}
+ />
+    
+  </div>
+)}
 
             {activeTab === 'customers' && <Followers followers={followers} />}
 
             {activeTab === 'reviews' && (
               <div className="reviews-wrapper">
-                <ReviewForm shopId={shopId} onReviewSubmitted={handleReviewSubmitted} />
                 <ShopReview reviews={reviews} count={reviewCount} />
               </div>
             )}
@@ -451,4 +453,4 @@ const ShopPage = () => {
   );
 };
 
-export default ShopPage;
+export default AdminShopPage;

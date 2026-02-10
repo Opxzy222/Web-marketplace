@@ -31,7 +31,7 @@ const FollowButton = ({ shopId, onPress }) => {
 
       try {
         const userId = localStorage.getItem('user_id');
-        const response = await axios.get(`/shops/${shopId}/followers-status/`, {
+        const response = await axios.get(`https://retail-alvinia-goza-f6a0e4f7.koyeb.app/shops/${shopId}/followers-status/`, {
           params: { user_id: userId },
           headers: { Accept: 'application/json' },
         });

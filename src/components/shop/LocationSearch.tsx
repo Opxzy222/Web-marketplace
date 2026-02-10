@@ -1,4 +1,4 @@
-// src/components/shop/LocationSearch.tsx
+// LocationSearch.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -101,7 +101,7 @@ export default function LocationSearch({ onSearch }: LocationSearchProps) {
         return;
       }
 
-      const limited = shops.slice(0, 50);
+      const limited = shops.slice(0, 100);
       onSearch(limited);
       navigate('/shop/SearchResult', {
         state: { searchTerm: searchTerm.trim(), shops: limited },
@@ -115,14 +115,14 @@ export default function LocationSearch({ onSearch }: LocationSearchProps) {
 
   return (
     <motion.div
-      className="location-search"
-      initial={{ opacity: 0, y: 10 }}
+      className="sb-location-search"
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.35 }}
     >
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className="sb-error-message">{error}</p>}
 
-      <div className="select-group">
+      <div className="sb-select-group">
         <label>Select State</label>
         <select
           value={selectedState || ''}
@@ -181,18 +181,18 @@ export default function LocationSearch({ onSearch }: LocationSearchProps) {
         )}
       </div>
 
-      <div className="input-group">
+      <div className="sb-input-group">
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="What are you looking for? (e.g. supermarket, fashion...)"
-          className="search-input"
+          placeholder="What are you looking for? (supermarket, fashion, electronics...)"
+          className="sb-search-input"
           disabled={loading}
         />
 
         <motion.button
-          className="search-btn"
+          className="sb-search-btn"
           onClick={handleSearch}
           disabled={loading}
           whileHover={{ scale: 1.04 }}

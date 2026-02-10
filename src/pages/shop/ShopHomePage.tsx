@@ -3,11 +3,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaStore, FaExclamationTriangle, FaSyncAlt } from "react-icons/fa";
-//import FollowedShops from "./FollowedShops"; // Adjust path
 import SearchBar from "../../components/shop/SearchBar";
 import Categories from "../../components/shop/Categories";
 import Header from "../../components/shop/Header";
-//import RecentShops from "./RecentShops"; // Adjust path
+import RecentlyVisitedShops from "../../components/shop/RecentlyVisitedShops";
+import FollowedShops from "../../components/shop/FollowedShops";
+
 //import AdMobManager from "./AdMobManager"; // Adjust path or replace with web ads
 //import useAuthGuard from "../../hooks/useAuthGuard"; // Adjust path
 import '../../css/shop/ShopHomePage.css';
@@ -211,12 +212,12 @@ const Shop: React.FC = () => {
           );
         case 'categories':
             return <Categories categories={item.data} />;
-            {/*case 'followedShops':
-        return <FollowedShops shops={item.data} />;
-      case 'recentShops':
-        return <RecentShops shops={item.data} />; */}
-      default:
-        return <div />;
+        case 'followedShops':
+          return <FollowedShops shops={item.data} />;
+        case 'recentShops':
+          return <RecentlyVisitedShops shops={item.data} />; 
+        default:
+          return <div />;
     }
   };
 

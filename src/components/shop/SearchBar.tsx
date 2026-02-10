@@ -1,3 +1,4 @@
+// SearchBar.tsx
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GeolocationSearch from './GeolocationSearch';
@@ -60,13 +61,13 @@ export default function SearchBar({
   };
 
   return (
-    <section className="search-bar">
-      {/* Filter Tabs */}
-      <div className="search__tabs">
+    <section className="sb-search-bar">
+      {/* Filter Tabs – modern segmented control */}
+      <div className="sb-tabs-container">
         {FILTERS.map((filter) => (
           <motion.button
             key={filter.key}
-            className={`search__tab ${activeFilter === filter.key ? 'active' : ''}`}
+            className={`sb-tab ${activeFilter === filter.key ? 'sb-tab-active' : ''}`}
             onClick={() => switchFilter(filter.key)}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.96 }}
@@ -81,11 +82,11 @@ export default function SearchBar({
       <AnimatePresence mode="wait">
         <motion.div
           key={activeFilter}
-          className="search__panel"
-          initial={{ opacity: 0, y: 16 }}
+          className="sb-panel"
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -16 }}
-          transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
         >
           {renderActiveSearch()}
         </motion.div>

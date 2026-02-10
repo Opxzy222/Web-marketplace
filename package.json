@@ -14,7 +14,7 @@
     "@types/react-select": "^5.0.0",
     "axios": "^1.13.2",
     "date-fns": "^4.1.0",
-    "framer-motion": "^12.31.0",
+    "framer-motion": "^12.34.0",
     "lodash": "^4.17.23",
     "lucide-react": "^0.563.0",
     "react": "^19.2.0",

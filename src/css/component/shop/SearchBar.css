@@ -1,291 +1,338 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 /* ────────────────────────────────────────────────
-   Premium 2026 Search Bar – Centered + Glassmorphism
-   Consistent with your auth screens (.dark class support)
+   Hero SearchBar – 2026 Next-Gen Premium Glass UI
+   Fixed wrapping • Taller inputs • Minimal top margin
+   Sleek segmented navbar • Floating luxury depth
    ──────────────────────────────────────────────── */
 
 :root {
-  --bg:               linear-gradient(145deg, #f8fafc 0%, #eef2f6 100%);
-  --card-bg:          rgba(255, 255, 255, 0.82);
-  --text:             #0f172a;
-  --text-secondary:   #475569;
-  --text-muted:       #64748b;
-  --accent-start:     #3b82f6;
-  --accent-end:       #7c3aed;
-  --accent:           linear-gradient(135deg, var(--accent-start), var(--accent-end));
-  --accent-solid:     #4f46e5;
-  --glow:             rgba(59, 130, 246, 0.26);
-  --border:           rgba(226, 232, 240, 0.58);
-  --shadow-card:      0 10px 32px -8px rgba(0,0,0,0.12);
-  --shadow-neu-light: 6px 6px 12px rgba(0,0,0,0.07), -6px -6px 12px rgba(255,255,255,0.7);
-  --shadow-neu-dark:  inset 4px 4px 10px rgba(0,0,0,0.35), inset -4px -4px 10px rgba(255,255,255,0.08);
-  --radius:           20px;
-  --transition:       0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+  --bg-hero:         rgba(255, 255, 255, 0.70);
+  --border-hero:     rgba(226, 232, 240, 0.42);
+  --shadow-hero:     0 18px 56px -16px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.80);
+  --bg-tab:          rgba(255, 255, 255, 0.94);
+  --bg-panel:        rgba(255, 255, 255, 0.96);
+  --text-primary:    #0f172a;
+  --text-secondary:  #475569;
+  --accent:          #3b82f6;
+  --accent-glow:     rgba(59, 130, 246, 0.28);
+  --radius:          30px;
+  --radius-sm:       22px;
+  --transition:      0.40s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dark {
-  --bg:               linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
-  --card-bg:          rgba(15, 23, 42, 0.76);
-  --text:             #e2e8f0;
-  --text-secondary:   #94a3b8;
-  --text-muted:       #64748b;
-  --accent-start:     #60a5fa;
-  --accent-end:       #a78bfa;
-  --accent:           linear-gradient(135deg, var(--accent-start), var(--accent-end));
-  --accent-solid:     #8b5cf6;
-  --glow:             rgba(96, 165, 250, 0.36);
-  --border:           rgba(51, 65, 85, 0.62);
-  --shadow-card:      0 12px 36px -10px rgba(0,0,0,0.5);
-  --shadow-neu-light: 6px 6px 12px #0a101f, -6px -6px 12px #14233d;
-  --shadow-neu-dark:  inset 4px 4px 10px rgba(0,0,0,0.48), inset -4px -4px 10px rgba(255,255,255,0.06);
+  --bg-hero:         rgba(15, 23, 42, 0.76);
+  --border-hero:     rgba(51, 65, 85, 0.48);
+  --shadow-hero:     0 24px 64px -20px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.05);
+  --bg-tab:          rgba(30, 41, 59, 0.94);
+  --bg-panel:        rgba(30, 41, 59, 0.94);
+  --text-primary:    #f1f5f9;
+  --text-secondary:  #94a3b8;
+  --accent:          #60a5fa;
+  --accent-glow:     rgba(96, 165, 250, 0.38);
 }
 
-/* ── Full viewport centering container ──────────────────────────────── */
-.search-bar-container {
-  min-height: 100vh;
+/* Hero Container – minimal top spacing, feels like part of header */
+.sb-search-bar {
   width: 100%;
+  max-width: 960px;
+  margin: 0.8rem auto 1.8rem;           /* Even tighter top margin */
+  padding: 1.6rem 1.8rem 2rem;
+  background: var(--bg-hero);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-hero);
+  backdrop-filter: blur(40px) saturate(190%);
+  box-shadow: var(--shadow-hero);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition);
+}
+
+/* Subtle animated top flow – luxurious accent */
+.sb-search-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 5px;
+  background: linear-gradient(90deg, #c4b5fd, #60a5fa, #34d399, #fbbf24);
+  background-size: 300% 100%;
+  animation: flowAccent 10s linear infinite;
+  opacity: 0.75;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+@keyframes flowAccent {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+/* Segmented Navbar – modern, no wrapping, pill-like */
+.sb-tabs-container {
+  display: flex;
+  background: var(--bg-tab);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem;
+  margin-bottom: 1.3rem;
+  backdrop-filter: blur(18px);
+  border: 1px solid var(--border-hero);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.05);
+  gap: 0.3rem;
+  overflow-x: auto;                     /* Scrollable on very small screens */
+  scrollbar-width: none;
+}
+
+.sb-tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+.sb-tab {
+  flex: 0 0 auto;                       /* Prevent shrinking too much */
+  min-width: 110px;                     /* Ensures "City / Area" fits */
+  padding: 0.9rem 1.3rem;
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;                  /* No wrapping/line break */
+  position: relative;
+  z-index: 1;
+}
+
+.sb-tab-active {
+  color: white;
+  font-weight: 800;
+}
+
+.sb-tab::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  border-radius: inherit;
+  opacity: 0;
+  transform: scale(0.97);
+  transition: all var(--transition);
+  z-index: -1;
+  box-shadow: 0 8px 28px var(--accent-glow);
+}
+
+.sb-tab-active::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.sb-tab:hover:not(.sb-tab-active) {
+  color: var(--accent);
+  background: rgba(59, 130, 246, 0.09);
+}
+
+/* Panel */
+.sb-panel {
+  background: var(--bg-panel);
+  border-radius: var(--radius-sm);
+  padding: 1.7rem 1.9rem;
+  border: 1px solid var(--border-hero);
+  box-shadow: 0 10px 38px rgba(0,0,0,0.07);
+  backdrop-filter: blur(20px);
+}
+
+/* ── Form – Taller inputs, never slim/tiny ── */
+.sb-location-search {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.sb-select-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.3rem;
+}
+
+.sb-select-group label {
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.sb-select-group select,
+.sb-search-input {
+  height: 60px;                         /* Taller & consistent */
+  min-height: 56px;                     /* Prevents tiny collapse on mobile */
+  padding: 0 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  background: rgba(255,255,255,0.84);
+  border: 1.5px solid var(--border-hero);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  backdrop-filter: blur(14px);
+  transition: all var(--transition);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.03);
+}
+
+.dark .sb-select-group select,
+.dark .sb-search-input {
+  background: rgba(30,41,59,0.88);
+  color: #f1f5f9;
+  border-color: rgba(51,65,85,0.58);
+}
+
+.sb-select-group select:focus,
+.sb-search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow), inset 0 1px 4px rgba(0,0,0,0.03);
+  transform: translateY(-1px);
+}
+
+.sb-input-group {
+  display: flex;
+  gap: 1.1rem;
+  align-items: stretch;
+}
+
+.sb-search-input {
+  flex: 1;
+}
+
+.sb-search-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.75;
+}
+
+.sb-search-btn {
+  min-width: 180px;
+  height: 60px;
+  background: var(--accent);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  box-shadow: 0 10px 30px var(--accent-glow);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.sb-search-btn:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 18px 42px var(--accent-glow);
+}
+
+.sb-search-btn:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.sb-error-message {
+  color: #ef4444;
+  font-weight: 600;
+  text-align: center;
+  background: rgba(254, 226, 226, 0.78);
+  padding: 1rem 1.4rem;
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(12px);
+}
+
+/* Responsive – mobile-first polish */
+@media (max-width: 768px) {
+  .sb-search-bar {
+    margin: 0.7rem auto 1.6rem;
+    padding: 1.5rem 1.3rem 1.9rem;
+    border-radius: 26px;
+  }
+
+  .sb-tabs-container {
+    padding: 0.3rem;
+    overflow-x: auto;
+  }
+
+  .sb-tab {
+    min-width: 100px;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.94rem;
+  }
+
+  .sb-input-group {
+    flex-direction: column;
+  }
+
+  .sb-search-btn {
+    height: 58px;
+  }
+
+  .sb-select-group {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.sb-spinner {
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.sb-geo-hint {
+  margin-top: 0.9rem;
+  text-align: center;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+}
+
+.sb-geo-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.sb-geo-link:hover {
+  color: var(--accent-hover || var(--accent));
+  text-decoration: underline;
+}
+
+.sb-error-message {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem 1rem;
+  background: rgba(254, 226, 226, 0.8);
+  color: #dc2626;
+  padding: 0.9rem 1.3rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.1rem;
+  backdrop-filter: blur(10px);
 }
 
-/* ── Main search bar card ───────────────────────────────────────────── */
-.search-bar {
-  width: 100%;
-  max-width: 960px;
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(24px) saturate(140%);
-  box-shadow: var(--shadow-card), var(--shadow-neu-light);
-  transition: all var(--transition);
-  overflow: hidden;
-}
-
-.dark .search-bar {
-  box-shadow: var(--shadow-card), var(--shadow-neu-dark);
-}
-
-/* ── Filter Tabs ─────────────────────────────────────────────────────── */
-.search__tabs {
-  display: flex;
-  background: rgba(255, 255, 255, 0.65);
-  border-radius: 999px;
-  padding: 0.5rem;
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
-  margin-bottom: 1.6rem;
-  box-shadow: inset 0 1px 4px rgba(0,0,0,0.04);
-}
-
-.dark .search__tabs {
-  background: rgba(30, 41, 59, 0.62);
-  border-color: rgba(96, 165, 250, 0.24);
-  box-shadow: inset 0 1px 4px rgba(0,0,0,0.32);
-}
-
-.search__tab {
-  flex: 1;
-  padding: 0.85rem 1.4rem;
-  border: none;
-  background: transparent;
-  font-size: 0.97rem;
-  font-weight: 600;
+.sb-info-message {
+  text-align: center;
   color: var(--text-secondary);
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.24s ease;
-}
-
-.search__tab:hover {
-  color: var(--accent-solid);
-  background: var(--glow);
-}
-
-.search__tab.active {
-  background: var(--accent);
-  color: white;
-  box-shadow: 0 4px 14px var(--glow);
-}
-
-/* ── Search Panel ────────────────────────────────────────────────────── */
-.search__panel {
-  background: var(--card-bg);
-  border-radius: 16px;
-  padding: 1.5rem;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-card), var(--shadow-neu-light);
-  transition: all var(--transition);
-}
-
-.dark .search__panel {
-  box-shadow: var(--shadow-card), var(--shadow-neu-dark);
-}
-
-/* ── Common child search styles ─────────────────────────────────────── */
-.geo-search,
-.location-search,
-.shopid-search {
-  width: 100%;
-}
-
-/* ── Error message (used in child components) ────────────────────────── */
-.error-message {
-  color: var(--error-text);
-  font-size: 0.92rem;
-  margin: 0.8rem 0;
-  text-align: center;
-  font-weight: 500;
-}
-
-/* ── Responsive adjustments ─────────────────────────────────────────── */
-@media (max-width: 768px) {
-  .search-bar-container {
-    padding: 1rem 0.8rem;
-  }
-
-  .search-bar {
-    padding: 1.4rem 1rem;
-    border-radius: 16px;
-  }
-
-  .search__tabs {
-    padding: 0.4rem;
-  }
-
-  .search__tab {
-    font-size: 0.94rem;
-    padding: 0.75rem 1.1rem;
-  }
-
-  .search__panel {
-    padding: 1.2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .search__tabs {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-    border-radius: 14px;
-  }
-
-  .search__tab {
-    flex: 0 1 auto;
-    padding: 0.7rem 1rem;
-    font-size: 0.9rem;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .search__tab,
-  .search__panel {
-    transition: none;
-  }
-}
-
-/* Common styles for all three search modes */
-.geo-search,
-.location-search,
-.shopid-search {
-  width: 100%;
-  padding: 1.25rem;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(229, 231, 235, 0.5);
-  transition: all 0.3s ease;
-}
-
-.dark .geo-search,
-.dark .location-search,
-.dark .shopid-search {
-  background: #1e293b;
-  border-color: rgba(96, 165, 250, 0.15);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.38);
-}
-
-.error-message {
-  color: #ef4444;
-  font-size: 0.9rem;
+  font-size: 0.94rem;
   margin-bottom: 1rem;
-  text-align: center;
-  font-weight: 500;
-}
-
-.select-group label {
-  display: block;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #374151;
-  margin: 1rem 0 0.5rem;
-}
-
-.dark .select-group label {
-  color: #e2e8f0;
-}
-
-.select-group select,
-.search-input {
-  width: 100%;
-  padding: 0.9rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  font-size: 1rem;
-  background: #f9fafb;
-  color: #111827;
-  transition: all 0.2s ease;
-}
-
-.dark .select-group select,
-.dark .search-input {
-  background: #334155;
-  border-color: #475569;
-  color: #f1f5f9;
-}
-
-.search-input::placeholder {
-  color: #9ca3af;
-}
-
-.search-btn {
-  margin-top: 1.25rem;
-  width: 100%;
-  padding: 0.9rem;
-  background: #2563eb;
-  color: white;
-  font-weight: 600;
-  font-size: 1rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.search-btn:hover {
-  background: #1d4ed8;
-}
-
-.search-btn:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* Responsive */
-@media (max-width: 640px) {
-  .geo-search,
-  .location-search,
-  .shopid-search {
-    padding: 1rem;
-  }
+  opacity: 0.9;
 }

@@ -1,0 +1,276 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ────────────────────────────────────────────────
+   Recently Visited Shops – Premium 2026 Professional Style
+   Glassmorphic cards, consistent with Categories & Followed Shops
+   Clean dark/light modes, elegant hover states
+   ──────────────────────────────────────────────── */
+
+:root {
+  --bg-section:      rgba(255, 255, 255, 0.82);
+  --border-section:  rgba(226, 232, 240, 0.55);
+  --shadow-section:  0 12px 40px -16px rgba(0,0,0,0.16);
+  --bg-card:         rgba(255, 255, 255, 0.90);
+  --shadow-card:     0 6px 20px rgba(0,0,0,0.09);
+  --shadow-hover:    0 18px 44px rgba(0,0,0,0.20), 0 0 0 1px rgba(59,130,246,0.14);
+  --text-title:      #0f172a;
+  --text-primary:    #1e293b;
+  --text-muted:      #64748b;
+  --accent:          #3b82f6;
+  --accent-glow:     rgba(59, 130, 246, 0.24);
+  --radius:          20px;
+  --radius-sm:       16px;
+  --transition:      0.34s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.dark {
+  --bg-section:      rgba(15, 23, 42, 0.80);
+  --border-section:  rgba(51, 65, 85, 0.58);
+  --shadow-section:  0 16px 48px -20px rgba(0,0,0,0.65);
+  --bg-card:         rgba(30, 41, 59, 0.88);
+  --shadow-card:     0 8px 28px rgba(0,0,0,0.50);
+  --shadow-hover:    0 22px 52px rgba(0,0,0,0.70), 0 0 0 1.5px rgba(96,165,250,0.32);
+  --text-title:      #e2e8f0;
+  --text-primary:    #cbd5e1;
+  --text-muted:      #94a3b8;
+  --accent:          #60a5fa;
+  --accent-glow:     rgba(96, 165, 250, 0.36);
+}
+
+/* Main section – same constraints as others */
+.rv-recently-visited-section {
+  width: 100%;
+  max-width: 960px;
+  margin: 1.8rem auto;
+  padding: 2rem 1.5rem;
+  background: var(--bg-section);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-section);
+  backdrop-filter: blur(22px) saturate(150%);
+  box-shadow: var(--shadow-section);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition);
+}
+
+/* Subtle top glow accent */
+.rv-recently-visited-section::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 20%, var(--accent) 50%, transparent 80%);
+  filter: blur(3px);
+  opacity: 0.6;
+}
+
+/* Header */
+.rv-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.8rem;
+  gap: 1.6rem;
+}
+
+.rv-section-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--text-title);
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+/* See All – consistent minimal pill style */
+.rv-see-all-button {
+  color: var(--accent);
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: rgba(59, 130, 246, 0.07);
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  padding: 0.64rem 1.5rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.dark .rv-see-all-button {
+  background: rgba(96, 165, 250, 0.10);
+  border-color: rgba(96, 165, 250, 0.24);
+}
+
+.rv-see-all-button:hover,
+.rv-see-all-button:focus {
+  background: var(--accent);
+  color: white;
+  box-shadow: var(--accent-glow);
+  transform: translateY(-1.5px);
+}
+
+/* List container */
+.rv-shops-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Card wrapper */
+.rv-shop-card-wrapper {
+  width: 100%;
+}
+
+/* Card – horizontal layout, clean & professional */
+.rv-shop-card {
+  width: 100%;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  padding: 1.3rem 1.4rem;
+  border: 1px solid var(--border-section);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.rv-shop-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--accent);
+}
+
+/* Top accent line on card */
+.rv-shop-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent) 40%, transparent);
+  opacity: 0.55;
+}
+
+/* Image */
+.rv-image-container {
+  flex-shrink: 0;
+  margin-right: 1.2rem;
+}
+
+.rv-shop-image,
+.rv-shop-image-placeholder {
+  width: 74px;
+  height: 74px;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  transition: transform 0.38s ease;
+}
+
+.rv-shop-card:hover .rv-shop-image,
+.rv-shop-card:hover .rv-shop-image-placeholder {
+  transform: scale(1.08);
+}
+
+.rv-shop-image-placeholder {
+  background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #cbd5e1;
+}
+
+.dark .rv-shop-image-placeholder {
+  background: linear-gradient(135deg, #1e293b, #334155);
+  color: #e2e8f0;
+}
+
+/* Info */
+.rv-shop-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.rv-shop-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.35rem;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rv-visited-at {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Show more button – clean & integrated */
+.rv-show-more-wrapper {
+  margin-top: 1.6rem;
+  text-align: center;
+}
+
+.rv-show-more-button {
+  background: rgba(59, 130, 246, 0.06);
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  color: var(--accent);
+  font-size: 0.96rem;
+  font-weight: 600;
+  padding: 0.9rem 2rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.dark .rv-show-more-button {
+  background: rgba(96, 165, 250, 0.09);
+  border-color: rgba(96, 165, 250, 0.26);
+}
+
+.rv-show-more-button:hover {
+  background: var(--accent);
+  color: white;
+  box-shadow: var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .rv-recently-visited-section {
+    margin: 1.4rem auto;
+    padding: 1.6rem 1.2rem;
+    border-radius: 18px;
+  }
+
+  .rv-image-container {
+    margin-right: 1rem;
+  }
+
+  .rv-shop-image,
+  .rv-shop-image-placeholder {
+    width: 68px;
+    height: 68px;
+  }
+
+  .rv-shop-name {
+    font-size: 1rem;
+  }
+
+  .rv-section-title {
+    font-size: 1.65rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+  }
+}

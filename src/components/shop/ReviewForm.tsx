@@ -88,16 +88,16 @@ const ReviewForm = ({ shopId, onReviewSubmitted }) => {
 
   return (
     <motion.div 
-      className="review-form-container"
+      className="sprf-review-form-container"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <form onSubmit={handleSubmit} className="review-form">
-        <div className="form-group">
-          <label className="form-label">Comment</label>
+      <form onSubmit={handleSubmit} className="sprf-review-form">
+        <div className="sprf-form-group">
+          <label className="sprf-form-label">Comment</label>
           <textarea
-            className={`text-input ${error ? 'error' : ''}`}
+            className={`sprf-text-input ${error ? 'error' : ''}`}
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Write your review here..."
@@ -107,7 +107,7 @@ const ReviewForm = ({ shopId, onReviewSubmitted }) => {
           <AnimatePresence>
             {error && (
               <motion.div 
-                className="error-message"
+                className="sprf-error-message"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
@@ -119,14 +119,14 @@ const ReviewForm = ({ shopId, onReviewSubmitted }) => {
           </AnimatePresence>
         </div>
 
-        <div className="form-group">
-          <label className="form-label">Rating</label>
-          <div className="star-rating-container">
+        <div className="sprf-form-group">
+          <label className="sprf-form-label">Rating</label>
+          <div className="sprf-star-rating-container">
             {[1, 2, 3, 4, 5].map((star) => (
               <motion.button
                 key={star}
                 type="button"
-                className={`star-button ${rating >= star ? 'filled' : ''}`}
+                className={`sprf-star-button ${rating >= star ? 'filled' : ''}`}
                 onClick={() => setRating(star)}
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.95 }}
@@ -141,7 +141,7 @@ const ReviewForm = ({ shopId, onReviewSubmitted }) => {
           <AnimatePresence>
             {ratingError && (
               <motion.div 
-                className="error-message"
+                className="sprf-error-message"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
@@ -155,7 +155,7 @@ const ReviewForm = ({ shopId, onReviewSubmitted }) => {
 
         <motion.button
           type="submit"
-          className="submit-button"
+          className="sprf-submit-button"
           disabled={isSubmitting || rating === 0 || !comment.trim()}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -163,7 +163,7 @@ const ReviewForm = ({ shopId, onReviewSubmitted }) => {
         >
           {isSubmitting ? (
             <>
-              <div className="spinner" />
+              <div className="sprf-spinner" />
               Submitting...
             </>
           ) : (
