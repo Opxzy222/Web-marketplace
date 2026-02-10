@@ -245,7 +245,7 @@ const Homepage: React.FC = () => {
     <div className="homepage">
       <header className="header">
         <div className="header-brand">
-          <img src="src//assets/images/icon1.png" alt="Gogo Logo" className="header-logo" loading="lazy" />
+          <img src="/public/assets/images/icon1.png" alt="Gogo Logo" className="header-logo" loading="lazy" />
           <h1 className="">Gogo Digital Market</h1>
           <ThemeToggle />
         </div>
@@ -260,7 +260,7 @@ const Homepage: React.FC = () => {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
           >
-            <img src="/src/assets/images/homestart.jpg" alt="Discover local businesses" className="hero-image" loading="lazy" />
+            <img src="/public/assets/images/homestart.jpg" alt="Discover local businesses" className="hero-image" loading="lazy" />
             <div className="hero-gradient-overlay" />
           </motion.div>
           <motion.div
