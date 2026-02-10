@@ -26,30 +26,39 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const root = document.documentElement;
 
-    // Light/dark class
+    // Apply/remove dark class
     if (isDark) {
       root.classList.add('dark');
     } else {
       root.classList.remove('dark');
     }
 
-    // ────────────── Update status bar color ──────────────
-    let meta = document.querySelector('meta[name="theme-color"]');
+    // ────────────── Manage status bar / address bar color ──────────────
+    // Remove any previously added dynamic theme-color meta tags
+    document
+      .querySelectorAll('meta[name="theme-color"][data-dynamic="true"]')
+      .forEach((el) => el.remove());
 
-    // If no meta exists (rare), create one
-    if (!meta) {
-      meta = document.createElement('meta');
-      meta.setAttribute('name', 'theme-color');
-      document.head.appendChild(meta);
+    // Create and append new meta tag
+    const meta = document.createElement('meta');
+    meta.name = 'theme-color';
+    meta.content = '#2F5F87';                    // ← same color for both modes
+    meta.setAttribute('data-dynamic', 'true');   // marker to identify our tags
+    document.head.appendChild(meta);
+    // ────────────────────────────────────────────────────────────────
+
+    // Optional: reinforce apple-mobile-web-app-status-bar-style (helps iOS PWA)
+    let appleMeta = document.querySelector(
+      'meta[name="apple-mobile-web-app-status-bar-style"]'
+    );
+    if (!appleMeta) {
+      appleMeta = document.createElement('meta');
+      appleMeta.setAttribute('name', 'apple-mobile-web-app-status-bar-style');
+      document.head.appendChild(appleMeta);
     }
+    appleMeta.setAttribute('content', 'black-translucent');
 
-    // Choose color — make these match your header!
-    const newColor = isDark ? '#0f172a' : '#ffffff';  // ← customize these hex values
-
-    meta.setAttribute('content', newColor);
-    // ─────────────────────────────────────────────────────
-
-    // Persist only explicit choice
+    // Persist only when user made explicit choice
     if (theme === 'system') {
       localStorage.removeItem('theme');
     } else {
@@ -57,15 +66,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, [isDark, theme]);
 
-  // Your existing system preference listener
+  // Listen for system theme changes when in 'system' mode
   useEffect(() => {
     if (theme !== 'system') return;
 
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
+
     const listener = () => {
-      document.documentElement.classList.toggle('dark', mq.matches);
-      // The previous useEffect will also catch this because isDark changes
+      // classList will be updated by the first useEffect because isDark changes
     };
+
     mq.addEventListener('change', listener);
     return () => mq.removeEventListener('change', listener);
   }, [theme]);

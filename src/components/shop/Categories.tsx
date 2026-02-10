@@ -27,16 +27,16 @@ const Categories: React.FC<CategoriesProps> = ({ categories }) => {
   }, [sortedCategories]);
 
   const categoryIconMap: Record<string, string> = {
-    Vehicles: '/assets/G-images/Vehicle.jpg',
-    electronics: '/assets/G-images/Electronics.jpg',
-    phone: '/assets/Image/phone-icon.png',
-    furniture: '/assets/G-images/Furniture.jpg',
-    '': '/assets/Image/home-appliance-icon.png',
-    fashion: '/assets/G-images/Fashion.jpg',
-    property: '/assets/Image/property-icon.png',
-    'health & beauty': '/assets/G-images/Health.jpg',
-    services: '/assets/G-images/Services.jpg',
-    'medical & healthcare': '/assets/G-images/Medical.jpg',
+    Vehicles: '/src/assets/G-images/Vehicle.jpg',
+    electronics: '/src/assets/G-images/Electronics.jpg',
+    phone: '/src/assets/Image/phone-icon.png',
+    furniture: '/src/assets/G-images/Furniture.jpg',
+    '': '/src/assets/Image/home-appliance-icon.png',
+    fashion: '/src/assets/G-images/Fashion.jpg',
+    property: '/src/assets/Image/property-icon.png',
+    'health & beauty': '/src/assets/G-images/Health.jpg',
+    services: '/src/assets/G-images/Services.jpg',
+    'medical & healthcare': '/src/assets/G-images/Medical.jpg',
   };
 
   const normalizeCategoryName = (name: string): string =>
