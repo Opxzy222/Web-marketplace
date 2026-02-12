@@ -274,33 +274,86 @@
   font-size: 15px;
 }
 
+/* MessageButton.css */
+
 .action-buttons-row {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;          /* space between Follow and Message buttons */
+  flex-wrap: wrap;    /* safe for very small screens */
 }
 
-.message-btn {
-  flex: 1;
-  min-width: 140px;
+/* ──────────────────────────────────────────────── */
+
+.message-button-wrapper {
+  border: none;
+  background: none;
+  padding: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  min-width: 110px;          /* same as FollowButton */
+  position: relative;
+}
+
+.message-button-wrapper:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.message-button-gradient {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  background: var(--bg-gradient-button);
-  color: var(--text-light);
+  gap: 8px;                  /* same gap as FollowButton */
+  padding: 12px 24px;        /* identical vertical + horizontal padding */
+  border-radius: 20px;
   font-weight: 700;
-  font-size: 15px;
-  padding: 14px 24px;
-  border-radius: var(--radius-xl);
-  border: none;
-  box-shadow: 0 4px 14px rgba(30,58,138,0.35);
-  transition: all var(--transition-normal);
+  font-size: 14px;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 100%;
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%); /* slate-600 → slate-700 */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);           /* subtle highlight */
 }
 
-.message-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(30,58,138,0.45);
+.message-icon {
+  stroke-width: 2.5;
+  stroke: white;
+  flex-shrink: 0;
+}
+
+/* Optional: slightly stronger hover glow for message button */
+.message-button-wrapper:hover .message-button-gradient {
+  background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Loading / disabled state (optional, if you add loading later) */
+.message-button-wrapper:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive – match FollowButton */
+@media (max-width: 480px) {
+  .message-button-wrapper {
+    min-width: 100px;
+  }
+  
+  .message-button-gradient {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
 }
 
 /* Modal */

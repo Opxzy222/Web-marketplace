@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence, useAnimationControls } from 'framer-motion';
 import {
   CheckCircle,
@@ -27,7 +27,8 @@ import '../../css/shop/ShopPage.css';
 const ShopPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const shopId = location.state?.shopId;
+  //const shopId = location.state?.shopId;
+  const { shopId } = useParams();
 
   const [shop, setShop] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -288,21 +289,24 @@ const ShopPage = () => {
               <p className="followers-text">{followers.length} Customers</p>
 
               <div className="action-buttons-row">
-                <FollowButton shopId={shopId} />
-                <button
-                  className="message-btn"
-                  onClick={() =>
-                    navigate(
-                      `/shop/StartConversation?shopId=${shopId}&name=${encodeURIComponent(
-                        shop.name
-                      )}`
-                    )
-                  }
-                >
-                  <MessageCircle size={18} />
-                  Message
-                </button>
-              </div>
+  <FollowButton shopId={shopId} />
+
+  <motion.button
+    className="message-button-wrapper"
+    onClick={() =>
+      navigate(
+        `/shop/StartConversation?shopId=${shopId}&name=${encodeURIComponent(shop.name)}`
+      )
+    }
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+  >
+    <div className="message-button-gradient">
+      <MessageCircle size={18} className="message-icon" />
+      <span className="button-text">Message</span>
+    </div>
+  </motion.button>
+</div>
             </div>
           </div>
 

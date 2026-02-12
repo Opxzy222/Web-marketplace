@@ -38,7 +38,7 @@ const FollowedShops: React.FC<FollowedShopsProps> = ({ shops }) => {
   };
 
   const handleShopPress = (shopId: number) => {
-    navigate(`/shop/shop-page/${shopId}`);
+    navigate(`/shop-page/${shopId}`);
   };
 
   const renderShopItem = (shop: Shop, index: number) => (
@@ -57,7 +57,7 @@ const FollowedShops: React.FC<FollowedShopsProps> = ({ shops }) => {
     >
       <button
         className="fs-shop-card"
-        onClick={() => handleShopPress(shop.id)}
+        onClick={() => handleShopPress(shop.shop_id)}
         type="button"
       >
         <div className="fs-image-container">

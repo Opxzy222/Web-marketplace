@@ -27,16 +27,16 @@ const Categories: React.FC<CategoriesProps> = ({ categories }) => {
   }, [sortedCategories]);
 
   const categoryIconMap: Record<string, string> = {
-    Vehicles: '/public/assets/G-images/Vehicle.jpg',
-    electronics: '/public/assets/G-images/Electronics.jpg',
-    phone: '/public/assets/Image/phone-icon.png',
-    furniture: '/public/assets/G-images/Furniture.jpg',
-    '': '/public/assets/Image/home-appliance-icon.png',
-    fashion: '/public/assets/G-images/Fashion.jpg',
-    property: '/public/assets/Image/property-icon.png',
-    'health & beauty': '/public/assets/G-images/Health.jpg',
-    services: '/public/assets/G-images/Services.jpg',
-    'medical & healthcare': '/public/assets/G-images/Medical.jpg',
+    Vehicles: '/assets/G-images/Vehicle.jpg',
+    electronics: '/assets/G-images/Electronics.jpg',
+    phone: '/assets/Image/phone-icon.png',
+    furniture: '/assets/G-images/Furniture.jpg',
+    '': '/assets/Image/home-appliance-icon.png',
+    fashion: '/assets/G-images/Fashion.jpg',
+    property: '/assets/Image/property-icon.png',
+    'health & beauty': '/assets/G-images/Health.jpg',
+    services: '/assets/G-images/Services.jpg',
+    'medical & healthcare': '/assets/G-images/Medical.jpg',
   };
 
   const normalizeCategoryName = (name: string): string =>

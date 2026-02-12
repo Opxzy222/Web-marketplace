@@ -96,7 +96,7 @@ useEffect(() => {
           <Route path="/update-products" element={<UpdateShopProducts />} />
           <Route path="/shop-products" element={<ShopProduct />} />
           <Route path="/search-result" element={<SearchResults />} />
-          <Route path="/shop-page" element={<ShopPage />} />
+          <Route path="/shop-page/:shopId" element={<ShopPage />} />
           <Route path="/admin-shop-page" element={<AdminShopPage />} />
         </Routes>
       </main>

@@ -103,7 +103,7 @@ export default function LocationSearch({ onSearch }: LocationSearchProps) {
 
       const limited = shops.slice(0, 100);
       onSearch(limited);
-      navigate('/shop/SearchResult', {
+      navigate('/search-result', {
         state: { searchTerm: searchTerm.trim(), shops: limited },
       });
     } catch (err: any) {

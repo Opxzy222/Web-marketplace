@@ -3,7 +3,6 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ArrowLeft,
   Filter,
   X,
   Star,
@@ -107,7 +106,6 @@ const SearchResults = () => {
       const isPremiumPlan = shop.plan === 'standard' || shop.plan === 'premium';
 
       const ratingOk = rating >= minRating && rating <= maxRating;
-
       const distanceOk =
         allDistancesNull || distance === null
           ? true
@@ -182,75 +180,84 @@ const SearchResults = () => {
   }, [allDistancesNull]);
 
   const goToShop = (shopId: string) => {
-    navigate('/shop-page', { state: { shopId } });
+    navigate(`/shop-page/${shopId}`);
   };
 
   const renderShopCard = useCallback(
-    (item: any) => (
-      <motion.div
-        className="shop-card"
-        whileHover={{ y: -6, boxShadow: '0 20px 40px rgba(0,0,0,0.12)' }}
-        transition={{ duration: 0.25 }}
-      >
-        <div className="card-image">
+  (item: any) => (
+    <motion.div
+      className="srt-shop-card"
+      whileHover={{ y: -6, scale: 1.015 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 18 }}
+      onClick={() => goToShop(item.shop_id)}
+      style={{ cursor: 'pointer' }}
+    >
+      {/* TOP SECTION */}
+      <div className="srt-top-row">
+
+        {/* Image */}
+        <div className="srt-image-wrapper">
           {item.image ? (
             <img
               src={item.image}
               alt={item.name || 'Shop'}
-              className="shop-img"
+              className="srt-shop-img"
               loading="lazy"
             />
           ) : (
-            <div className="no-img-placeholder">
-              <Store size={32} />
+            <div className="srt-no-img-placeholder">
+              <Store size={30} strokeWidth={1.4} />
             </div>
           )}
         </div>
 
-        <div className="card-content">
-          <div className="card-header">
-            <h3 className="shop-name">{item.name || 'Unnamed Space'}</h3>
-            <div className="badges">
-              {item.verified && (
-                <div className="badge verified">
-                  <ShieldCheck size={14} />
-                </div>
-              )}
-              {item.average_rating != null && (
-                <div className="badge rating">
-                  <Star size={14} fill="currentColor" />
-                  <span>{item.average_rating.toFixed(1)}</span>
-                </div>
-              )}
-              {(item.plan === 'standard' || item.plan === 'premium') && (
-                <div className="badge premium">
-                  <Zap size={14} />
-                </div>
-              )}
-            </div>
-          </div>
+        {/* Right side (Name + badges stacked) */}
+        <div className="srt-right-stack">
+          <h3 className="srt-shop-name">
+            {item.name || 'Unnamed Space'}
+          </h3>
 
-          <div className="card-meta">
-            <div className="meta-item">
-              <MapPin size={16} className="meta-icon" />
-              <span className="meta-text">{item.address || 'No Address'}</span>
-            </div>
-            <div className="meta-item">
-              <Store size={16} className="meta-icon" />
-              <span className="meta-text">
-                {item.distance != null ? `${item.distance.toFixed(1)} km` : 'N/A'}
-              </span>
-            </div>
-          </div>
+          <div className="srt-badge-row">
+            {item.average_rating != null && (
+              <div className="srt-rating-pill">
+                <Star size={14} fill="#facc15" stroke="#eab308" />
+                <span>{item.average_rating.toFixed(1)}</span>
+              </div>
+            )}
 
-          <button className="view-button" onClick={() => goToShop(item.id)}>
-            View Space
-          </button>
+            {item.verified && (
+              <ShieldCheck size={16} className="srt-verified-icon" />
+            )}
+
+            {(item.plan === 'standard' || item.plan === 'premium') && (
+              <div className="srt-plan-pill">
+                <Zap size={14} />
+                <span>Premium</span>
+              </div>
+            )}
+          </div>
         </div>
-      </motion.div>
-    ),
-    
-  );
+      </div>
+
+      {/* FULL WIDTH ADDRESS */}
+      <div className="srt-address-row">
+        {item.address || 'No address provided'}
+      </div>
+
+      {/* FULL WIDTH DISTANCE */}
+      <div className="srt-distance-row">
+        <MapPin size={14} />
+        <span>
+          {item.distance != null
+            ? `${item.distance.toFixed(1)} km`
+            : 'Distance N/A'}
+        </span>
+      </div>
+    </motion.div>
+  ),
+  [goToShop]
+);
+
 
   return (
     <PageShell
@@ -259,45 +266,34 @@ const SearchResults = () => {
       error={null}
       showBackButton={true}
     >
-      <div className="search-results-page">
-        <div className="top-bar">
-          <div className="search-info">
-            <h1 className="page-title">
-              {searchTerm ? `“${searchTerm}”` : 'All Spaces'}
-            </h1>
-            {isDataLoaded && (
-              <span className="result-count">
-                {filteredResults.length} {filteredResults.length === 1 ? 'space' : 'spaces'}
-              </span>
-            )}
-          </div>
-
+      <div className="srt-page-content">
+        <div className="srt-filter-trigger-wrapper">
           <motion.button
-            className="filter-button"
+            className="srt-filter-trigger"
             onClick={handleFilterPress}
-            whileHover={{ scale: 1.06 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.96 }}
             aria-label="Open filters"
           >
             <Filter size={20} />
-            <span>Filter</span>
+            <span>Filter Results</span>
           </motion.button>
         </div>
 
         {searchResults.length === 0 ? (
-          <div className="empty-state">
+          <div className="srt-empty-state">
             <p>No spaces found for "{searchTerm}".</p>
           </div>
         ) : (
-          <div className="results-grid">
+          <div className="srt-results-list">
             <AnimatePresence>
-              {filteredResults.map((item, index) => (
+              {filteredResults.map((item) => (
                 <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, y: 16 }}
+                  key={item.shop_id || item.id}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -16 }}
-                  transition={{ duration: 0.28, delay: index * 0.04 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.32 }}
                 >
                   {renderShopCard(item)}
                 </motion.div>
@@ -305,10 +301,10 @@ const SearchResults = () => {
             </AnimatePresence>
 
             {filteredResults.length === 0 && searchResults.length > 0 && (
-              <div className="empty-filter-result">
-                <p>No matches with current filters.</p>
-                <button className="reset-link" onClick={resetFilters}>
-                  Reset filters
+              <div className="srt-no-matches">
+                <p>No results match the current filters.</p>
+                <button className="srt-clear-filters-btn" onClick={resetFilters}>
+                  Clear Filters
                 </button>
               </div>
             )}
@@ -319,29 +315,30 @@ const SearchResults = () => {
         <AnimatePresence>
           {modalVisible && (
             <motion.div
-              className="modal-backdrop"
+              className="srt-modal-backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setModalVisible(false)}
             >
               <motion.div
-                className="filter-modal"
-                initial={{ y: 60, opacity: 0.7 }}
+                className="srt-filter-modal"
+                initial={{ y: 80, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 60, opacity: 0.7 }}
+                exit={{ y: 80, opacity: 0 }}
+                transition={{ type: 'spring', damping: 28, stiffness: 200 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="modal-header">
+                <div className="srt-modal-header">
                   <h2>Filters</h2>
-                  <button className="close-btn" onClick={() => setModalVisible(false)}>
+                  <button className="srt-modal-close" onClick={() => setModalVisible(false)}>
                     <X size={24} />
                   </button>
                 </div>
 
-                <div className="filter-content">
-                  <div className="filter-group">
-                    <label className="filter-label">
+                <div className="srt-modal-body">
+                  <div className="srt-filter-section">
+                    <label className="srt-filter-label">
                       Rating ({tempMinRating.toFixed(1)} – {tempMaxRating.toFixed(1)})
                     </label>
                     <Range
@@ -354,18 +351,18 @@ const SearchResults = () => {
                         setTempMaxRating(max);
                       }}
                       renderTrack={({ props, children }) => (
-                        <div {...props} className="range-track">
-                          <div className="range-active" />
+                        <div {...props} className="srt-range-track">
+                          <div className="srt-range-active" />
                           {children}
                         </div>
                       )}
-                      renderThumb={({ props }) => <div {...props} className="range-thumb" />}
+                      renderThumb={({ props }) => <div {...props} className="srt-range-thumb" />}
                     />
                   </div>
 
                   {!allDistancesNull && (
-                    <div className="filter-group">
-                      <label className="filter-label">
+                    <div className="srt-filter-section">
+                      <label className="srt-filter-label">
                         Distance ({tempMinDistance.toFixed(1)} – {tempMaxDistance.toFixed(1)} km)
                       </label>
                       <Range
@@ -378,55 +375,55 @@ const SearchResults = () => {
                           setTempMaxDistance(max);
                         }}
                         renderTrack={({ props, children }) => (
-                          <div {...props} className="range-track">
-                            <div className="range-active" />
+                          <div {...props} className="srt-range-track">
+                            <div className="srt-range-active" />
                             {children}
                           </div>
                         )}
-                        renderThumb={({ props }) => <div {...props} className="range-thumb" />}
+                        renderThumb={({ props }) => <div {...props} className="srt-range-thumb" />}
                       />
                     </div>
                   )}
 
                   {allDistancesNull && (
-                    <p className="distance-unavailable">
-                      Distance information not available
+                    <p className="srt-distance-note">
+                      Distance information not available for this search
                     </p>
                   )}
 
-                  <div className="toggle-group">
-                    <label className="toggle-label">
-                      <span>Verified shops only</span>
-                      <label className="switch">
+                  <div className="srt-toggle-section">
+                    <label className="srt-toggle-row">
+                      <span>Verified only</span>
+                      <label className="srt-switch">
                         <input
                           type="checkbox"
                           checked={tempIsVerified}
                           onChange={() => setTempIsVerified(!tempIsVerified)}
                         />
-                        <span className="slider round"></span>
+                        <span className="srt-slider srt-round"></span>
                       </label>
                     </label>
 
-                    <label className="toggle-label">
-                      <span>Premium / Standard only</span>
-                      <label className="switch">
+                    <label className="srt-toggle-row">
+                      <span>Standard / Premium only</span>
+                      <label className="srt-switch">
                         <input
                           type="checkbox"
                           checked={tempIsPremium}
                           onChange={() => setTempIsPremium(!tempIsPremium)}
                         />
-                        <span className="slider round"></span>
+                        <span className="srt-slider srt-round"></span>
                       </label>
                     </label>
                   </div>
                 </div>
 
-                <div className="modal-actions">
-                  <button className="btn btn-secondary" onClick={resetFilters}>
+                <div className="srt-modal-actions">
+                  <button className="srt-btn srt-btn-reset" onClick={resetFilters}>
                     Reset
                   </button>
-                  <button className="btn btn-primary" onClick={applyFilters}>
-                    Apply Filters
+                  <button className="srt-btn srt-btn-apply" onClick={applyFilters}>
+                    Apply
                   </button>
                 </div>
               </motion.div>
@@ -438,34 +435,34 @@ const SearchResults = () => {
         <AnimatePresence>
           {subscriptionModalVisible && (
             <motion.div
-              className="modal-backdrop"
+              className="srt-modal-backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSubscriptionModalVisible(false)}
             >
               <motion.div
-                className="subscription-modal"
-                initial={{ scale: 0.88, y: 40 }}
+                className="srt-subscription-modal"
+                initial={{ scale: 0.85, y: 40 }}
                 animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.88, y: 40 }}
+                exit={{ scale: 0.85, y: 40 }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
-                  className="close-btn"
+                  className="srt-modal-close"
                   onClick={() => setSubscriptionModalVisible(false)}
                 >
                   <X size={24} />
                 </button>
 
-                <h2>Premium Filters</h2>
-                <p className="modal-text">
-                  Advanced filtering options are available only to Standard or Premium subscribers.
+                <h2>Premium Feature</h2>
+                <p>
+                  Advanced filtering is available only to Standard or Premium subscribers.
                 </p>
 
-                <div className="modal-actions">
+                <div className="srt-modal-actions">
                   <button
-                    className="btn btn-primary"
+                    className="srt-btn srt-btn-apply"
                     onClick={() => {
                       navigate('/subscription');
                       setSubscriptionModalVisible(false);
@@ -474,7 +471,7 @@ const SearchResults = () => {
                     Upgrade Now
                   </button>
                   <button
-                    className="btn btn-secondary"
+                    className="srt-btn srt-btn-reset"
                     onClick={() => setSubscriptionModalVisible(false)}
                   >
                     Cancel

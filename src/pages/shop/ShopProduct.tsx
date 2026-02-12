@@ -228,116 +228,106 @@ const ShopProduct = () => {
   // ────────────────────────────────────────────────
   // Single return using PageShell
   // ────────────────────────────────────────────────
-  return (
-    <PageShell
-      title={`${category === "Services" ? "Services" : "Products"} Listing`}
-      isLoading={loading}
-      error={error}
-      onRetry={fetchShopProducts}
-    >
-      <div className="content-wrapper">
-        <button className="update-button" onClick={handleUpdateProduct}>
-          Update {category === "Services" ? "services" : "products"}
-        </button>
+  // ... imports unchanged
 
-        <input
-          className="search-input"
-          placeholder="Search products..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+return (
+  <PageShell
+    title={`${category === "Services" ? "Services" : "Products"} Listing`}
+    isLoading={loading}
+    error={error}
+    onRetry={fetchShopProducts}
+  >
+    <div className="sps-content-wrapper">
+      <button className="sps-update-button" onClick={handleUpdateProduct}>
+        Update {category === "Services" ? "services" : "products"}
+      </button>
 
-        {(!products || products.length === 0) && (
-          <p className="no-products">No products available.</p>
-        )}
+      <input
+        className="sps-search-input"
+        placeholder="Search in your inventory..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
 
-        <div className="content-container">
-          <AnimatePresence>
-            {filteredProducts.map((categoryData: any) => (
-              <motion.div
-                key={categoryData.category}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className="category-section"
-              >
-                <h2 className="category-title">{categoryData.category}</h2>
+      {(!products || products.length === 0) && (
+        <p className="sps-no-items">No items available yet.</p>
+      )}
 
-                {categoryData.subcategories.map((sub: any) => (
-                  <div
-                    key={sub.subcategory}
-                    className="subcategory-section"
-                  >
-                    <h3 className="subcategory-title">{sub.subcategory}</h3>
-
-                    <div className="products-grid">
-                      {sub.products.map(renderProduct)}
-                    </div>
-                  </div>
-                ))}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* Full-screen gallery overlay */}
-      {galleryVisible && (
-        <div className="gallery-overlay" onClick={closeGallery}>
-          <div className="gallery-container" onClick={(e) => e.stopPropagation()}>
-            <div
-              className="gallery-scroll"
-              style={{ transform: `translateX(-${currentGalleryIndex * 100}%)` }}
+      <div className="sps-content-container">
+        <AnimatePresence>
+          {filteredProducts.map((categoryData: any) => (
+            <motion.div
+              key={categoryData.category}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="sps-category-section"
             >
-              {galleryImages.map((url, idx) => (
-                <div key={idx} className="gallery-page">
-                  <img
-                    src={url}
-                    alt={`Product image ${idx + 1}`}
-                    className="gallery-image"
-                    loading="lazy"
-                  />
-                  {galleryImages.length > 1 && (
-                    <div className="gallery-count-badge">
-                      {idx + 1} / {galleryImages.length}
-                    </div>
-                  )}
+              <h2 className="sps-category-title">{categoryData.category}</h2>
+
+              {categoryData.subcategories.map((sub: any) => (
+                <div
+                  key={sub.subcategory}
+                  className="sps-subcategory-section"
+                >
+                  <h3 className="sps-subcategory-title">{sub.subcategory}</h3>
+
+                  <div className="sps-products-grid">
+                    {sub.products.map(renderProduct)}
+                  </div>
                 </div>
               ))}
-            </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    </div>
 
-            <button className="close-gallery-btn" onClick={closeGallery}>
-              <X size={32} />
-            </button>
-
-            {galleryImages.length > 1 && (
-              <div className="gallery-nav">
-                <button
-                  className="nav-btn prev"
-                  onClick={() =>
-                    setCurrentGalleryIndex((i) => Math.max(0, i - 1))
-                  }
-                >
-                  ←
-                </button>
-                <button
-                  className="nav-btn next"
-                  onClick={() =>
-                    setCurrentGalleryIndex((i) =>
-                      Math.min(galleryImages.length - 1, i + 1)
-                    )
-                  }
-                >
-                  →
-                </button>
+    {/* Gallery */}
+    {galleryVisible && (
+      <div className="sps-gallery-overlay" onClick={closeGallery}>
+        <div className="sps-gallery-container" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="sps-gallery-scroll"
+            style={{ transform: `translateX(-${currentGalleryIndex * 100}%)` }}
+          >
+            {galleryImages.map((url, idx) => (
+              <div key={idx} className="sps-gallery-page">
+                <img
+                  src={url}
+                  alt={`Item image ${idx + 1}`}
+                  className="sps-gallery-image"
+                  loading="lazy"
+                />
+                {galleryImages.length > 1 && (
+                  <div className="sps-gallery-count-badge">
+                    {idx + 1} / {galleryImages.length}
+                  </div>
+                )}
               </div>
-            )}
+            ))}
           </div>
+
+          <button className="sps-close-gallery-btn" onClick={closeGallery}>
+            <X size={32} />
+          </button>
+
+          {galleryImages.length > 1 && (
+            <div className="sps-gallery-nav">
+              <button className="sps-nav-btn sps-prev" onClick={() => setCurrentGalleryIndex(i => Math.max(0, i - 1))}>
+                ←
+              </button>
+              <button className="sps-nav-btn sps-next" onClick={() => setCurrentGalleryIndex(i => Math.min(galleryImages.length - 1, i + 1))}>
+                →
+              </button>
+            </div>
+          )}
         </div>
-      )}
-    </PageShell>
-  );
+      </div>
+    )}
+  </PageShell>
+);
 };
 
 export default ShopProduct;
