@@ -1,9 +1,8 @@
-// src/components/common/Header.tsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
-import '../css/component/HeaderGlobal.css';   // keep this import
+import '../css/component/HeaderGlobal.css';
 
 interface HeaderProps {
   title: string;
@@ -29,23 +28,26 @@ export default function Header({
 
   return (
     <header className={`gl-header ${className}`}>
-      <div className="gl-header-left">
-        {showBackButton && (
-          <button
-            className="gl-back-btn"
-            onClick={handleBack}
-            aria-label="Go back"
-          >
-            <ArrowLeft size={24} />
-          </button>
-        )}
-      </div>
+      {/* Inner wrapper gets the curve + full background */}
+      <div className="gl-header-inner">
+        <div className="gl-header-left">
+          {showBackButton && (
+            <button
+              className="gl-back-btn"
+              onClick={handleBack}
+              aria-label="Go back"
+            >
+              <ArrowLeft size={24} />
+            </button>
+          )}
+        </div>
 
-      <h1 className="gl-header-title">{title}</h1>
+        <h1 className="gl-header-title">{title}</h1>
 
-      <div className="gl-header-right">
-        {/* {rightElement} */}
-        <ThemeToggle />
+        <div className="gl-header-right">
+          {/* {rightElement} */}
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );

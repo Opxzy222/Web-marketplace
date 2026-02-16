@@ -21,24 +21,30 @@ import ShopProduct from './pages/shop/ShopProduct';
 import SearchResults from './pages/shop/SearchResults';
 import ShopPage from './pages/shop/ShopPage';
 import AdminShopPage from './pages/shop/AdminShopPage';
+import EditProfileScreen from './pages/shop/EditProfileScreen';
+import Account from './tabs/Account';
+import Profile from './tabs/Profile';
+import CustomerReceipts from './pages/shop/CustomerReceipts';
+import Subscription from './pages/shop/Subscription';
+import VerificationStatus from './pages/VerificationStatus';
+import IDVerification from './pages/IDVerification';
+import NotificationSettings from './pages/shop/NotificationSettings';
+import Feedback from './pages/shop/Feedback';
+import ChangePassword from './pages/ChangePassword';
+
 
 import { ThemeProvider } from './contexts/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
 import BottomTabBar from './components/BottomTabBar';
 
-// ────────────────────────────────────────────────
-// Comment out everything that is not yet implemented
-// to prevent "undefined is not a function" or blank screen
-// ────────────────────────────────────────────────
+
  import { CartProvider } from './contexts/CartContext';
+import FeedbackScreen from './pages/shop/Feedback';
+import Details from './pages/shop/Details';
+import Conversation from './pages/shop/Conversation';
 // import { AdProvider } from './contexts/AdContext';
 // import { AppResetProvider } from './contexts/AppResetContext';
 
-// import Messages from './pages/Messages';
-// import Status from './pages/Status';
-// import Account from './pages/Account';
-// import Profile from './pages/Profile';
-// import Login from './pages/Login';
 
 function AppContent() {
   const location = useLocation();
@@ -98,6 +104,20 @@ useEffect(() => {
           <Route path="/search-result" element={<SearchResults />} />
           <Route path="/shop-page/:shopId" element={<ShopPage />} />
           <Route path="/admin-shop-page" element={<AdminShopPage />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/profile-edit" element={<EditProfileScreen />} />
+          <Route path="/customer-receipts" element={<CustomerReceipts />} />
+          <Route path="/subscription" element={<Subscription />} />
+          <Route path="/verification-status" element={<VerificationStatus />} />
+          <Route path="/ID-verification" element={<IDVerification />} />
+          <Route path="/notification-settings" element={<NotificationSettings />} />
+          <Route path="/feed-back" element={<FeedbackScreen />} />
+          <Route path="/delete-account" element={<NotificationSettings />} />
+          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/details" element={<Details />} />
+          <Route path="/conversation" element={<Conversation />} />
+          
         </Routes>
       </main>
 

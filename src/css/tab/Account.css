@@ -1,0 +1,227 @@
+.account-wrapper {
+  background: var(--bg-page);
+  min-height: 100vh;
+  padding: 24px 16px;
+}
+
+.account-content {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ── Wallet Card ─────────────────────────────────────── */
+.wallet-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 28px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
+
+.wallet-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.wallet-header svg {
+  color: var(--accent-blue);
+}
+
+.wallet-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.balance-block {
+  text-align: center;
+  padding: 28px 20px;
+  background: var(--hover-bg-light);
+  border-radius: 12px;
+  margin-bottom: 28px;
+  border: 1px solid var(--border-subtle);
+}
+
+.balance-label {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.balance-value {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+/* Info rows */
+.account-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.info-row {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: var(--hover-bg-medium);
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+.info-row:hover {
+  background: var(--hover-bg-light);
+}
+
+.info-content {
+  flex: 1;
+}
+
+.info-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.info-value-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.info-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.copy-icon-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.copy-icon-btn:hover,
+.copy-icon-btn:focus {
+  color: var(--accent-blue);
+  background: var(--hover-bg-light);
+}
+
+.topup-hint {
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ── No wallet state ─────────────────────────────────── */
+.no-wallet {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.no-wallet-icon {
+  color: var(--accent-red);
+  margin-bottom: 20px;
+}
+
+.no-wallet h3 {
+  font-size: 22px;
+  color: var(--text-primary);
+  margin: 0 0 12px;
+}
+
+.no-wallet p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0 0 28px;
+}
+
+.verify-cta {
+  padding: 14px 40px;
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(37,99,235,0.25);
+  transition: all 0.2s;
+}
+
+.verify-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37,99,235,0.35);
+}
+
+/* ── Quick actions ───────────────────────────────────── */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 520px) {
+  .quick-actions-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.action-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-card);
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-blue);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+}
+
+.action-card svg {
+  color: var(--accent-blue);
+}
+
+.action-card span {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .wallet-card {
+    padding: 24px 18px;
+  }
+  .balance-value {
+    font-size: 28px;
+  }
+}

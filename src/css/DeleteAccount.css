@@ -1,0 +1,160 @@
+/* DeleteAccountScreen.css */
+.delete-account-page {
+  min-height: 100vh;
+}
+
+.gradient-container {
+  background: linear-gradient(135deg, #F7FAFC 0%, #E5E7EB 100%);
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 20px;
+  background: #3A7BD5;
+  border-radius: 0 0 36px 36px;
+  color: white;
+  box-shadow: 0 12px 35px rgba(58, 123, 213, 0.3);
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-title {
+  font-size: 22px;
+  font-weight: 800;
+  flex: 1;
+  text-align: center;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.header-spacer {
+  width: 48px;
+}
+
+.content {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+  gap: 32px;
+  justify-content: center;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #666;
+  text-align: center;
+  line-height: 1.5;
+  font-weight: 500;
+  margin: 0;
+}
+
+.form-container {
+  margin-bottom: 40px;
+}
+
+.input-group {
+  margin-bottom: 24px;
+}
+
+.input-label {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.password-input-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.password-input-container:focus-within {
+  border-color: #3A7BD5;
+  box-shadow: 0 8px 25px rgba(58, 123, 213, 0.15);
+}
+
+.input-icon {
+  color: #6B7280;
+  flex-shrink: 0;
+}
+
+.password-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: #333;
+  background: none;
+  padding: 4px 0;
+}
+
+.password-input::placeholder {
+  color: #5A5A5A;
+}
+
+.password-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.delete-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(135deg, #D32F2F, #B71C1C);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(211, 47, 47, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.5px;
+}
+
+.delete-button:hover:not(.disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(211, 47, 47, 0.5);
+}
+
+.delete-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.delete-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,155 @@
+/* ChildCategoryList.css & SubcategoryList.css – Shared styles for both components */
+
+/* Use same CSS variables as UpdateShopProducts */
+:root {
+  --bg-page: #F8FAFC;
+  --bg-card: white;
+  --bg-header: linear-gradient(135deg, #3A7BD5 0%, #2563EB 100%);
+  --text-primary: #1E293B;
+  --text-secondary: #6B7280;
+  --text-light: #FFFFFF;
+  --accent-blue: #6366F1;
+  --accent-purple: #A855F7;
+  --accent-teal: #14B8A6;
+  --accent-red: #F43F5E;
+  --border-subtle: #E5E7EB;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-selected: 0 6px 24px rgba(20, 184, 166, 0.3);
+  --hover-bg-light: #F1F5F9;
+}
+
+.dark {
+  --bg-page: #0F172A;
+  --bg-card: #1E293B;
+  --bg-header: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-light: #FFFFFF;
+  --accent-blue: #60A5FA;
+  --accent-purple: #C084FC;
+  --accent-teal: #5EEAD4;
+  --accent-red: #F87171;
+  --border-subtle: #334155;
+  --shadow-card: 0 6px 24px rgba(0, 0, 0, 0.5);
+  --shadow-selected: 0 8px 32px rgba(20, 184, 166, 0.4);
+  --hover-bg-light: rgba(96, 165, 250, 0.15);
+}
+
+.child-category-list,
+.subcategory-list {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding-bottom: 100px;
+}
+
+.content-wrapper {
+  flex: 1;
+  padding: 20px 16px;
+}
+
+.list-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 100px;
+}
+
+.subcategory-card {
+  border-radius: 20px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.subcategory-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-selected);
+}
+
+.subcategory-card:active {
+  transform: scale(0.98) translateY(0);
+}
+
+.subcategory-card.selected {
+  border-color: var(--accent-teal);
+  background: rgba(20, 184, 166, 0.08);
+  box-shadow: var(--shadow-selected);
+}
+
+.subcategory-card-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.card-gradient {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 2px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--hover-bg-light) 100%);
+}
+
+.subcategory-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.chevron-icon {
+  width: 26px;
+  height: 26px;
+  color: var(--accent-teal);
+  flex-shrink: 0;
+}
+
+.spinner.small {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-subtle);
+  border-top: 2px solid var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Error/Loading states handled by PageShell */
+/* loader-container, error-text, retry-button styles available if needed outside PageShell */
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .child-category-list,
+  .subcategory-list {
+    padding: 16px;
+  }
+  
+  .content-wrapper {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .subcategory-card-inner {
+    padding: 16px;
+  }
+  
+  .subcategory-title {
+    font-size: 16px;
+  }
+}

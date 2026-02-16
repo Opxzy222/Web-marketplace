@@ -1,8 +1,6 @@
 /* src/index.css — Tailwind v4 + dark mode + mobile-friendly (working 2026 style) */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
 
 /* Define theme variables using plain values or OKLCH for better color consistency */
 :root {

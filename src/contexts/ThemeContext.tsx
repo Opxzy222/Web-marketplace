@@ -22,43 +22,63 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     theme === 'dark' ||
     (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-  // Update <html> class + theme-color meta
+  // Update <html> class + theme-color meta + iOS status bar style
   useEffect(() => {
     const root = document.documentElement;
 
-    // Apply/remove dark class
+    // Apply/remove dark class on <html>
     if (isDark) {
       root.classList.add('dark');
     } else {
       root.classList.remove('dark');
     }
 
-    // ────────────── Manage status bar / address bar color ──────────────
-    // Remove any previously added dynamic theme-color meta tags
+    // ────────────────────────────────────────────────────────────────
+    // Manage theme-color meta (Android + general browsers)
+    // ────────────────────────────────────────────────────────────────
+    // Remove any previously added dynamic theme-color tags
     document
       .querySelectorAll('meta[name="theme-color"][data-dynamic="true"]')
       .forEach((el) => el.remove());
 
-    // Create and append new meta tag
+    // Create and append new meta tag with desired color
     const meta = document.createElement('meta');
     meta.name = 'theme-color';
-    meta.content = '#2F5F87';                    // ← same color for both modes
-    meta.setAttribute('data-dynamic', 'true');   // marker to identify our tags
+    meta.content = '#1E3A8A';                    // ← your requested color
+    meta.setAttribute('data-dynamic', 'true');   // marker so we can clean up later
     document.head.appendChild(meta);
-    // ────────────────────────────────────────────────────────────────
 
-    // Optional: reinforce apple-mobile-web-app-status-bar-style (helps iOS PWA)
+    // ────────────────────────────────────────────────────────────────
+    // iOS Safari / PWA status bar handling
+    // ────────────────────────────────────────────────────────────────
     let appleMeta = document.querySelector(
       'meta[name="apple-mobile-web-app-status-bar-style"]'
-    );
+    ) as HTMLMetaElement | null;
+
     if (!appleMeta) {
       appleMeta = document.createElement('meta');
       appleMeta.setAttribute('name', 'apple-mobile-web-app-status-bar-style');
       document.head.appendChild(appleMeta);
     }
-    appleMeta.setAttribute('content', 'black-translucent');
 
-    // Persist only when user made explicit choice
+    // Use "default" so iOS respects the #1E3A8A from theme-color
+    appleMeta.setAttribute('content', 'default');
+
+    // Optional: reinforce full-screen PWA capability (helps on iOS)
+    let capableMeta = document.querySelector(
+      'meta[name="apple-mobile-web-app-capable"]'
+    ) as HTMLMetaElement | null;
+
+    if (!capableMeta) {
+      capableMeta = document.createElement('meta');
+      capableMeta.setAttribute('name', 'apple-mobile-web-app-capable');
+      document.head.appendChild(capableMeta);
+    }
+    capableMeta.setAttribute('content', 'yes');
+
+    // ────────────────────────────────────────────────────────────────
+    // Persist user choice (only if not 'system')
+    // ────────────────────────────────────────────────────────────────
     if (theme === 'system') {
       localStorage.removeItem('theme');
     } else {
@@ -66,14 +86,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, [isDark, theme]);
 
-  // Listen for system theme changes when in 'system' mode
+  // Listen for system theme changes (only when theme = 'system')
   useEffect(() => {
     if (theme !== 'system') return;
 
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
 
     const listener = () => {
-      // classList will be updated by the first useEffect because isDark changes
+      // The classList + meta updates will happen automatically via the first useEffect
+      // because isDark changes when system preference changes
     };
 
     mq.addEventListener('change', listener);

@@ -1,0 +1,491 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.receipts-container {
+  min-height: 100vh;
+  background: #F9FAFB;
+  font-family: 'Inter', sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: #3A7BD5;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  box-shadow: 0 4px 12px rgba(58, 123, 213, 0.3);
+}
+
+.back-button, .refresh-button {
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #FFF;
+  flex: 1;
+  text-align: center;
+  margin: 0 16px;
+}
+
+.content {
+  padding: 16px;
+  padding-top: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.loading .centered,
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  min-height: 400px;
+}
+
+.loading-spinner {
+  font-size: 32px;
+  color: #2563EB;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+/* Spending Card */
+.spending-card {
+  background: #FFF;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.spending-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.spending-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1F2A44;
+  margin: 0;
+}
+
+.month-button {
+  padding: 8px;
+  border-radius: 8px;
+  background: #2563EB;
+  border: none;
+  color: #FFF;
+  cursor: pointer;
+}
+
+.spending-amount {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2563EB;
+  margin: 0;
+}
+
+/* Navigation */
+.nav-bar {
+  background: #FFF;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+}
+
+.nav-bar-inner {
+  display: flex;
+  flex: 1;
+}
+
+.nav-button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.nav-button.active {
+  background: #EFF6FF;
+}
+
+.nav-button span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.nav-button.active span {
+  color: #2563EB;
+}
+
+.underline-gradient {
+  height: 3px;
+  width: 80%;
+  margin-top: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2563EB, #10B981);
+}
+
+/* Filter */
+.filter-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.filter-button {
+  padding: 8px;
+  border-radius: 8px;
+  background: #2563EB;
+  border: none;
+  color: #FFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-info-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  flex: 1;
+  text-align: right;
+}
+
+/* Date Header */
+.date-header {
+  padding: 8px 12px;
+  margin: 16px 0 8px 0;
+}
+
+.date-header span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1F2A44;
+  margin-right: 8px;
+}
+
+.date-header-underline {
+  height: 2px;
+  flex: 1;
+  background: linear-gradient(90deg, #2563EB, #10B981);
+  border-radius: 1px;
+}
+
+/* Receipt Card */
+.receipt-card {
+  margin-bottom: 16px;
+}
+
+.card-touchable {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card-background {
+  padding: 16px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(241,245,249,0.95));
+  border: 2px solid rgba(203,213,225,0.3);
+  border-radius: 12px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.shop-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #2563EB;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.card-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.receipt-id {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1F2A44;
+  margin: 0 0 4px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.receipt-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.receipt-amount {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1F2A44;
+}
+
+.receipt-date {
+  font-size: 14px;
+  font-weight: 500;
+  color: #6B7280;
+}
+
+.status-container {
+  display: flex;
+}
+
+.status-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  max-width: 140px;
+}
+
+.status-icon {
+  font-size: 14px;
+}
+
+.status-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #FFF;
+}
+
+.card-divider {
+  height: 1px;
+  background: rgba(229,231,235,0.5);
+  margin: 12px 0;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-button {
+  flex: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: none;
+  cursor: pointer;
+}
+
+.action-button .button-gradient {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #FFF;
+  transition: all 0.2s;
+}
+
+.action-button.accept .button-gradient {
+  background: linear-gradient(135deg, #22C55E, #16A34A);
+}
+
+.action-button.reject .button-gradient {
+  background: linear-gradient(135deg, #EF4444, #DC2626);
+}
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #FFF;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1F2A44;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.date-input, .picker {
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  background: #F9FAFB;
+  border: 2px solid transparent;
+  font-size: 15px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+}
+
+.date-input:hover, .picker:hover {
+  background: #F1F5F9;
+  border-color: #2563EB;
+}
+
+.date-picker {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #FFF;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  z-index: 1001;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.apply-button, .clear-button {
+  flex: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: none;
+  cursor: pointer;
+}
+
+.apply-button .button-gradient {
+  background: linear-gradient(135deg, #2563EB, #10B981);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.clear-button {
+  background: #F9FAFB;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563EB;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.empty-container svg {
+  color: #6B7280;
+  margin-bottom: 12px;
+}
+
+.empty-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #6B7280;
+  margin: 0;
+}
+
+.receipts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .content {
+    padding: 12px;
+  }
+  
+  .header {
+    padding: 12px;
+  }
+  
+  .nav-bar-inner {
+    gap: 4px;
+  }
+  
+  .nav-button span {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .receipt-card {
+    margin-bottom: 12px;
+  }
+  
+  .card-background {
+    padding: 12px;
+  }
+}

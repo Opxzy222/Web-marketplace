@@ -2,18 +2,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Copy, Check } from 'lucide-react';
-import '../css/component/HeaderGlobal.css';   // keep this import
+import '../css/component/HeaderGlobal.css'; // same CSS file – no need for new one
 
 interface HeaderProps {
   title: string;
   onBack?: () => void;
   showBackButton?: boolean;
-  shopId?: string;           // ← new: optional shop ID to display & copy
+  shopId?: string;           // optional shop ID to display & copy
   className?: string;
 }
 
 export default function Header({
-  title,
+  
   onBack,
   showBackButton = true,
   shopId,
@@ -35,54 +35,60 @@ export default function Header({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error('Failed to copy shop ID:', err);
     }
   };
 
   return (
     <header className={`gl-header ${className}`}>
-      <div className="gl-header-left">
-        {showBackButton && (
-          <button
-            className="gl-back-btn"
-            onClick={handleBack}
-            aria-label="Go back"
-          >
-            <ArrowLeft size={24} />
-          </button>
-        )}
-      </div>
-
-      <h1 className="gl-header-title">{title}</h1>
-
-      <div className="gl-header-right">
-        {shopId ? (
-          <div className="shop-id-container">
-            <span className="shop-id-label">SPACE ID:</span>
-            <span className="shop-id-value">{shopId}</span>
-
+      {/* Same inner wrapper as HeaderGlobal – gets the curve + background */}
+      <div className="gl-header-inner">
+        {/* Left side – back button */}
+        <div className="gl-header-left">
+          {showBackButton && (
             <button
-              className={`shop-id-copy-btn ${copied ? 'copied' : ''}`}
-              onClick={handleCopy}
-              aria-label="Copy shop ID"
-              title={copied ? 'Copied!' : 'Copy SPACE ID'}
+              className="gl-back-btn"
+              onClick={handleBack}
+              aria-label="Go back"
             >
-              {copied ? (
-                <Check size={20} color="#86efac" />
-              ) : (
-                <Copy size={20} color="#e2e8f0" />
-              )}
+              <ArrowLeft size={24} />
             </button>
+          )}
+        </div>
 
-            {/* Optional floating feedback tooltip */}
-            {copied && (
-              <div className="copy-feedback">Copied!</div>
-            )}
-          </div>
-        ) : (
-          // Optional fallback if no shopId — can be empty or something else
-          <div className="empty-right-placeholder" />
-        )}
+        {/* Center – title */}
+        
+
+        {/* Right side – shop ID + copy (instead of ThemeToggle) */}
+        <div className="gl-header-right">
+          {shopId ? (
+            <div className="shop-id-wrapper">
+              <span className="shop-id-label">SPACE ID:</span>
+              <span className="shop-id-value">{shopId}</span>
+
+              <button
+                className={`shop-id-copy-btn ${copied ? 'copied' : ''}`}
+                onClick={handleCopy}
+                aria-label="Copy shop ID"
+                title={copied ? 'Copied!' : 'Copy SPACE ID'}
+              >
+                {copied ? (
+                  <Check size={20} color="#86efac" />
+                ) : (
+                  <Copy size={20} color="#e2e8f0" />
+                )}
+              </button>
+
+              {/* Optional small toast-like feedback (positioned absolutely) */}
+              {copied && (
+                <div className="copy-feedback-tooltip">Copied!</div>
+              )}
+            </div>
+          ) : (
+            // Fallback when no shopId (keeps layout balanced)
+            <div className="gl-header-placeholder" />
+          )}
+        </div>
       </div>
     </header>
   );

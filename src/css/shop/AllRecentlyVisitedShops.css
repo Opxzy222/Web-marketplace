@@ -1,0 +1,461 @@
+/* AllRecentlyVisitedShops.css – Styled for dark/light mode like UpdateShopProducts */
+
+:root {
+  --bg-page: #F8FAFC;
+  --bg-card: white;
+  --bg-header: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  --text-primary: #1F2937;
+  --text-secondary: #6B7280;
+  --text-light: #FFFFFF;
+  --accent-blue: #3B82F6;
+  --accent-blue-dark: #1D4ED8;
+  --accent-green: #22C55E;
+  --accent-green-dark: #15803D;
+  --border-subtle: #E2E8F0;
+  --border-input: #E2E8F0;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.3);
+  --hover-bg-light: #EFF6FF;
+  --hover-bg-medium: #F8FAFC;
+  --focus-ring: rgba(59, 130, 246, 0.1);
+}
+
+.dark {
+  --bg-page: #0F172A;
+  --bg-card: #1E293B;
+  --bg-header: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%);
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-light: #FFFFFF;
+  --accent-blue: #60A5FA;
+  --accent-blue-dark: #3B82F6;
+  --accent-green: #34D399;
+  --accent-green-dark: #10B981;
+  --border-subtle: #334155;
+  --border-input: #475569;
+  --shadow-card: 0 6px 24px rgba(0, 0, 0, 0.5);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.7);
+  --hover-bg-light: rgba(96, 165, 250, 0.15);
+  --hover-bg-medium: rgba(96, 165, 250, 0.08);
+  --focus-ring: rgba(96, 165, 250, 0.25);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.recently-visited-shops {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  color: var(--text-primary);
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-bottom: 100px;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 8px;
+}
+
+.filter-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--bg-header);
+  color: var(--text-light);
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.filter-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.filter-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.filter-info-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+  text-align: right;
+}
+
+.shops-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.shop-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shop-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.image-container {
+  position: relative;
+  height: 140px;
+  overflow: hidden;
+}
+
+.shop-image,
+.placeholder-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.placeholder-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--hover-bg-medium);
+}
+
+.store-icon {
+  width: 40px;
+  height: 40px;
+  color: var(--text-secondary);
+}
+
+.image-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+}
+
+.shop-name-overlay {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.shop-name-overlay span {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.shop-content {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+}
+
+.shop-info {
+  flex: 1;
+  padding-right: 12px;
+}
+
+.shop-address {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.visited-at {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.shop-description {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.loader-container,
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border-subtle);
+  border-top: 4px solid var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loader-text {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.empty-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--text-secondary);
+}
+
+.no-data-text {
+  font-size: 18px;
+  color: var(--text-primary);
+  font-weight: 700;
+  text-align: center;
+}
+
+.no-data-subtext {
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  animation: fadeIn 0.2s ease forwards;
+  padding: 16px;
+}
+
+.modal-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: var(--shadow-modal);
+  animation: slideUp 0.3s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.date-input {
+  width: 100%;
+  padding: 16px;
+  background: var(--hover-bg-medium);
+  border: 2px solid var(--border-input);
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.date-input:hover {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.apply-button,
+.clear-button {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.apply-button {
+  background: var(--bg-header);
+  color: var(--text-light);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.apply-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.clear-button {
+  background: var(--hover-bg-medium);
+  color: var(--accent-blue);
+  border: 2px solid var(--border-input);
+}
+
+.clear-button:hover {
+  background: var(--hover-bg-light);
+  border-color: var(--accent-blue);
+}
+
+.date-picker {
+  margin-top: 10px;
+  padding: 12px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 2px solid var(--border-input);
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.date-picker:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.date-header {
+  padding: 12px 0 8px;
+  margin-top: 8px;
+}
+
+.date-header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.date-header-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.date-header-underline {
+  height: 2px;
+  background: var(--bg-header);
+  border-radius: 1px;
+  width: 40px;
+}
+
+/* Animations */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .recently-visited-shops {
+    padding: 16px;
+  }
+  
+  .filter-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .filter-info-text {
+    text-align: center;
+  }
+  
+  .shop-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .shop-info {
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    width: 95%;
+    padding: 20px;
+  }
+  
+  .modal-buttons {
+    flex-direction: column;
+  }
+}

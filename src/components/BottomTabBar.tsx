@@ -54,7 +54,7 @@ export default function BottomTabBar() {
       ctrl.start({
         scale: isActive ? 1.15 : 1,
         y: isActive ? -6 : 0,
-        opacity: isActive ? 1 : 0.65,
+        opacity: isActive ? 1 : 0.8,
         transition: { type: 'spring', stiffness: 400, damping: 28 },
       });
     });

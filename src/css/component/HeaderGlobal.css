@@ -1,6 +1,6 @@
 /* =============================================
    HeaderGlobal – advanced glassmorphism + gradient 2026 style
-   Works excellently in light & dark mode
+   With curved bottom effect – original colors preserved
    ============================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -39,11 +39,11 @@
   left: 0;
   right: 0;
   z-index: 1000;
+  background: transparent;
+  
 
-  background: linear-gradient(135deg, var(--gl-bg-start) 0%, var(--gl-bg-end) 100%);
-  backdrop-filter: blur(var(--gl-blur)) saturate(var(--gl-saturate));
-  -webkit-backdrop-filter: blur(var(--gl-blur)) saturate(var(--gl-saturate));
-
+  /* Outer container has NO background → allows curve to be visible */
+  overflow: hidden;
   box-shadow: var(--gl-shadow-base);
   border-bottom: 1px solid var(--gl-border);
 
@@ -55,16 +55,27 @@
 
 .gl-header.scrolled {
   box-shadow: var(--gl-shadow-scrolled);
-  backdrop-filter: blur(calc(var(--gl-blur) + 4px)) saturate(calc(var(--gl-saturate) + 0.15));
 }
 
-/* Layout */
-.gl-header {
+/* Inner wrapper carries gradient + blur + curve */
+.gl-header-inner {
+  background: #1E3A8A;
+  backdrop-filter: blur(var(--gl-blur)) saturate(var(--gl-saturate));
+  -webkit-backdrop-filter: blur(var(--gl-blur)) saturate(var(--gl-saturate));
+
+  /* Curved bottom – adjust radius to taste */
+  border-bottom-left-radius: 36px;
+  border-bottom-right-radius: 36px;
+
+  /* Extra shadow under the curve for depth */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+
+  /* Layout */
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: env(safe-area-inset-top, 0) 1.375rem env(safe-area-inset-bottom, 0) 1.375rem;
-  min-height: 4rem; /* Slightly taller → feels more premium */
+  min-height: 4rem;
 }
 
 /* Back button */
@@ -116,17 +127,14 @@
   gap: 1.125rem;
 }
 
-/* ThemeToggle blending – glass pill style */
-.gl-header-right > * {
-  /* Optional: make ThemeToggle feel part of the glass header */
-}
-
-/* Responsive */
+/* Responsive adjustments */
 @media (max-width: 640px) {
-  .gl-header {
+  .gl-header-inner {
     padding-left: 1rem;
     padding-right: 1rem;
     min-height: 3.75rem;
+    border-bottom-left-radius: 28px;
+    border-bottom-right-radius: 28px;
   }
 
   .gl-header-title {
@@ -135,6 +143,11 @@
 }
 
 @media (max-width: 480px) {
+  .gl-header-inner {
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+  }
+
   .gl-header-title {
     font-size: 1.125rem;
     padding: 0 0.875rem;
@@ -144,6 +157,7 @@
     padding: 0.625rem;
   }
 }
+
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -250,4 +264,48 @@
 .empty-right-placeholder {
   width: 38px;
   height: 38px;
+}
+
+/* Force inline layout – prevent wrapping */
+.shop-id-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;                     /* space between elements */
+  flex-wrap: nowrap;            /* ← critical: no wrapping */
+  white-space: nowrap;          /* prevent text wrapping inside spans */
+  overflow: hidden;             /* hide overflow if too long */
+  max-width: 100%;              /* don't exceed parent */
+  background: rgba(255, 255, 255, 0.12);
+  padding: 6px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+}
+
+/* Make sure long shop IDs truncate nicely instead of wrapping */
+.shop-id-value {
+  font-weight: 600;
+  max-width: 140px;             /* adjust based on your design */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Copy button – keep it compact */
+.shop-id-copy-btn {
+  flex-shrink: 0;               /* prevent button from shrinking */
+  min-width: 32px;
+  height: 32px;
+  padding: 0;
+  margin-left: 4px;             /* optional extra space */
+}
+
+/* Optional: on very small screens, reduce padding/gap */
+@media (max-width: 400px) {
+  .shop-id-wrapper {
+    gap: 6px;
+    padding: 5px 8px;
+  }
+  .shop-id-value {
+    max-width: 100px;
+  }
 }

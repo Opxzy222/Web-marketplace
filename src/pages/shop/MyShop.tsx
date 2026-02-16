@@ -327,7 +327,7 @@ const MyShop = () => {
 
                     <button
                       className="action-btn details"
-                      onClick={() => navigate("/shop/Details", { state: { shopId: shop.id } })}
+                      onClick={() => navigate("/details", { state: { shopId: shop.id } })}
                     >
                       <Info size={24} />
                       <span>Details</span>

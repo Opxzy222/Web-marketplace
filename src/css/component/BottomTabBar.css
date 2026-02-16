@@ -9,7 +9,7 @@
 :root {
   --bg-nav:          rgba(255, 255, 255, 0.88);
   --border-nav:      rgba(226, 232, 240, 0.65);
-  --shadow-nav:      0 -8px 32px -12px rgba(0,0,0,0.12);
+  --shadow-nav:      0 -4px 20px -10px rgba(0,0,0,0.08);
   --text-primary:    #0f172a;
   --text-secondary:  #475569;
   --accent:          #3b82f6;
@@ -93,8 +93,8 @@
 .tab-item.active .tab-icon,
 .tab-item:hover .tab-icon {
   color: var(--accent);
-  filter: drop-shadow(0 2px 6px var(--accent-glow));
 }
+
 
 /* Badge */
 .badge {
@@ -140,7 +140,7 @@
   height: 4px;
   background: var(--accent);
   border-radius: 999px;
-  box-shadow: 0 2px 8px var(--accent-glow);
+  box-shadow: none;
 }
 
 /* ── Dark mode tweaks ───────────────────────────────── */

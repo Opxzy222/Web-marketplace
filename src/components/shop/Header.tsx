@@ -12,13 +12,11 @@ const Header: React.FC = () => {
   const [greeting, setGreeting] = useState('Hello');
 
   useEffect(() => {
-    // Get username
     const storedName = localStorage.getItem('user_name');
     if (storedName) {
       setUserName(storedName);
     }
 
-    // Time-based greeting
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 12) {
       setGreeting('Good Morning');
@@ -35,7 +33,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="shop-header">
-      <div className="header-content">
+      <div className="header-inner">
         <div className="greeting-section">
           <h1 className="greeting-main">
             {greeting}, <span className="user-name">{firstName}</span>

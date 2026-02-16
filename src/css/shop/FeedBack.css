@@ -1,0 +1,225 @@
+/* Feedback.css – Premium glass + gradient style (same vibe as ChangePassword & VerificationStatus) */
+
+.feedback-wrapper {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Card – glassmorphic with blur */
+.feedback-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 28px;
+  padding: 40px 28px;
+  width: 100%;
+  max-width: 520px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-modal);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gradient top bar accent */
+.feedback-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--accent-blue), #8b5cf6, #ec4899);
+}
+
+/* Title & subtitle */
+.form-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 12px;
+  text-align: center;
+  letter-spacing: -0.6px;
+}
+
+.form-subtitle {
+  font-size: 15.5px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin: 0 0 40px;
+  line-height: 1.5;
+}
+
+/* Stars Row */
+.stars-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.star-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Rating display */
+.rating-display {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  margin: 0 0 32px;
+}
+
+/* Textarea */
+.textarea-group {
+  margin-bottom: 32px;
+}
+
+.textarea-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.feedback-textarea {
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--hover-bg-medium);
+  border: 2px solid var(--border-input);
+  border-radius: 16px;
+  font-size: 16px;
+  color: var(--text-primary);
+  resize: vertical;
+  min-height: 120px;
+  transition: all 0.3s;
+}
+
+.feedback-textarea:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 4px var(--focus-ring);
+  transform: translateY(-2px);
+}
+
+.feedback-textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.feedback-textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Submit Button – shine sweep + gradient */
+.submit-btn {
+  width: 100%;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-dark) 50%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 17px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.35);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left 0.7s;
+}
+
+.submit-btn:hover:not(.loading)::before {
+  left: 100%;
+}
+
+.submit-btn:hover:not(.loading) {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 45px rgba(37, 99, 235, 0.5);
+}
+
+.submit-btn.loading {
+  opacity: 0.7;
+  cursor: wait;
+  transform: none;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* Success Toast */
+.success-toast {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-green);
+  color: white;
+  padding: 16px 36px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 600;
+  font-size: 15.5px;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+}
+
+/* Animations */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .feedback-card {
+    padding: 32px 20px;
+    margin: 24px 16px;
+    border-radius: 24px;
+  }
+
+  .form-title {
+    font-size: 24px;
+  }
+
+  .stars-row {
+    gap: 8px;
+  }
+
+  .star-btn svg {
+    width: 36px;
+    height: 36px;
+  }
+}
