@@ -26,6 +26,19 @@
   --border: #334155;
 }
 
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  background: #1E3A8A !important;   /* fallback + iOS blending */
+}
+
+/* If you have a fixed header at the top */
+.gl-header,
+header,
+[class*="header"] {
+  background-color: #1E3A8A !important;
+}
+
 /* Apply base styles */
 body {
   background-color: var(--background);
