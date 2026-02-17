@@ -1,10 +1,8 @@
-/* src/index.css — Tailwind v4 + dark mode + mobile-friendly (working 2026 style) */
+/* src/index.css — Tailwind v4 + dark mode + mobile-friendly (updated 2026 style) */
 
-
-
-/* Define theme variables using plain values or OKLCH for better color consistency */
+/* Define theme variables */
 :root {
-  --background: #f8fafc;          /* slate-50 approximate */
+  --background: #f8fafc;          /* slate-50 approximate – light mode */
   --foreground: #0f172a;          /* slate-950 */
   --card: #ffffff;
   --card-foreground: #0f172a;
@@ -13,10 +11,13 @@
   --accent: #2563eb;              /* blue-600 */
   --border: #e2e8f0;
   --radius: 0.75rem;
+
+  /* Status bar color – used for iOS PWA top strip */
+  --status-bar-color: #1E3A8A;
 }
 
 .dark {
-  --background: #0f172a;          /* slate-950 */
+  --background: #0f172a;          /* slate-950 – dark mode */
   --foreground: #f8fafc;          /* slate-50 */
   --card: #1e293b;                /* slate-900 */
   --card-foreground: #f8fafc;
@@ -24,9 +25,42 @@
   --muted-foreground: #94a3b8;
   --accent: #3b82f6;              /* blue-500 */
   --border: #334155;
+
+  /* Optional: slightly different status bar in dark mode if desired */
+  --status-bar-color: #1E3A8A;   /* keep same, or change to #0f172a etc. */
 }
 
+/* ────────────────────────────────────────────────
+   iOS Status Bar Color Fix (only affects top safe area)
+   Works when launched as PWA from home screen
+   ──────────────────────────────────────────────── */
+@supports (padding-top: env(safe-area-inset-top)) {
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top);          /* exactly status bar height */
+    background: var(--status-bar-color);       /* #1E3A8A */
+    z-index: 9999;                             /* above all content */
+    pointer-events: none;                      /* doesn't block interaction */
+  }
 
+  /* Prevent content from overlapping the status bar area */
+  body {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* Push main content / headers below the status bar */
+  .gl-header,
+  header,
+  main,
+  .page-shell > *:first-child,
+  .page-main {
+    margin-top: env(safe-area-inset-top);
+  }
+}
 
 /* Apply base styles */
 body {
