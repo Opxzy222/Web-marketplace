@@ -189,10 +189,13 @@ const StartConversation = () => {
   // WebSocket connection
   // ────────────────────────────────────────────────
   useEffect(() => {
-    if (!conversationId || !userId || !sessionId) return;
+    if (!conversationId || conversationId === 'undefined' || conversationId === 'null' || !/^\d+$/.test(conversationId) || !userId || !sessionId) {
+      console.log('Skipping WebSocket connect - invalid ID or missing data:', { conversationId, userId, sessionId });
+      return;
+    }
 
     const connectWebSocket = () => {
-      const url = `wss://retail-alvinia-goza-f6a0e4f7.koyeb.app/ws/chat/${conversationId}/?user_id=${userId}`;
+      const url = `wss://retail-alvinia-goza-f6a0e4f7.koyeb.app/ws/chat/${conversationId}?user_id=${userId}`;
       console.log('Connecting WebSocket:', url);
 
       wsRef.current = new WebSocket(url);
@@ -304,14 +307,11 @@ const StartConversation = () => {
   // ────────────────────────────────────────────────
   const sendMessage = useCallback(async () => {
     const text = inputMessage.trim();
-    if (!text || !userId || !sessionId || !shopId) {
-      console.warn('Cannot send message - missing required data', { text, userId, sessionId, shopId });
-      return;
-    }
+    if (!text || !userId || !sessionId || !shopId) return;
 
     setInputMessage('');
 
-    const tempId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const tempId = `${Date.now()}-${Math.random().toString(36).slice(2,9)}`;
     const tempMsg = {
       id: tempId,
       temp_id: tempId,
@@ -327,7 +327,6 @@ const StartConversation = () => {
 
     const sendViaWS = () => {
       if (wsRef.current?.readyState === WebSocket.OPEN) {
-        console.log('Sending via WebSocket:', { tempId, content: text });
         wsRef.current.send(JSON.stringify({
           content: text,
           temp_id: tempId,
@@ -348,15 +347,11 @@ const StartConversation = () => {
           content: text,
         };
 
-        console.log('Sending via HTTP:', payload);
-
         const res = await axios.post(
           'https://retail-alvinia-goza-f6a0e4f7.koyeb.app/messages/',
           payload,
           { headers: { Authorization: sessionId } }
         );
-
-        console.log('HTTP send success:', res.data);
 
         const { id: serverId, conversation_id: newConvId } = res.data;
 
@@ -384,20 +379,15 @@ const StartConversation = () => {
 
         receivedMessagesRef.current.add(Number(serverId));
       } catch (err) {
-        console.error('HTTP send failed:', {
-          status: err.response?.status,
-          data: err.response?.data,
-          message: err.message,
-          payload: err.config?.data ? JSON.parse(err.config.data) : null,
-        });
+        console.error('HTTP send failed:', err);
         setMessages(prev => prev.filter(m => m.temp_id !== tempId));
-        setErrorMessage(err.response?.data?.error || 'Failed to send message');
       }
     };
 
     if (conversationId && sendViaWS()) {
-      // success via WS
+      // WS sent → optimistic update already done
     } else {
+      // No WS or first message → use HTTP
       await sendViaHTTP();
     }
   }, [inputMessage, userId, sessionId, shopId, conversationId]);

@@ -1,96 +1,66 @@
-/* src/index.css — Scoped with .ind-app prefix + Tailwind v4 + dark mode */
-
-/* All global styles live inside .ind-app to avoid conflicts */
-.ind-app {
-  /* Theme variables – scoped */
-  --background: #f8fafc;          /* light mode background */
-  --foreground: #0f172a;
+/* Define theme variables using plain values or OKLCH for better color consistency */
+:root {
+  --background: #f8fafc;          /* slate-50 approximate */
+  --foreground: #0f172a;          /* slate-950 */
   --card: #ffffff;
   --card-foreground: #0f172a;
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
-  --accent: #2563eb;
+  --accent: #2563eb;              /* blue-600 */
   --border: #e2e8f0;
   --radius: 0.75rem;
-
-  /* Status bar color for iOS PWA top strip */
-  --status-bar-color: #1E3A8A;
-
-  /* Dark mode overrides */
-  &.dark {
-    --background: #0f172a;
-    --foreground: #f8fafc;
-    --card: #1e293b;
-    --card-foreground: #f8fafc;
-    --muted: #1e293b;
-    --muted-foreground: #94a3b8;
-    --accent: #3b82f6;
-    --border: #334155;
-
-    /* Status bar in dark mode – same or adjust as needed */
-    --status-bar-color: #1E3A8A;
-  }
-
-  /* iOS Status Bar Fix – only affects top safe area on notched devices */
-  @supports (padding-top: env(safe-area-inset-top)) {
-    &::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: env(safe-area-inset-top);
-      background: var(--status-bar-color);
-      z-index: 9999;
-      pointer-events: none;
-    }
-
-    body {
-      padding-top: env(safe-area-inset-top);
-    }
-
-    /* Ensure headers and main content start below status bar */
-    .gl-header,
-    header,
-    main,
-    .page-shell > *:first-child,
-    .page-main {
-      margin-top: env(safe-area-inset-top);
-    }
-  }
-
-  /* Base styles – scoped to .ind-app */
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
-    margin: 0;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    min-height: 100vh;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-
-  /* Mobile & touch improvements */
-  html {
-    scroll-behavior: smooth;
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-  }
-
-  button,
-  a {
-    touch-action: manipulation;
-  }
-
-  /* Focus rings – scoped */
-  :focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
 }
 
-/* Optional: make sure #root fills the viewport */
-.ind-app #root {
+.dark {
+  --background: #0f172a;          /* slate-950 */
+  --foreground: #f8fafc;          /* slate-50 */
+  --card: #1e293b;                /* slate-900 */
+  --card-foreground: #f8fafc;
+  --muted: #1e293b;               /* slate-800 */
+  --muted-foreground: #94a3b8;
+  --accent: #3b82f6;              /* blue-500 */
+  --border: #334155;
+}
+
+/* Apply base styles */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Mobile & touch improvements */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+button,
+a {
+  touch-action: manipulation;
+}
+
+/* Better focus rings in both modes */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  background: #1E3A8A !important;   /* fallback + iOS blending */
+}
+
+/* If you have a fixed header at the top */
+.gl-header,
+header,
+[class*="header"] {
+  background-color: #1E3A8A !important;
 }
