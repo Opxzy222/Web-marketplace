@@ -28,7 +28,8 @@ const ShopPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   //const shopId = location.state?.shopId;
-  const { shopId } = useParams();
+  const { shop_id } = useParams();
+  const { shopId: shopId } = location.state || {};
 
   const [shop, setShop] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -80,13 +81,21 @@ const ShopPage = () => {
     fetchSessionId();
   }, []);
 
+  useEffect(() => {
+  console.log('sessionId:', sessionId);
+  console.log('shop_id from params:', shop_id);
+  console.log('shopId from state:', shopId);
+  console.log('shop:', shop);
+}, [sessionId, shop_id, shopId, shop]);
+
   // ─── Data Fetching ─────────────────────────────────────────────────
   const fetchShopData = async () => {
-    if (!sessionId || !shopId) return;
+    if (!sessionId || !shop_id) return;
+    console.log('Starting fetch for shop_id:', shop_id);
 
     try {
       const response = await axios.get(
-        `https://retail-alvinia-goza-f6a0e4f7.koyeb.app/shops/${shopId}/combined/`,
+        `https://retail-alvinia-goza-f6a0e4f7.koyeb.app/shops/${shop_id}/combined/`,
         { headers: { Authorization: sessionId } }
       );
       const data = response.data;
@@ -294,10 +303,7 @@ const ShopPage = () => {
   <motion.button
     className="message-button-wrapper"
     onClick={() =>
-      navigate(
-        `/shop/StartConversation?shopId=${shopId}&name=${encodeURIComponent(shop.name)}`
-      )
-    }
+     navigate("/start-conversation", { state: { shopId: shopId, name: shop.name } })}
     whileHover={{ scale: 1.02 }}
     whileTap={{ scale: 0.98 }}
   >

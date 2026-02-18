@@ -179,9 +179,13 @@ const SearchResults = () => {
     setModalVisible(false);
   }, [allDistancesNull]);
 
-  const goToShop = (shopId: string) => {
-    navigate(`/shop-page/${shopId}`);
-  };
+  const goToShop = (shop_id: string, shopId: string) => {
+  navigate(`/shop-page/${shop_id}`, {
+    state: { shopId }
+  });
+  console.log(shopId, 'shop id')
+};
+
 
   const renderShopCard = useCallback(
   (item: any) => (
@@ -189,7 +193,7 @@ const SearchResults = () => {
       className="srt-shop-card"
       whileHover={{ y: -6, scale: 1.015 }}
       transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-      onClick={() => goToShop(item.shop_id)}
+      onClick={() => goToShop(item.shop_id, item.id)}
       style={{ cursor: 'pointer' }}
     >
       {/* TOP SECTION */}

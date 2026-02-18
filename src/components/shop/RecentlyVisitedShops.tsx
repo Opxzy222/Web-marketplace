@@ -30,8 +30,10 @@ const RecentlyVisitedShops: React.FC<RecentlyVisitedShopsProps> = ({ shops }) =>
     setShowAll(true);
   };
 
-  const handleShopPress = (shopId: number) => {
-    navigate(`/shop-page/${shopId}`);
+  const handleShopPress = (shop_id: string, shopId: number) => {
+    navigate(`/shop-page/${shop_id}`, {
+    state: { shopId }
+  });
   };
 
   const shopsToShow = showAll ? shops : shops.slice(0, 3);
@@ -52,7 +54,7 @@ const RecentlyVisitedShops: React.FC<RecentlyVisitedShopsProps> = ({ shops }) =>
     >
       <button
         className="rv-shop-card"
-        onClick={() => handleShopPress(shop.shop_id)}
+        onClick={() => handleShopPress(shop.shop_id, shop.id)}
         type="button"
       >
         <div className="rv-image-container">

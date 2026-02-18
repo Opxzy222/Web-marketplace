@@ -42,6 +42,8 @@ import BottomTabBar from './components/BottomTabBar';
 import FeedbackScreen from './pages/shop/Feedback';
 import Details from './pages/shop/Details';
 import Conversation from './pages/shop/Conversation';
+import StartConversation from './pages/shop/StartConversation';
+import MessageList from './tabs/MessageList';
 // import { AdProvider } from './contexts/AdContext';
 // import { AppResetProvider } from './contexts/AppResetContext';
 
@@ -102,7 +104,7 @@ useEffect(() => {
           <Route path="/update-products" element={<UpdateShopProducts />} />
           <Route path="/shop-products" element={<ShopProduct />} />
           <Route path="/search-result" element={<SearchResults />} />
-          <Route path="/shop-page/:shopId" element={<ShopPage />} />
+          <Route path="/shop-page/:shop_id" element={<ShopPage />} />
           <Route path="/admin-shop-page" element={<AdminShopPage />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/account" element={<Account />} />
@@ -116,7 +118,9 @@ useEffect(() => {
           <Route path="/delete-account" element={<NotificationSettings />} />
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/details" element={<Details />} />
+          <Route path="/messages" element={<MessageList />} />
           <Route path="/conversation" element={<Conversation />} />
+          <Route path="/start-conversation" element={<StartConversation />} />
           
         </Routes>
       </main>
