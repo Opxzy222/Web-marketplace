@@ -1,37 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="ind-html">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-
     <!-- Optimized viewport for mobile & PWA behavior -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no" />
-
     <title>marketplace</title>
-
     <!-- PWA manifest – required for installability + Android theme color -->
     <link rel="manifest" href="/manifest.json" />
-
     <!-- Theme color – controls status bar (Android), address bar, and iOS when respected -->
     <meta name="theme-color" content="#1E3A8A" />
-
-    <!-- Modern standard for full-screen PWA mode (replaces deprecated apple-mobile-web-app-capable) -->
+    <!-- Modern standard for full-screen PWA mode -->
     <meta name="mobile-web-app-capable" content="yes" />
-
     <!-- iOS status bar style – "default" allows #1E3A8A to show through -->
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-
     <!-- Tells browsers we support both light and dark modes -->
     <meta name="color-scheme" content="light dark" />
-
     <!-- Prevent FOUC – synchronously apply dark mode class before paint -->
     <script>
       (function() {
         const saved = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
         let isDark = false;
-
         if (saved === 'dark') {
           isDark = true;
         } else if (saved === 'light') {
@@ -40,15 +30,14 @@
           // 'system' or unset → follow system preference
           isDark = prefersDark;
         }
-
         if (isDark) {
-          document.documentElement.classList.add('dark');
+          document.documentElement.classList.add('ind-dark');
         }
       })();
     </script>
   </head>
-  <body>
-    <div id="root"></div>
+  <body class="ind-body">
+    <div id="root" class="ind-root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
