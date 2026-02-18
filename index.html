@@ -1,49 +1,36 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="ind-app">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
 
-    <!-- Optimized viewport for mobile & PWA behavior -->
+    <!-- Optimized viewport for mobile & PWA -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no" />
 
     <title>marketplace</title>
 
-    <!-- PWA manifest – required for installability + Android theme color -->
+    <!-- PWA manifest -->
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- Theme color – controls status bar (Android), address bar, and iOS when respected -->
+    <!-- Theme color – Android status bar / address bar -->
     <meta name="theme-color" content="#1E3A8A" />
 
-    <!-- Modern standard for full-screen PWA mode (replaces deprecated apple-mobile-web-app-capable) -->
+    <!-- Modern full-screen PWA capability -->
     <meta name="mobile-web-app-capable" content="yes" />
 
-    <!-- iOS status bar style – "default" allows #1E3A8A to show through -->
+    <!-- iOS status bar – "default" allows theme-color to show -->
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
-    <!-- Tells browsers we support both light and dark modes -->
+    <!-- Color scheme support -->
     <meta name="color-scheme" content="light dark" />
 
-    <!-- Prevent FOUC – synchronously apply dark mode class before paint -->
+    <!-- Prevent FOUC – apply dark class early -->
     <script>
       (function() {
         const saved = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        let isDark = false;
-
-        if (saved === 'dark') {
-          isDark = true;
-        } else if (saved === 'light') {
-          isDark = false;
-        } else {
-          // 'system' or unset → follow system preference
-          isDark = prefersDark;
-        }
-
-        if (isDark) {
-          document.documentElement.classList.add('dark');
-        }
+        let isDark = saved === 'dark' || (!saved && prefersDark);
+        if (isDark) document.documentElement.classList.add('dark');
       })();
     </script>
   </head>
