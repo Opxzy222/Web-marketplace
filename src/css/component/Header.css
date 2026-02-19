@@ -1,6 +1,7 @@
 /* =============================================
    Shop Header – glassmorphism 2026 style
    Matches HeaderGlobal exactly (blur, curve, light/dark)
+   Now more compact – reduced vertical space
    ============================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -44,22 +45,21 @@
   transition: all 0.3s ease;
 }
 
-/* Inner glass + curve container */
+/* Inner glass + curve container – now more compact */
 .shop-header-inner {
   background: var(--gl-bg);
   backdrop-filter: var(--gl-blur);
   -webkit-backdrop-filter: var(--gl-blur);
   border-bottom: 1px solid var(--gl-border);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
-
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
   border-bottom-left-radius: var(--gl-radius);
   border-bottom-right-radius: var(--gl-radius);
 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.375rem;
-  min-height: 4.5rem;           /* slightly taller to feel welcoming */
+  padding: 0.75rem 1.25rem;           /* tighter padding */
+  min-height: 3.5rem;                  /* significantly reduced height */
   transition: all 0.3s ease;
 }
 
@@ -70,7 +70,7 @@
 
 .greeting-main {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: 1.25rem;                  /* smaller than before */
   font-weight: 600;
   letter-spacing: -0.025em;
   color: var(--gl-text);
@@ -89,7 +89,7 @@
 .avatar-btn {
   background: none;
   border: none;
-  padding: 0.5rem;
+  padding: 0.4rem;                     /* tighter padding */
   border-radius: 9999px;
   cursor: pointer;
   display: flex;
@@ -99,49 +99,57 @@
 }
 
 .avatar {
-  width: 44px;
-  height: 44px;
+  width: 38px;                         /* smaller avatar */
+  height: 38px;
   border-radius: 9999px;
-  background: linear-gradient(135deg, #6366f1, #a855f7); /* vibrant fallback */
+  background: linear-gradient(135deg, #6366f1, #a855f7);
   color: white;
   font-weight: 700;
-  font-size: 1.125rem;
+  font-size: 1rem;                     /* adjusted for smaller size */
   display: flex;
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
   transition: all 0.28s ease;
 }
 
 .avatar-btn:hover .avatar,
 .avatar-btn:focus-visible .avatar {
   transform: scale(1.14) translateY(-1px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
 }
 
-/* Responsive adjustments */
+/* Responsive – even more compact on smaller screens */
 @media (max-width: 640px) {
   .shop-header-inner {
-    padding: 0.9rem 1rem;
+    padding: 0.65rem 1rem;
+    min-height: 3.25rem;
     --gl-radius: 20px;
   }
   .greeting-main {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
   }
   .avatar {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
   }
 }
 
 @media (max-width: 480px) {
   .shop-header-inner {
+    padding: 0.6rem 0.9rem;
+    min-height: 3.1rem;
     --gl-radius: 16px;
   }
   .greeting-main {
-    font-size: 1.125rem;
+    font-size: 1.05rem;
+  }
+  .avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 0.9rem;
   }
 }
 

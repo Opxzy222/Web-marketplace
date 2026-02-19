@@ -22,7 +22,7 @@ export default function ThemeToggle() {
       </button>
 
       <button
-        className={`theme-btn ${isDark ? 'active' : ''}`}
+        className={`theme-btn-dark ${isDark ? 'active' : ''}`}
         onClick={() => setTheme('dark')}
         aria-pressed={isDark}
         title="Dark mode"

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 /* ────────────────────────────────────────────────
    Premium 2026 Categories – Lightning Gradient Flow + Dark Mode
@@ -13,7 +13,7 @@
   --bg-card:         rgba(255, 255, 255, 0.94);
   --shadow-card:     0 6px 20px rgba(0,0,0,0.08);
   --shadow-hover:    0 16px 36px rgba(0,0,0,0.16);
-  --text-title:      #111827;
+  --text-title:      #0f172a;
   --text-name:       #1f2937;
   --accent-glow:     rgba(59, 130, 246, 0.25);
   --radius:          18px;
@@ -82,35 +82,44 @@
 }
 
 .categories-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--text-title);
+  font-size: 2rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, var(--text-title), var(--accent) 110%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin: 0;
-  letter-spacing: -0.03em;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  letter-spacing: -0.035em;
+  text-shadow: 0 1.5px 6px rgba(0,0,0,0.12);
 }
 
 .dark .categories-title {
-  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.65);
 }
 
-/* See All Button */
+/* See All Button – smaller, sharper, more premium/clickable */
 .see-all-btn {
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
-  font-size: 0.94rem;
-  font-weight: 600;
-  padding: 0.7rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0.62rem 1.38rem;             /* tighter & sharper */
   border: none;
   border-radius: 999px;
   cursor: pointer;
-  box-shadow: 0 4px 16px var(--accent-glow);
+  box-shadow: 0 5px 18px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.28);
   transition: all var(--transition);
+  letter-spacing: 0.01em;
 }
 
 .see-all-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px var(--accent-glow);
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 12px 32px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.28);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+.see-all-btn:active {
+  transform: translateY(-1px) scale(0.98);
 }
 
 /* Grid */
@@ -221,6 +230,15 @@
 
   .category-name {
     font-size: 0.82rem;
+  }
+
+  .categories-title {
+    font-size: 1.65rem;
+  }
+
+  .see-all-btn {
+    font-size: 0.86rem;
+    padding: 0.58rem 1.24rem;
   }
 }
 

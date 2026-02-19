@@ -9,13 +9,14 @@
 :root {
   --bg-hero:         rgba(255, 255, 255, 0.70);
   --border-hero:     rgba(226, 232, 240, 0.42);
-  --shadow-hero:     0 18px 56px -16px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.80);
+  --shadow-hero:     0 12px 36px -8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.80);
   --bg-tab:          rgba(255, 255, 255, 0.94);
   --bg-panel:        rgba(255, 255, 255, 0.96);
   --text-primary:    #0f172a;
   --text-secondary:  #475569;
+  --text-tab-inactive: #334155;
   --accent:          #3b82f6;
-  --accent-glow:     rgba(59, 130, 246, 0.28);
+  --accent-glow:     rgba(59, 130, 246, 0.2);
   --radius:          30px;
   --radius-sm:       22px;
   --transition:      0.40s cubic-bezier(0.16, 1, 0.3, 1);
@@ -24,21 +25,22 @@
 .dark {
   --bg-hero:         rgba(15, 23, 42, 0.76);
   --border-hero:     rgba(51, 65, 85, 0.48);
-  --shadow-hero:     0 24px 64px -20px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.05);
+  --shadow-hero:     0 16px 48px -12px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05);
   --bg-tab:          rgba(30, 41, 59, 0.94);
   --bg-panel:        rgba(30, 41, 59, 0.94);
   --text-primary:    #f1f5f9;
   --text-secondary:  #94a3b8;
+  --text-tab-inactive: #64748b;
   --accent:          #60a5fa;
-  --accent-glow:     rgba(96, 165, 250, 0.38);
+  --accent-glow:     rgba(96, 165, 250, 0.3);
 }
 
 /* Hero Container – minimal top spacing, feels like part of header */
 .sb-search-bar {
   width: 100%;
   max-width: 960px;
-  margin: 0.8rem auto 1.8rem;           /* Even tighter top margin */
-  padding: 1.6rem 1.8rem 2rem;
+  margin: -0.6rem auto 1.4rem;         /* Even tighter top margin */
+  
   background: var(--bg-hero);
   border-radius: var(--radius);
   border: 1px solid var(--border-hero);
@@ -89,10 +91,10 @@
 .sb-tab {
   flex: 0 0 auto;                       /* Prevent shrinking too much */
   min-width: 110px;                     /* Ensures "City / Area" fits */
-  padding: 0.9rem 1.3rem;
+  padding: 0.9rem 1.1rem;
   font-size: 0.97rem;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--text-tab-inactive);
   background: transparent;
   border: none;
   border-radius: 18px;
@@ -211,21 +213,21 @@
 .sb-search-btn {
   min-width: 180px;
   height: 60px;
-  background: var(--accent);
+  background: linear-gradient(to bottom, var(--accent), color-mix(in srgb, var(--accent), black 10%));
   color: white;
   font-size: 1.1rem;
   font-weight: 700;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: calc(var(--radius-sm) + 4px);
   cursor: pointer;
-  box-shadow: 0 10px 30px var(--accent-glow);
+  box-shadow: 0 8px 24px var(--accent-glow), inset 0 2px 0 rgba(255,255,255,0.25), inset 0 -2px 0 rgba(0,0,0,0.1);
   transition: all var(--transition);
   white-space: nowrap;
 }
 
 .sb-search-btn:hover {
   transform: translateY(-4px) scale(1.03);
-  box-shadow: 0 18px 42px var(--accent-glow);
+  box-shadow: 0 14px 36px var(--accent-glow), inset 0 2px 0 rgba(255,255,255,0.25), inset 0 -2px 0 rgba(0,0,0,0.1);
 }
 
 .sb-search-btn:disabled {

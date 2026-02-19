@@ -1,137 +1,146 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 /* ────────────────────────────────────────────────
-   Followed Shops – Premium 2026 Glassmorphic Elegance
-   Deep blur, floating depth, subtle glows – homepage beauty
-   Matches Categories constraints + modern luxury feel
+   Followed Shops – Premium 2026 Liquid Glass + Depth
+   Enhanced blur/depth, dynamic accents, tactile hovers
+   Matches site-wide luxury aesthetic
    ──────────────────────────────────────────────── */
 
 :root {
-  --bg-section:      rgba(255, 255, 255, 0.78);
-  --border-section:  rgba(226, 232, 240, 0.45);
-  --shadow-section:  0 20px 60px -20px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.6);
-  --bg-card:         rgba(255, 255, 255, 0.82);
-  --shadow-card:     0 10px 30px rgba(0,0,0,0.10);
-  --shadow-hover:    0 24px 56px rgba(0,0,0,0.22), 0 0 0 1px rgba(59,130,246,0.18);
+  --bg-section:      rgba(255, 255, 255, 0.76);
+  --border-section:  rgba(226, 232, 240, 0.50);
+  --shadow-section:  0 22px 64px -18px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.65);
+  --bg-card:         rgba(255, 255, 255, 0.80);
+  --shadow-card:     0 12px 36px rgba(0,0,0,0.12);
+  --shadow-hover:    0 28px 64px rgba(0,0,0,0.24), 0 0 0 1.5px rgba(59,130,246,0.20);
   --text-title:      #0f172a;
   --text-name:       #1e293b;
   --text-muted:      #64748b;
   --accent:          #3b82f6;
-  --accent-glow:     rgba(59, 130, 246, 0.28);
-  --glow-soft:       0 0 20px rgba(59, 130, 246, 0.15);
-  --radius:          22px;
-  --radius-sm:       16px;
-  --transition:      0.38s cubic-bezier(0.16, 1, 0.3, 1);
+  --accent-glow:     rgba(59, 130, 246, 0.32);
+  --glow-soft:       0 0 24px rgba(59, 130, 246, 0.18);
+  --radius:          24px;
+  --radius-sm:       18px;
+  --transition:      0.42s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dark {
-  --bg-section:      rgba(15, 23, 42, 0.78);
-  --border-section:  rgba(51, 65, 85, 0.50);
-  --shadow-section:  0 24px 68px -24px rgba(0,0,0,0.70), inset 0 1px 0 rgba(255,255,255,0.06);
-  --bg-card:         rgba(30, 41, 59, 0.84);
-  --shadow-card:     0 12px 36px rgba(0,0,0,0.55);
-  --shadow-hover:    0 28px 64px rgba(0,0,0,0.75), 0 0 0 1.5px rgba(96,165,250,0.35);
+  --bg-section:      rgba(15, 23, 42, 0.80);
+  --border-section:  rgba(51, 65, 85, 0.52);
+  --shadow-section:  0 26px 72px -22px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.07);
+  --bg-card:         rgba(30, 41, 59, 0.86);
+  --shadow-card:     0 14px 40px rgba(0,0,0,0.58);
+  --shadow-hover:    0 32px 72px rgba(0,0,0,0.80), 0 0 0 2px rgba(96,165,250,0.38);
   --text-title:      #e2e8f0;
   --text-name:       #cbd5e1;
   --text-muted:      #94a3b8;
   --accent:          #60a5fa;
-  --accent-glow:     rgba(96, 165, 250, 0.40);
-  --glow-soft:       0 0 24px rgba(96, 165, 250, 0.25);
+  --accent-glow:     rgba(96, 165, 250, 0.45);
+  --glow-soft:       0 0 28px rgba(96, 165, 250, 0.28);
 }
 
-/* Main container – centered, wide, premium glass */
+/* Main container – richer glass, centered premium feel */
 .fs-followed-shops-container {
   width: 100%;
   max-width: 960px;
-  margin: 2rem auto;
-  padding: 2.2rem 1.6rem;
+  margin: 1.8rem auto;
+  padding: 2rem 1.8rem;
   background: var(--bg-section);
   border-radius: var(--radius);
   border: 1px solid var(--border-section);
-  backdrop-filter: blur(28px) saturate(160%);
+  backdrop-filter: blur(32px) saturate(180%);
   box-shadow: var(--shadow-section);
   position: relative;
   overflow: hidden;
   transition: transform var(--transition), box-shadow var(--transition);
 }
 
-/* Softer, wider atmospheric top glow */
+/* Dynamic liquid-glass top flow – more modern & subtle motion */
 .fs-followed-shops-container::before {
   content: '';
   position: absolute;
   inset: 0 0 auto 0;
-  height: 5px;
-  background: linear-gradient(90deg, transparent 20%, var(--accent) 50%, transparent 80%);
-  filter: blur(4px);
-  opacity: 0.65;
+  height: 6px;
+  background: linear-gradient(90deg, #c084fc, var(--accent), #34d399, #fbbf24);
+  background-size: 200% 100%;
+  animation: liquidFlow 12s linear infinite;
+  opacity: 0.70;
+  filter: blur(3px);
   border-radius: var(--radius) var(--radius) 0 0;
 }
 
-/* Header – elegant spacing */
+@keyframes liquidFlow {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Header */
 .fs-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  gap: 2rem;
+  margin-bottom: 1.8rem;
+  gap: 1.5rem;
 }
 
 .fs-section-title {
-  font-size: 1.95rem;
-  font-weight: 800;
-  background: linear-gradient(90deg, var(--text-title), var(--accent) 120%);
+  font-size: 2rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, var(--text-title), var(--accent) 110%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin: 0;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.035em;
+  text-shadow: 0 1.5px 6px rgba(0,0,0,0.12);
 }
 
-/* See All – pill on hover, modern & inviting */
+.dark .fs-section-title {
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+
+/* See All – sharper, more premium & tactile */
 .fs-see-all-button {
-  color: var(--accent);
-  font-size: 0.96rem;
-  font-weight: 600;
-  background: rgba(59, 130, 246, 0.08);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  padding: 0.62rem 1.4rem;
+  color: white;
+  font-size: 0.92rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent), black 12%));
+  border: none;
+  padding: 0.58rem 1.32rem;
   border-radius: 999px;
   cursor: pointer;
+  box-shadow: 0 6px 20px var(--accent-glow), inset 0 1.5px 0 rgba(255,255,255,0.30);
   transition: all var(--transition);
-  white-space: nowrap;
-}
-
-.dark .fs-see-all-button {
-  background: rgba(96, 165, 250, 0.12);
-  border-color: rgba(96, 165, 250, 0.25);
+  letter-spacing: 0.01em;
 }
 
 .fs-see-all-button:hover,
 .fs-see-all-button:focus {
-  background: var(--accent);
-  color: white;
-  box-shadow: var(--glow-soft);
-  transform: translateY(-1px);
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 12px 32px var(--accent-glow), inset 0 1.5px 0 rgba(255,255,255,0.30);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent), black 8%), var(--accent));
 }
 
-/* Horizontal scroll – smooth & premium */
+/* Horizontal list – better scroll cues + snap */
 .fs-shops-horizontal-list {
   display: flex;
-  gap: 1.6rem;
+  gap: 1.8rem;
   overflow-x: auto;
-  padding-bottom: 1rem;
+  padding-bottom: 1.2rem;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* cleaner Firefox */
+  scrollbar-width: none;
+  mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
 }
 
 .fs-shops-horizontal-list::-webkit-scrollbar {
-  display: none; /* hide on Chrome/Safari */
+  display: none;
 }
 
-/* Card – floating, deeper depth, premium proportions */
+/* Card wrapper & card */
 .fs-shop-card-wrapper {
-  flex: 0 0 158px;
+  flex: 0 0 168px;
   scroll-snap-align: start;
 }
 
@@ -139,7 +148,7 @@
   width: 100%;
   background: var(--bg-card);
   border-radius: var(--radius-sm);
-  padding: 1.5rem 1rem 1.3rem;
+  padding: 1.6rem 1.1rem 1.4rem;
   border: 1px solid var(--border-section);
   box-shadow: var(--shadow-card);
   cursor: pointer;
@@ -149,41 +158,41 @@
   align-items: center;
   position: relative;
   overflow: hidden;
-  min-height: 180px;
-  backdrop-filter: blur(8px);
+  min-height: 192px;
+  backdrop-filter: blur(10px);
 }
 
 .fs-shop-card:hover {
-  transform: translateY(-12px) scale(1.04);
+  transform: translateY(-14px) scale(1.05);
   box-shadow: var(--shadow-hover);
-  background: linear-gradient(145deg, var(--bg-card), rgba(255,255,255,0.96));
+  background: linear-gradient(145deg, var(--bg-card), rgba(255,255,255,0.94));
 }
 
 .dark .fs-shop-card:hover {
-  background: linear-gradient(145deg, var(--bg-card), rgba(30,41,59,0.96));
+  background: linear-gradient(145deg, var(--bg-card), rgba(30,41,59,0.94));
 }
 
-/* Image – larger, more focal */
+/* Image container & image */
 .fs-image-container {
   position: relative;
-  margin-bottom: 1.2rem;
-  width: 92px;
-  height: 92px;
+  margin-bottom: 1.3rem;
+  width: 100px;
+  height: 100px;
 }
 
 .fs-shop-image,
 .fs-shop-image-placeholder {
   width: 100%;
   height: 100%;
-  border-radius: 20px;
+  border-radius: 22px;
   object-fit: cover;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.14);
-  transition: transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.16);
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .fs-shop-card:hover .fs-shop-image,
 .fs-shop-card:hover .fs-shop-image-placeholder {
-  transform: scale(1.12) rotate(2deg);
+  transform: scale(1.14) rotate(3deg);
 }
 
 .fs-shop-image-placeholder {
@@ -191,8 +200,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.4rem;
-  font-weight: 800;
+  font-size: 2.6rem;
+  font-weight: 900;
   color: #cbd5e1;
 }
 
@@ -201,30 +210,30 @@
   color: #e2e8f0;
 }
 
-/* Follow badge – elevated gem */
+/* Follow badge – more luxurious gem */
 .fs-follow-badge {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 10px;
+  right: 10px;
   background: linear-gradient(135deg, #10b981, #059669);
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45), inset 0 1px 0 rgba(255,255,255,0.4);
+  box-shadow: 0 6px 18px rgba(16,185,129,0.50), inset 0 1.5px 0 rgba(255,255,255,0.45);
 }
 
 .fs-follow-badge svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
 }
 
-/* Name – crisp & elegant */
+/* Shop name */
 .fs-shop-name {
-  font-size: 0.96rem;
-  font-weight: 700;
+  font-size: 0.98rem;
+  font-weight: 800;
   color: var(--text-name);
   text-align: center;
   line-height: 1.4;
@@ -235,72 +244,77 @@
   overflow: hidden;
 }
 
-/* Empty state – more inviting & premium */
+/* Empty state – warmer & more premium */
 .fs-empty-container {
-  padding: 5rem 2rem;
+  padding: 5.5rem 2.2rem;
   text-align: center;
   background: var(--bg-card);
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-section);
   box-shadow: var(--shadow-card);
-  animation: subtlePulse 4s ease-in-out infinite;
+  animation: subtlePulse 5s ease-in-out infinite;
 }
 
 @keyframes subtlePulse {
-  0%, 100% { opacity: 0.92; }
+  0%, 100% { opacity: 0.94; }
   50%      { opacity: 1; }
 }
 
 .fs-empty-icon {
   color: var(--accent);
-  opacity: 0.8;
-  margin-bottom: 1.4rem;
-  animation: heartBeat 3s infinite;
+  opacity: 0.85;
+  margin-bottom: 1.6rem;
+  animation: heartBeat 3.2s infinite;
 }
 
 @keyframes heartBeat {
   0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.12); }
+  50%      { transform: scale(1.14); }
 }
 
 .fs-empty-title {
-  font-size: 1.55rem;
-  font-weight: 800;
+  font-size: 1.65rem;
+  font-weight: 900;
   color: var(--text-title);
-  margin: 0 0 0.8rem;
+  margin: 0 0 0.9rem;
 }
 
 .fs-empty-subtitle {
-  font-size: 1rem;
+  font-size: 1.02rem;
   color: var(--text-muted);
   margin: 0;
-  max-width: 360px;
+  max-width: 380px;
   margin: 0 auto;
 }
 
-/* Responsive – mobile elegance */
+/* Responsive */
 @media (max-width: 480px) {
   .fs-followed-shops-container {
-    margin: 1.4rem auto;
-    padding: 1.6rem 1.2rem;
-    border-radius: 18px;
+    margin: 1.3rem auto;
+    padding: 1.8rem 1.3rem;
+    border-radius: 20px;
   }
 
   .fs-shop-card-wrapper {
-    flex: 0 0 142px;
+    flex: 0 0 152px;
   }
 
   .fs-image-container {
-    width: 82px;
-    height: 82px;
+    width: 88px;
+    height: 88px;
   }
 
   .fs-shop-name {
-    font-size: 0.9rem;
+    font-size: 0.92rem;
   }
 
   .fs-section-title {
-    font-size: 1.7rem;
+    font-size: 1.8rem;
+  }
+
+  .fs-see-all-button {
+    font-size: 0.88rem;
+    padding: 0.54rem 1.2rem;
   }
 }
 

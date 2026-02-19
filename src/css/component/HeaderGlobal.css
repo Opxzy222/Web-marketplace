@@ -1,32 +1,32 @@
 /* =============================================
-   HeaderGlobal – modern glassmorphism 2026 style
-   Matches shop header: semi-transparent blur, moderate curve, high readability
+   HeaderGlobal – COMPACT glassmorphism 2026 style
+   Reduced height (~44–52px), tight padding, small radius
    ============================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap');
 
-/* ── Modern Variables (aligned with shop header) ── */
+/* ── Compact variables ── */
 :root {
-  --gl-bg: rgba(255, 255, 255, 0.78);              /* light glass white */
-  --gl-blur: blur(24px) saturate(190%);
-  --gl-border: rgba(226, 232, 240, 0.45);
-  --gl-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
-  --gl-text: #111827;                              /* charcoal gray – non-blue, max contrast on light glass */
-  --gl-hover-bg: rgba(255, 255, 255, 0.20);
-  --gl-radius: 24px;                               /* moderate curve */
+  --gl-bg: rgba(255, 255, 255, 0.85);
+  --gl-blur: blur(18px) saturate(170%);
+  --gl-border: rgba(226, 232, 240, 0.55);
+  --gl-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --gl-text: #111827;
+  --gl-hover-bg: rgba(255, 255, 255, 0.28);
+  --gl-radius: 14px;                /* much smaller curve */
 }
 
 .dark {
-  --gl-bg: rgba(30, 41, 59, 0.88);                 /* dark slate glass */
-  --gl-blur: blur(20px) saturate(150%);
-  --gl-border: rgba(51, 65, 85, 0.55);
-  --gl-shadow: 0 12px 40px rgba(0, 0, 0, 0.48);
-  --gl-text: #f1f5f9;                              /* light slate – readable */
-  --gl-hover-bg: rgba(241, 245, 249, 0.16);
-  --gl-radius: 24px;
+  --gl-bg: rgba(30, 41, 59, 0.94);
+  --gl-blur: blur(14px) saturate(130%);
+  --gl-border: rgba(51, 65, 85, 0.65);
+  --gl-shadow: 0 6px 20px rgba(0, 0, 0, 0.50);
+  --gl-text: #f1f5f9;
+  --gl-hover-bg: rgba(241, 245, 249, 0.22);
+  --gl-radius: 14px;
 }
 
-/* Header wrapper – extends to cover status bar (same as shop header) */
+/* Header wrapper – covers notch with minimal extra space */
 .gl-header {
   position: sticky;
   top: 0;
@@ -41,101 +41,96 @@
   border-bottom: 1px solid var(--gl-border);
   color: var(--gl-text);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 
 .gl-header.scrolled {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);     /* deeper on scroll – light/dark adjusted via var */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
 }
 
-/* Inner wrapper – carries glass + curve */
+/* Inner wrapper – the actual compact header */
 .gl-header-inner {
   background: var(--gl-bg);
   backdrop-filter: var(--gl-blur);
   -webkit-backdrop-filter: var(--gl-blur);
   border-bottom: 1px solid var(--gl-border);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
   border-bottom-left-radius: var(--gl-radius);
   border-bottom-right-radius: var(--gl-radius);
 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1.25rem;           /* tighter padding */
-  min-height: 3.5rem;                  /* significantly reduced height */
-  transition: all 0.3s ease;
+  padding: 0.4rem 0.9rem;            /* very tight */
+  min-height: 42px;                   /* core height – was 3.5rem */
+  transition: all 0.25s ease;
 }
 
-/* Left: Back button */
-.gl-header-left {
-  flex: 0 0 auto;
-}
-
+/* Back button – compact but tappable */
 .gl-back-btn {
   background: none;
   border: none;
-  padding: 0.75rem;
+  padding: 0.45rem;
   border-radius: 9999px;
   color: var(--gl-text);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.28s ease;
+  transition: all 0.2s ease;
 }
 
 .gl-back-btn:hover,
 .gl-back-btn:focus-visible {
   background: var(--gl-hover-bg);
-  transform: scale(1.12) translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: scale(1.1);
 }
 
-/* Title – centered, high contrast */
+/* Title – smaller & centered tightly */
 .gl-header-title {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.1rem;                  /* reduced from 1.3rem */
   font-weight: 600;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   text-align: center;
   flex: 1 1 auto;
   color: var(--gl-text);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);      /* subtle lift on glass */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 0 1.25rem;
+  padding: 0 0.6rem;
 }
 
-/* Right side (ThemeToggle etc.) */
+/* Right side – tighter spacing */
 .gl-header-right {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 1.125rem;
+  gap: 0.75rem;                      /* tighter */
 }
 
-/* Responsive */
+/* Responsive – even smaller on phones */
 @media (max-width: 640px) {
   .gl-header-inner {
-    padding: 0.9rem 1rem;
-    --gl-radius: 20px;
+    padding: 0.4rem 0.8rem;
+    --gl-radius: 12px;
   }
   .gl-header-title {
-    font-size: 1.2rem;
+    font-size: 1.05rem;
   }
 }
 
 @media (max-width: 480px) {
   .gl-header-inner {
-    --gl-radius: 16px;
+    padding: 0.35rem 0.7rem;
+    --gl-radius: 10px;
   }
   .gl-header-title {
-    font-size: 1.125rem;
-    padding: 0 0.875rem;
+    font-size: 1rem;
+    padding: 0 0.4rem;
   }
   .gl-back-btn {
-    padding: 0.625rem;
+    padding: 0.4rem;
   }
 }
 
@@ -148,55 +143,54 @@
   }
 }
 
-/* ── Shop ID / other extras (updated to match glass style) ── */
+/* ── Shop ID – also compacted ── */
 .shop-id-container {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.18);           /* glass match */
-  padding: 8px 14px;
-  border-radius: 14px;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.22);
+  padding: 5px 10px;
+  border-radius: 10px;
   border: 1px solid var(--gl-border);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
   transition: all 0.2s ease;
 }
 
 .dark .shop-id-container {
-  background: rgba(241, 245, 249, 0.14);
+  background: rgba(241, 245, 249, 0.18);
 }
 
 .shop-id-container:hover {
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.30);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
 .shop-id-label {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--gl-text);
   text-transform: uppercase;
-  letter-spacing: 0.6px;
-  opacity: 0.85;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
 }
 
 .shop-id-value {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--gl-text);
-  letter-spacing: 0.4px;
-  max-width: 120px;
+  letter-spacing: 0.3px;
+  max-width: 100px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .shop-id-copy-btn {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.65);
   border: none;
-  border-radius: 10px;
-  width: 38px;
-  height: 38px;
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -206,39 +200,36 @@
 }
 
 .dark .shop-id-copy-btn {
-  background: rgba(241, 245, 249, 0.10);
+  background: rgba(241, 245, 249, 0.14);
 }
 
 .shop-id-copy-btn:hover {
-  background: rgba(255, 255, 255, 0.22);
-  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(1.08);
 }
 
-/* ... rest of your .copy-feedback, .empty-right-placeholder etc. can stay as-is or inherit vars ... */
-
 .shop-id-copy-btn.copied {
-  background: rgba(34, 197, 94, 0.25);
-  color: var(--accent-copied);
+  background: rgba(34, 197, 94, 0.30);
 }
 
 .shop-id-copy-btn.copied:hover {
-  background: rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.40);
 }
 
-/* Copy success feedback */
+/* Copy feedback – smaller & closer */
 .copy-feedback {
   position: absolute;
-  bottom: -36px;
+  bottom: -30px;
   right: 0;
   background: var(--bg-feedback);
   color: var(--text-feedback);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 10px;
+  padding: 4px 10px;
+  border-radius: 8px;
   white-space: nowrap;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  animation: fadeInOut 2s forwards;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+  animation: fadeInOut 1.8s forwards;
   pointer-events: none;
   z-index: 10;
 }
@@ -250,52 +241,45 @@
   100% { opacity: 0; transform: translateY(-6px); }
 }
 
-/* Empty placeholder when no shopId */
+/* Empty placeholder */
 .empty-right-placeholder {
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  height: 30px;
 }
 
-/* Force inline layout – prevent wrapping */
+/* Shop ID wrapper – compact */
 .shop-id-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;                     /* space between elements */
-  flex-wrap: nowrap;            /* ← critical: no wrapping */
-  white-space: nowrap;          /* prevent text wrapping inside spans */
-  overflow: hidden;             /* hide overflow if too long */
-  max-width: 100%;              /* don't exceed parent */
-  background: rgba(255, 255, 255, 0.12);
-  padding: 6px 10px;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(8px);
-}
-
-/* Make sure long shop IDs truncate nicely instead of wrapping */
-.shop-id-value {
-  font-weight: 600;
-  max-width: 140px;             /* adjust based on your design */
+  gap: 6px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  max-width: 100%;
+  background: rgba(255, 255, 255, 0.16);
+  padding: 5px 8px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(6px);
 }
 
-/* Copy button – keep it compact */
-.shop-id-copy-btn {
-  flex-shrink: 0;               /* prevent button from shrinking */
-  min-width: 32px;
-  height: 32px;
-  padding: 0;
-  margin-left: 4px;             /* optional extra space */
+.shop-id-value {
+  max-width: 90px;
 }
 
-/* Optional: on very small screens, reduce padding/gap */
+/* Very small screens */
 @media (max-width: 400px) {
+  .gl-header-inner {
+    padding: 0.3rem 0.6rem;
+  }
+  .gl-header-title {
+    font-size: 0.95rem;
+  }
   .shop-id-wrapper {
-    gap: 6px;
-    padding: 5px 8px;
+    gap: 4px;
+    padding: 4px 6px;
   }
   .shop-id-value {
-    max-width: 100px;
+    max-width: 80px;
   }
 }

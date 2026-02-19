@@ -44,6 +44,8 @@ import Details from './pages/shop/Details';
 import Conversation from './pages/shop/Conversation';
 import StartConversation from './pages/shop/StartConversation';
 import MessageList from './tabs/MessageList';
+import FollowedShopStatus from './tabs/FollowedShopStatus';
+import FullShopPosts from './pages/shop/FullShopPosts';
 // import { AdProvider } from './contexts/AdContext';
 // import { AppResetProvider } from './contexts/AppResetContext';
 
@@ -121,6 +123,8 @@ useEffect(() => {
           <Route path="/messages" element={<MessageList />} />
           <Route path="/conversation" element={<Conversation />} />
           <Route path="/start-conversation" element={<StartConversation />} />
+          <Route path="/latest-updates" element={<FollowedShopStatus />} />
+          <Route path="/more-posts" element={<FullShopPosts />} />
           
         </Routes>
       </main>

@@ -71,7 +71,7 @@ export default function BottomTabBar() {
       id: 'status',
       label: 'Updates',
       Icon: Clock,
-      path: '/status',
+      path: '/latest-updates',
     },
     {
       id: 'messages',

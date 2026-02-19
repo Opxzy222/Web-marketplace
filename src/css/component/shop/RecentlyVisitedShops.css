@@ -1,67 +1,77 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 /* ────────────────────────────────────────────────
-   Recently Visited Shops – Premium 2026 Professional Style
-   Glassmorphic cards, consistent with Categories & Followed Shops
-   Clean dark/light modes, elegant hover states
+   Recently Visited Shops – Premium 2026 Liquid Glass + Depth
+   Consistent with Followed Shops / Categories
+   Richer blur, dynamic accents, elevated hovers
    ──────────────────────────────────────────────── */
 
 :root {
-  --bg-section:      rgba(255, 255, 255, 0.82);
-  --border-section:  rgba(226, 232, 240, 0.55);
-  --shadow-section:  0 12px 40px -16px rgba(0,0,0,0.16);
-  --bg-card:         rgba(255, 255, 255, 0.90);
-  --shadow-card:     0 6px 20px rgba(0,0,0,0.09);
-  --shadow-hover:    0 18px 44px rgba(0,0,0,0.20), 0 0 0 1px rgba(59,130,246,0.14);
+  --bg-section:      rgba(255, 255, 255, 0.78);
+  --border-section:  rgba(226, 232, 240, 0.52);
+  --shadow-section:  0 20px 60px -16px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.62);
+  --bg-card:         rgba(255, 255, 255, 0.84);
+  --shadow-card:     0 10px 32px rgba(0,0,0,0.11);
+  --shadow-hover:    0 24px 56px rgba(0,0,0,0.22), 0 0 0 1.5px rgba(59,130,246,0.18);
   --text-title:      #0f172a;
   --text-primary:    #1e293b;
   --text-muted:      #64748b;
   --accent:          #3b82f6;
-  --accent-glow:     rgba(59, 130, 246, 0.24);
-  --radius:          20px;
-  --radius-sm:       16px;
-  --transition:      0.34s cubic-bezier(0.22, 0.61, 0.36, 1);
+  --accent-glow:     rgba(59, 130, 246, 0.30);
+  --glow-soft:       0 0 22px rgba(59, 130, 246, 0.16);
+  --radius:          22px;
+  --radius-sm:       18px;
+  --transition:      0.40s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dark {
   --bg-section:      rgba(15, 23, 42, 0.80);
-  --border-section:  rgba(51, 65, 85, 0.58);
-  --shadow-section:  0 16px 48px -20px rgba(0,0,0,0.65);
-  --bg-card:         rgba(30, 41, 59, 0.88);
-  --shadow-card:     0 8px 28px rgba(0,0,0,0.50);
-  --shadow-hover:    0 22px 52px rgba(0,0,0,0.70), 0 0 0 1.5px rgba(96,165,250,0.32);
+  --border-section:  rgba(51, 65, 85, 0.54);
+  --shadow-section:  0 24px 68px -20px rgba(0,0,0,0.72), inset 0 1px 0 rgba(255,255,255,0.07);
+  --bg-card:         rgba(30, 41, 59, 0.86);
+  --shadow-card:     0 12px 36px rgba(0,0,0,0.55);
+  --shadow-hover:    0 28px 64px rgba(0,0,0,0.78), 0 0 0 2px rgba(96,165,250,0.36);
   --text-title:      #e2e8f0;
   --text-primary:    #cbd5e1;
   --text-muted:      #94a3b8;
   --accent:          #60a5fa;
-  --accent-glow:     rgba(96, 165, 250, 0.36);
+  --accent-glow:     rgba(96, 165, 250, 0.42);
+  --glow-soft:       0 0 26px rgba(96, 165, 250, 0.26);
 }
 
-/* Main section – same constraints as others */
+/* Main section – premium centered glass block */
 .rv-recently-visited-section {
   width: 100%;
   max-width: 960px;
   margin: 1.8rem auto;
-  padding: 2rem 1.5rem;
+  padding: 2.1rem 1.7rem;
   background: var(--bg-section);
   border-radius: var(--radius);
   border: 1px solid var(--border-section);
-  backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(30px) saturate(170%);
   box-shadow: var(--shadow-section);
   position: relative;
   overflow: hidden;
-  transition: all var(--transition);
+  transition: transform var(--transition), box-shadow var(--transition);
 }
 
-/* Subtle top glow accent */
+/* Dynamic liquid-glass top flow – consistent luxury accent */
 .rv-recently-visited-section::before {
   content: '';
   position: absolute;
   inset: 0 0 auto 0;
-  height: 4px;
-  background: linear-gradient(90deg, transparent 20%, var(--accent) 50%, transparent 80%);
+  height: 6px;
+  background: linear-gradient(90deg, #c084fc, var(--accent), #34d399, #fbbf24);
+  background-size: 200% 100%;
+  animation: liquidFlow 12s linear infinite;
+  opacity: 0.68;
   filter: blur(3px);
-  opacity: 0.6;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+@keyframes liquidFlow {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
 }
 
 /* Header */
@@ -69,50 +79,53 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.8rem;
-  gap: 1.6rem;
+  margin-bottom: 1.9rem;
+  gap: 1.5rem;
 }
 
 .rv-section-title {
-  font-size: 1.85rem;
-  font-weight: 800;
-  color: var(--text-title);
+  font-size: 1.95rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, var(--text-title), var(--accent) 110%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin: 0;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
+  text-shadow: 0 1.5px 6px rgba(0,0,0,0.12);
 }
 
-/* See All – consistent minimal pill style */
+.dark .rv-section-title {
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+
+/* See All button – premium tactile pill */
 .rv-see-all-button {
-  color: var(--accent);
-  font-size: 0.95rem;
-  font-weight: 600;
-  background: rgba(59, 130, 246, 0.07);
-  border: 1px solid rgba(59, 130, 246, 0.18);
-  padding: 0.64rem 1.5rem;
+  color: white;
+  font-size: 0.92rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent), black 10%));
+  border: none;
+  padding: 0.58rem 1.38rem;
   border-radius: 999px;
   cursor: pointer;
+  box-shadow: 0 6px 20px var(--accent-glow), inset 0 1.5px 0 rgba(255,255,255,0.28);
   transition: all var(--transition);
-  white-space: nowrap;
-}
-
-.dark .rv-see-all-button {
-  background: rgba(96, 165, 250, 0.10);
-  border-color: rgba(96, 165, 250, 0.24);
+  letter-spacing: 0.01em;
 }
 
 .rv-see-all-button:hover,
 .rv-see-all-button:focus {
-  background: var(--accent);
-  color: white;
-  box-shadow: var(--accent-glow);
-  transform: translateY(-1.5px);
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 12px 32px var(--accent-glow), inset 0 1.5px 0 rgba(255,255,255,0.28);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent), black 6%), var(--accent));
 }
 
 /* List container */
 .rv-shops-list {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1.3rem;
 }
 
 /* Card wrapper */
@@ -120,12 +133,12 @@
   width: 100%;
 }
 
-/* Card – horizontal layout, clean & professional */
+/* Card – elevated horizontal layout */
 .rv-shop-card {
   width: 100%;
   background: var(--bg-card);
   border-radius: var(--radius-sm);
-  padding: 1.3rem 1.4rem;
+  padding: 1.4rem 1.5rem;
   border: 1px solid var(--border-section);
   box-shadow: var(--shadow-card);
   cursor: pointer;
@@ -134,43 +147,49 @@
   align-items: center;
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(8px);
 }
 
 .rv-shop-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px);
   box-shadow: var(--shadow-hover);
   border-color: var(--accent);
+  background: linear-gradient(145deg, var(--bg-card), rgba(255,255,255,0.94));
 }
 
-/* Top accent line on card */
+.dark .rv-shop-card:hover {
+  background: linear-gradient(145deg, var(--bg-card), rgba(30,41,59,0.94));
+}
+
+/* Subtle top accent on card */
 .rv-shop-card::before {
   content: '';
   position: absolute;
   inset: 0 0 auto 0;
-  height: 3px;
+  height: 4px;
   background: linear-gradient(90deg, transparent, var(--accent) 40%, transparent);
-  opacity: 0.55;
+  opacity: 0.60;
 }
 
 /* Image */
 .rv-image-container {
   flex-shrink: 0;
-  margin-right: 1.2rem;
+  margin-right: 1.3rem;
 }
 
 .rv-shop-image,
 .rv-shop-image-placeholder {
-  width: 74px;
-  height: 74px;
-  border-radius: 16px;
+  width: 80px;
+  height: 80px;
+  border-radius: 18px;
   object-fit: cover;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-  transition: transform 0.38s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.14);
+  transition: transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .rv-shop-card:hover .rv-shop-image,
 .rv-shop-card:hover .rv-shop-image-placeholder {
-  transform: scale(1.08);
+  transform: scale(1.10);
 }
 
 .rv-shop-image-placeholder {
@@ -178,8 +197,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.2rem;
-  font-weight: 800;
+  font-size: 2.4rem;
+  font-weight: 900;
   color: #cbd5e1;
 }
 
@@ -195,10 +214,10 @@
 }
 
 .rv-shop-name {
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 1.08rem;
+  font-weight: 800;
   color: var(--text-primary);
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.4rem;
   line-height: 1.35;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -206,71 +225,73 @@
 }
 
 .rv-visited-at {
-  font-size: 0.88rem;
+  font-size: 0.90rem;
   font-weight: 500;
   color: var(--text-muted);
   margin: 0;
 }
 
-/* Show more button – clean & integrated */
+/* Show more button – matches premium style */
 .rv-show-more-wrapper {
-  margin-top: 1.6rem;
+  margin-top: 1.8rem;
   text-align: center;
 }
 
 .rv-show-more-button {
-  background: rgba(59, 130, 246, 0.06);
-  border: 1px solid rgba(59, 130, 246, 0.18);
-  color: var(--accent);
-  font-size: 0.96rem;
-  font-weight: 600;
-  padding: 0.9rem 2rem;
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent), black 10%));
+  color: white;
+  font-size: 0.94rem;
+  font-weight: 700;
+  padding: 0.88rem 2.2rem;
+  border: none;
   border-radius: 999px;
   cursor: pointer;
+  box-shadow: 0 6px 20px var(--accent-glow), inset 0 1.5px 0 rgba(255,255,255,0.28);
   transition: all var(--transition);
 }
 
-.dark .rv-show-more-button {
-  background: rgba(96, 165, 250, 0.09);
-  border-color: rgba(96, 165, 250, 0.26);
-}
-
 .rv-show-more-button:hover {
-  background: var(--accent);
-  color: white;
-  box-shadow: var(--accent-glow);
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 14px 36px var(--accent-glow), inset 0 1.5px 0 rgba(255,255,255,0.28);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent), black 6%), var(--accent));
 }
 
 /* Responsive */
 @media (max-width: 480px) {
   .rv-recently-visited-section {
     margin: 1.4rem auto;
-    padding: 1.6rem 1.2rem;
-    border-radius: 18px;
+    padding: 1.8rem 1.3rem;
+    border-radius: 20px;
   }
 
   .rv-image-container {
-    margin-right: 1rem;
+    margin-right: 1.1rem;
   }
 
   .rv-shop-image,
   .rv-shop-image-placeholder {
-    width: 68px;
-    height: 68px;
+    width: 72px;
+    height: 72px;
   }
 
   .rv-shop-name {
-    font-size: 1rem;
+    font-size: 1.02rem;
   }
 
   .rv-section-title {
-    font-size: 1.65rem;
+    font-size: 1.75rem;
+  }
+
+  .rv-see-all-button,
+  .rv-show-more-button {
+    font-size: 0.90rem;
+    padding: 0.54rem 1.24rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     transition: none !important;
+    animation: none !important;
   }
 }
