@@ -14,7 +14,7 @@
   --header-fg: #111827;
 }
 
-.ind-html.dark { /* ← Changed .ind-dark to .dark */
+.ind-html.dark {
   --background: #0f172a;
   --foreground: #f8fafc;
   --card: #1e293b;
@@ -41,25 +41,25 @@
   position: relative;
 }
 
-/* Visual fallback overlay for status bar area (critical for iOS) */
+/* Visual fallback overlay for status bar area – now stronger for better match */
 .ind-body::before {
   content: '';
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: env(safe-area-inset-top, 44px); /* fallback height if env() not supported */
+  height: env(safe-area-inset-top, 44px);
   background-color: var(--header-bg);
   backdrop-filter: blur(12px) saturate(110%);
   -webkit-backdrop-filter: blur(12px) saturate(110%);
-  opacity: 0.94;                    /* light mode: subtle but visible */
+  opacity: 0.97;                    /* almost solid in light mode too */
   z-index: 9999;
   pointer-events: none;
   transition: background-color 0.35s ease, opacity 0.35s ease;
 }
 
-.ind-html.dark .ind-body::before { /* ← Changed .ind-dark to .dark */
-  opacity: 0.99;                    /* dark mode: almost solid to match native dark bar */
+.ind-html.dark .ind-body::before {
+  opacity: 0.999;                   /* fully solid in dark mode */
   backdrop-filter: blur(8px) saturate(95%);
 }
 

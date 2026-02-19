@@ -11,15 +11,14 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- Theme color – Android / browser UI – media queries as fallback -->
+    <!-- Theme color – Android / browser UI fallback (dynamic one wins) -->
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8fafc" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="#0f172a" />
-    <meta name="theme-color" content="#f8fafc" /> <!-- Fallback -->
 
     <!-- iOS / PWA settings -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" /> <!-- Best for respecting theme-color -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Marketplace" />
 
     <!-- Color scheme support -->
@@ -42,12 +41,12 @@
         }
 
         if (isDark) {
-          document.documentElement.classList.add('dark'); // ← Changed to 'dark'
+          document.documentElement.classList.add('dark');
         }
 
         if (!saved || saved === 'system') {
           window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            document.documentElement.classList.toggle('dark', e.matches); // ← Changed to 'dark'
+            document.documentElement.classList.toggle('dark', e.matches);
           });
         }
       })();
