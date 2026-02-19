@@ -7,7 +7,7 @@
 
 /* ── Compact variables ── */
 :root {
-  --gl-bg: rgba(255, 255, 255, 0.85);
+  --gl-bg: #f8fafc;
   --gl-blur: blur(18px) saturate(170%);
   --gl-border: rgba(226, 232, 240, 0.55);
   --gl-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -17,7 +17,7 @@
 }
 
 .dark {
-  --gl-bg: rgba(30, 41, 59, 0.94);
+  --gl-bg: #0f172a;
   --gl-blur: blur(14px) saturate(130%);
   --gl-border: rgba(51, 65, 85, 0.65);
   --gl-shadow: 0 6px 20px rgba(0, 0, 0, 0.50);

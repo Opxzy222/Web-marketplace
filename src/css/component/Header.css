@@ -8,7 +8,7 @@
 
 /* ── Variables (identical to HeaderGlobal) ── */
 :root {
-  --gl-bg: rgba(255, 255, 255, 0.78);
+  --gl-bg: #f8fafc;
   --gl-blur: blur(24px) saturate(190%);
   --gl-border: rgba(226, 232, 240, 0.45);
   --gl-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
@@ -18,7 +18,7 @@
 }
 
 .dark {
-  --gl-bg: rgba(30, 41, 59, 0.88);
+  --gl-bg: #0f172a;
   --gl-blur: blur(20px) saturate(150%);
   --gl-border: rgba(51, 65, 85, 0.55);
   --gl-shadow: 0 12px 40px rgba(0, 0, 0, 0.48);

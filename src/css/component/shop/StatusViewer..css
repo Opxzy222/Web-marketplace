@@ -1,6 +1,6 @@
-/* StatusViewer.css - Fullscreen WhatsApp Stories Modal */
+/* StatusViewer.stv-css - Fullscreen WhatsApp Stories Modal */
 
-.status-viewer {
+.stv-status-viewer {
   position: fixed;
   top: 0;
   left: 0;
@@ -9,22 +9,22 @@
   z-index: 9999;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease-out;
+  transition: opacity 0.stv-3s ease-out;
 }
 
-.status-viewer.visible {
+.stv-status-viewer.visible {
   opacity: 1;
   pointer-events: all;
 }
 
-.backdrop {
+.stv-backdrop {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(0,0,0,0.3) 0%, black 100%);
+  background: radial-gradient(circle at center, rgba(0,0,0,0.stv-3) 0%, black 100%);
   backdrop-filter: blur(20px);
 }
 
-.viewer-container {
+.stv-viewer-container {
   position: absolute;
   inset: 0;
   display: flex;
@@ -33,7 +33,7 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.header {
+.stv-header {
   position: absolute;
   top: 20px;
   left: 20px;
@@ -45,28 +45,28 @@
   padding: 0 20px;
 }
 
-.shop-info {
+.stv-shop-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.shop-name {
+.stv-shop-name {
   font-size: 18px;
   font-weight: 600;
   color: white;
 }
 
-.created-at {
+.stv-created-at {
   font-size: 14px;
-  opacity: 0.8;
+  opacity: 0.stv-8;
 }
 
-.close-btn {
+.stv-close-btn {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.stv-6);
   border: none;
   color: white;
   font-size: 28px;
@@ -76,15 +76,15 @@
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(10px);
-  transition: all 0.2s ease;
+  transition: all 0.stv-2s ease;
 }
 
-.close-btn:hover {
-  background: rgba(0,0,0,0.8);
-  transform: scale(1.1);
+.stv-close-btn:hover {
+  background: rgba(0,0,0,0.stv-8);
+  transform: scale(1.stv-1);
 }
 
-.progress-container {
+.stv-progress-container {
   position: absolute;
   top: 80px;
   left: 20px;
@@ -95,15 +95,15 @@
   z-index: 10;
 }
 
-.progress-background {
+.stv-progress-background {
   flex: 1;
   height: 3px;
-  background: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.stv-3);
   border-radius: 2px;
   overflow: hidden;
 }
 
-.progress-bar {
+.stv-progress-bar {
   height: 100%;
   background: white;
   border-radius: 2px;
@@ -111,7 +111,7 @@
   will-change: transform;
 }
 
-.content-wrapper {
+.stv-content-wrapper {
   flex: 1;
   display: flex;
   justify-content: center;
@@ -119,19 +119,19 @@
   overflow: hidden;
 }
 
-.media {
+.stv-media {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
 }
 
-.video {
+.stv-video {
   background: black;
 }
 
-.text-status,
-.loading-container,
-.error-container {
+.stv-text-status,
+.stv-loading-container,
+.stv-error-container {
   flex: 1;
   display: flex;
   justify-content: center;
@@ -140,31 +140,31 @@
   padding: 40px;
 }
 
-.text-status p {
+.stv-text-status p {
   font-size: 28px;
   font-weight: 600;
   text-align: center;
-  line-height: 1.4;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+  line-height: 1.stv-4;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.stv-8);
   max-width: 90%;
 }
 
-.spinner {
+.stv-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid rgba(255,255,255,0.3);
+  border: 4px solid rgba(255,255,255,0.stv-3);
   border-top: 4px solid white;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
-.error-container p {
+.stv-error-container p {
   font-size: 18px;
   text-align: center;
-  color: rgba(255,255,255,0.9);
+  color: rgba(255,255,255,0.stv-9);
 }
 
-.caption-container {
+.stv-caption-container {
   position: absolute;
   bottom: 100px;
   left: 20px;
@@ -174,25 +174,25 @@
   justify-content: center;
 }
 
-.caption-bubble {
-  background: rgba(0,0,0,0.7);
+.stv-caption-bubble {
+  background: rgba(0,0,0,0.stv-7);
   backdrop-filter: blur(20px);
   padding: 16px 24px;
   border-radius: 24px;
   max-width: 90%;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.stv-4);
 }
 
-.caption-bubble p {
+.stv-caption-bubble p {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.stv-4;
   text-align: center;
   color: white;
 }
 
-.tap-zone {
+.stv-tap-zone {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -200,24 +200,24 @@
   background: none;
   cursor: pointer;
   z-index: 5;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.stv-2s ease;
 }
 
-.tap-zone:hover {
-  opacity: 0.8;
+.stv-tap-zone:hover {
+  opacity: 0.stv-8;
 }
 
-.tap-zone.left {
+.stv-tap-zone.left {
   left: 0;
   width: 35%;
 }
 
-.tap-zone.center {
+.stv-tap-zone.center {
   left: 35%;
   right: 35%;
 }
 
-.tap-zone.right {
+.stv-tap-zone.right {
   right: 0;
   width: 35%;
 }
@@ -227,22 +227,22 @@
 }
 
 @media (max-width: 768px) {
-  .header {
+  .stv-header {
     left: 16px;
     right: 64px;
   }
   
-  .shop-name {
+  .stv-shop-name {
     font-size: 16px;
   }
   
-  .progress-container {
+  .stv-progress-container {
     top: 70px;
     left: 16px;
     right: 16px;
   }
   
-  .caption-container {
+  .stv-caption-container {
     bottom: 80px;
     left: 16px;
     right: 16px;

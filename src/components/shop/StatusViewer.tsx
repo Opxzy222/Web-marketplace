@@ -354,21 +354,21 @@ const StatusViewer = ({
   return (
     <div className={`status-viewer ${visible ? 'visible' : ''}`}>
       {/* Backdrop */}
-      <div className="backdrop" onClick={onClose} />
+      <div className="stv-backdrop" onClick={onClose} />
       
       {/* Container */}
-      <div className="viewer-container">
+      <div className="stv-viewer-container">
         {/* Header */}
-        <div className="header">
-          <div className="shop-info">
-            <span className="shop-name">{currentStatus.shop?.name ?? "Unknown Shop"}</span>
-            <span className="created-at">{formatRelativeTime(currentStatus.created_at)}</span>
+        <div className="stv-header">
+          <div className="stv-shop-info">
+            <span className="stv-shop-name">{currentStatus.shop?.name ?? "Unknown Shop"}</span>
+            <span className="stv-created-at">{formatRelativeTime(currentStatus.created_at)}</span>
           </div>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <button className="stv-close-btn" onClick={onClose}>×</button>
         </div>
 
         {/* Progress bars */}
-        <div className="progress-container">
+        <div className="stv-progress-container">
           {shopStatuses.map((status, i) => {
             const isCurrent = i === effectiveIndex;
             const isPast = i < effectiveIndex;
@@ -376,9 +376,9 @@ const StatusViewer = ({
             const progress = isCurrent ? progressRef.current : (isPast || (isViewed && !isCurrent)) ? 1 : 0;
 
             return (
-              <div key={status.id} className="progress-background">
+              <div key={status.id} className="stv-progress-background">
                 <div 
-                  className="progress-bar" 
+                  className="stv-progress-bar" 
                   style={{ 
                     transform: `scaleX(${progress})`,
                     background: isCurrent ? 'white' : 'rgba(255,255,255,0.6)'
@@ -390,17 +390,17 @@ const StatusViewer = ({
         </div>
 
         {/* Content */}
-        <div className="content-wrapper">
+        <div className="stv-content-wrapper">
           {isText && statusText ? (
-            <div className="text-status">
+            <div className="stv-text-status">
               <p>{statusText}</p>
             </div>
           ) : isLoading && isVideo ? (
-            <div className="loading-container">
-              <div className="spinner" />
+            <div className="stv-loading-container">
+              <div className="stv-spinner" />
             </div>
           ) : loadError && isVideo ? (
-            <div className="error-container">
+            <div className="stv-error-container">
               <p>{loadError}</p>
             </div>
           ) : hasMedia ? (
@@ -408,7 +408,7 @@ const StatusViewer = ({
               {isVideo ? (
                 <video
                   ref={videoRef}
-                  className="media video"
+                  className="stv-media video"
                   playsInline
                   muted
                   preload="metadata"
@@ -417,7 +417,7 @@ const StatusViewer = ({
               ) : isImage ? (
                 <img 
                   src={currentStatus.media} 
-                  className="media image" 
+                  className="stv-media image" 
                   alt="Status"
                   loading="eager"
                 />
@@ -428,17 +428,17 @@ const StatusViewer = ({
 
         {/* Caption */}
         {hasMedia && statusText && (
-          <div className="caption-container">
-            <div className="caption-bubble">
+          <div className="stv-caption-container">
+            <div className="stv-caption-bubble">
               <p>{statusText}</p>
             </div>
           </div>
         )}
 
         {/* Tap zones */}
-        <button className="tap-zone left" onClick={handlePrev} />
-        <button className="tap-zone center" onClick={togglePause} />
-        <button className="tap-zone right" onClick={() => handleNext(false)} />
+        <button className="stv-tap-zone left" onClick={handlePrev} />
+        <button className="stv-tap-zone center" onClick={togglePause} />
+        <button className="stv-tap-zone right" onClick={() => handleNext(false)} />
       </div>
     </div>
   );
