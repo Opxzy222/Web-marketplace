@@ -34,18 +34,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
 
     // ────────────────────────────────────────────────────────────────
-    // Manage theme-color meta (Android + general browsers)
+    // Manage theme-color meta (Android + general browsers) – dynamic for app mode
     // ────────────────────────────────────────────────────────────────
     // Remove any previously added dynamic theme-color tags
     document
       .querySelectorAll('meta[name="theme-color"][data-dynamic="true"]')
       .forEach((el) => el.remove());
 
-    // Create and append new meta tag with desired color
+    // Create and append new meta tag with color based on isDark
     const meta = document.createElement('meta');
     meta.name = 'theme-color';
-    meta.content = '#1E3A8A';                    // ← your requested color
-    meta.setAttribute('data-dynamic', 'true');   // marker so we can clean up later
+    meta.content = isDark ? '#0f172a' : '#f8fafc';  // ← Dynamic based on mode
+    meta.setAttribute('data-dynamic', 'true');      // Marker so we can clean up later
     document.head.appendChild(meta);
 
     // ────────────────────────────────────────────────────────────────
@@ -61,7 +61,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       document.head.appendChild(appleMeta);
     }
 
-    // Use "default" so iOS respects the #1E3A8A from theme-color
+    // Use "default" so iOS respects the theme-color
     appleMeta.setAttribute('content', 'default');
 
     // Optional: reinforce full-screen PWA capability (helps on iOS)

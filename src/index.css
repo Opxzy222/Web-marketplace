@@ -10,11 +10,11 @@
   --border: #e2e8f0;
   --radius: 0.75rem;
 
-  --header-bg: #f8fafc;     /* very light neutral for light mode (was #eff6ff) */
-  --header-fg: #111827;     /* charcoal gray – high contrast, non-blue */
+  --header-bg: #f8fafc;     /* light mode header + status fallback */
+  --header-fg: #111827;
 }
 
-.ind-html.ind-dark {
+.ind-html.dark { /* ← Changed .ind-dark to .dark */
   --background: #0f172a;
   --foreground: #f8fafc;
   --card: #1e293b;
@@ -24,8 +24,8 @@
   --accent: #3b82f6;
   --border: #334155;
 
-  --header-bg: #0f172a;     /* very dark slate – makes status bar appear solid dark */
-  --header-fg: #f1f5f9;     /* light slate – readable */
+  --header-bg: #0f172a;     /* dark mode header + status fallback */
+  --header-fg: #f1f5f9;
 }
 
 /* Apply base styles */
@@ -41,26 +41,26 @@
   position: relative;
 }
 
-/* Modern status bar overlay – stronger in dark mode */
+/* Visual fallback overlay for status bar area (critical for iOS) */
 .ind-body::before {
   content: '';
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: env(safe-area-inset-top);
+  height: env(safe-area-inset-top, 44px); /* fallback height if env() not supported */
   background-color: var(--header-bg);
-  backdrop-filter: blur(16px) saturate(130%);
-  -webkit-backdrop-filter: blur(16px) saturate(130%);
-  opacity: 0.88;                    /* light mode: subtle glass */
+  backdrop-filter: blur(12px) saturate(110%);
+  -webkit-backdrop-filter: blur(12px) saturate(110%);
+  opacity: 0.94;                    /* light mode: subtle but visible */
   z-index: 9999;
   pointer-events: none;
-  transition: all 0.4s ease;
+  transition: background-color 0.35s ease, opacity 0.35s ease;
 }
 
-.ind-html.ind-dark .ind-body::before {
-  opacity: 0.98;                    /* almost solid in dark mode – looks like native dark bar */
-  backdrop-filter: blur(10px) saturate(100%); /* less saturation = deeper, less washed-out dark */
+.ind-html.dark .ind-body::before { /* ← Changed .ind-dark to .dark */
+  opacity: 0.99;                    /* dark mode: almost solid to match native dark bar */
+  backdrop-filter: blur(8px) saturate(95%);
 }
 
 /* Rest unchanged */

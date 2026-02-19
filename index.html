@@ -11,14 +11,15 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- Theme color – Android status bar / browser UI -->
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+    <!-- Theme color – Android / browser UI – media queries as fallback -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8fafc" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="#0f172a" />
+    <meta name="theme-color" content="#f8fafc" /> <!-- Fallback -->
 
     <!-- iOS / PWA settings -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" /> <!-- Best for respecting theme-color -->
     <meta name="apple-mobile-web-app-title" content="Marketplace" />
 
     <!-- Color scheme support -->
@@ -27,7 +28,6 @@
     <!-- Prevent FOUC – apply dark class synchronously before paint -->
     <script>
       (function() {
-        // Read saved preference or system preference
         const saved = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -38,19 +38,16 @@
         } else if (saved === 'light') {
           isDark = false;
         } else {
-          // 'system' or no saved value → follow system
           isDark = prefersDark;
         }
 
-        // Apply class immediately (before body/content loads)
         if (isDark) {
-          document.documentElement.classList.add('ind-dark');
+          document.documentElement.classList.add('dark'); // ← Changed to 'dark'
         }
 
-        // Optional: listen for system changes (only if following system)
         if (!saved || saved === 'system') {
           window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            document.documentElement.classList.toggle('ind-dark', e.matches);
+            document.documentElement.classList.toggle('dark', e.matches); // ← Changed to 'dark'
           });
         }
       })();
