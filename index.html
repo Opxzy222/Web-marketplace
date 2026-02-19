@@ -8,12 +8,14 @@
     <title>marketplace</title>
     <!-- PWA manifest – required for installability + Android theme color -->
     <link rel="manifest" href="/manifest.json" />
-    <!-- Theme color – controls status bar (Android), address bar, and iOS when respected -->
-    <meta name="theme-color" content="#1E3A8A" />
+    <!-- Theme color – controls status bar (Android), address bar; fallback for light mode -->
+    <meta name="theme-color" content="#ffffff" />
+    <!-- Dark mode theme color fallback -->
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
     <!-- Modern standard for full-screen PWA mode -->
     <meta name="mobile-web-app-capable" content="yes" />
-    <!-- iOS status bar style – "default" allows #1E3A8A to show through -->
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <!-- iOS status bar style – "black-translucent" for blending with header color (modern approach) -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <!-- Tells browsers we support both light and dark modes -->
     <meta name="color-scheme" content="light dark" />
     <!-- Prevent FOUC – synchronously apply dark mode class before paint -->

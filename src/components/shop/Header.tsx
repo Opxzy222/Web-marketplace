@@ -38,7 +38,6 @@ const Header: React.FC = () => {
           <h1 className="greeting-main">
             {greeting}, <span className="user-name">{firstName}</span>
           </h1>
-          <p className="greeting-sub">{greeting}</p>
         </div>
 
         <motion.button

@@ -1,66 +1,57 @@
 /* src/css/component/Header.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+/* ── Modern Variables ── */
 :root {
-  --header-bg-start: #3a7bd5;
-  --header-bg-end:   #3a6073;
-  --text-main:       #ffffff;
-  --text-sub:        rgba(255, 255, 255, 0.88);
-  --avatar-bg:       rgba(255, 255, 255, 0.20);
-  --avatar-text:     #ffffff;
-  --shadow:          0 6px 20px rgba(0, 0, 0, 0.22);
+  --header-bg: rgba(255, 255, 255, 0.78);          /* glass white */
+  --header-blur: blur(24px) saturate(190%);
+  --header-border: rgba(226, 232, 240, 0.45);
+  --header-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
+  --header-text: #0f172a;                          /* main greeting – deep slate, perfect */
+  --header-accent: #111827;                        /* charcoal gray – non-blue, max readability on light glass */
+  --header-radius: 24px;
 }
 
 .dark {
-  --header-bg-start: #1e3a8a;
-  --header-bg-end:   #0f172a;
-  --text-main:       #f1f5f9;
-  --text-sub:        rgba(241, 245, 249, 0.88);
-  --avatar-bg:       rgba(96, 165, 250, 0.28);
-  --avatar-text:     #e2e8f0;
-  --shadow:          0 8px 24px rgba(0, 0, 0, 0.50);
+  --header-bg: rgba(30, 41, 59, 0.88);
+  --header-blur: blur(20px) saturate(150%);
+  --header-border: rgba(51, 65, 85, 0.55);
+  --header-shadow: 0 12px 40px rgba(0, 0, 0, 0.48);
+  --header-text: #f1f5f9;
+  --header-accent: #e2e8f0;                        /* light gray – non-blue, bright & readable on dark glass */
+  --header-radius: 24px;
 }
 
+/* Header wrapper – extends to cover status bar */
 .shop-header {
   position: sticky;
   top: 0;
   z-index: 1000;
   width: 100%;
-  border: none;
-
-  /* REMOVE background from here — no color, no gradient here */
-  /* background: ... */   
-  background: linear-gradient(
-    180deg,
-    var(--bg-gradient-start) 0%,
-    color-mix(in srgb, var(--bg-gradient-start) 70%, var(--bg-gradient-end) 30%) 50%,
-    var(--bg-gradient-end) 100%
-  );
-  
-  overflow: hidden;          /* still good to have */
+  padding-top: env(safe-area-inset-top);
+  margin-top: calc(-1 * env(safe-area-inset-top));
+  background: transparent;
 }
 
-/* The rounded element gets the color/gradient */
+/* Inner – glass effect + moderate curve */
 .header-inner {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 1.1rem 1.5rem;
+  padding: calc(1.1rem + env(safe-area-inset-top)) 1.5rem 1.1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  border-bottom-left-radius: 40px;
-  border-bottom-right-radius: 40px;
-
-  /* Put your real gradient here (not inherit) */
-  background: #1E3A8A;
-
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: var(--header-bg);
+  backdrop-filter: var(--header-blur);
+  -webkit-backdrop-filter: var(--header-blur);
+  border-bottom: 1px solid var(--header-border);
+  box-shadow: var(--header-shadow);
+  border-bottom-left-radius: var(--header-radius);
+  border-bottom-right-radius: var(--header-radius);
+  transition: all 0.3s ease;
 }
-/* ── Greeting ──────────────────────────────────────── */
 
+/* Greeting */
 .greeting-section {
   display: flex;
   flex-direction: column;
@@ -71,24 +62,24 @@
   margin: 0;
   font-size: 1.65rem;
   font-weight: 700;
-  color: var(--text-main);
+  color: var(--header-text);
   letter-spacing: -0.02em;
 }
 
 .user-name {
-  font-weight: 600;
-  opacity: 0.98;
+  color: var(--header-accent);
+  font-weight: 700;               /* bold emphasis */
+  opacity: 1;
+  letter-spacing: -0.01em;        /* subtle tightness for modern feel */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.10); /* stronger lift on glass */
+  transition: all 0.2s ease;
 }
 
-.greeting-sub {
-  margin: 0;
-  font-size: 0.98rem;
-  font-weight: 500;
-  color: var(--text-sub);
+.header-inner:hover .user-name {
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.15); /* pop on hover */
 }
 
-/* ── Avatar ────────────────────────────────────────── */
-
+/* Avatar – glass style */
 .avatar-btn {
   background: none;
   border: none;
@@ -101,68 +92,53 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: var(--avatar-bg);
-  color: var(--avatar-text);
+  background: rgba(255, 255, 255, 0.20);
+  color: var(--header-text);
   font-weight: 700;
   font-size: 1.3rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.avatar-btn:hover .avatar {
+.dark .avatar {
+  background: rgba(241, 245, 249, 0.16);
+  border: 1px solid rgba(241, 245, 249, 0.10);
+}
+
+.avatar-btn:hover .avatar,
+.avatar-btn:focus-visible .avatar {
   transform: scale(1.08);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-/* ── Responsive ────────────────────────────────────── */
-
+/* Responsive */
 @media (max-width: 768px) {
   .header-inner {
-    padding: 1rem 1.25rem;
-    border-bottom-left-radius: 32px;
-    border-bottom-right-radius: 32px;
+    padding: calc(1rem + env(safe-area-inset-top)) 1.25rem 1rem;
+    --header-radius: 20px;
   }
-
-  .greeting-main {
-    font-size: 1.5rem;
-  }
-
-  .greeting-sub {
-    font-size: 0.94rem;
-  }
-
-  .avatar {
-    width: 44px;
-    height: 44px;
-    font-size: 1.18rem;
-  }
+  .greeting-main { font-size: 1.5rem; }
+  .avatar { width: 44px; height: 44px; font-size: 1.18rem; }
 }
 
 @media (max-width: 480px) {
   .header-inner {
-    padding: 0.9rem 1rem;
-    border-bottom-left-radius: 28px;
-    border-bottom-right-radius: 28px;
+    padding: calc(0.9rem + env(safe-area-inset-top)) 1rem 0.9rem;
+    --header-radius: 16px;
   }
-
-  .greeting-main {
-    font-size: 1.38rem;
-  }
-
-  .avatar {
-    width: 40px;
-    height: 40px;
-    font-size: 1.1rem;
-  }
+  .greeting-main { font-size: 1.38rem; }
+  .avatar { width: 40px; height: 40px; font-size: 1.1rem; }
 }
 
-/* Respect reduced motion */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .avatar-btn .avatar,
-  .avatar-btn:hover .avatar {
+  .avatar-btn:hover .avatar,
+  .avatar-btn:focus-visible .avatar {
     transition: none;
     transform: none;
   }

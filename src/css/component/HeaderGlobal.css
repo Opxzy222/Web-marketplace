@@ -1,84 +1,73 @@
 /* =============================================
-   HeaderGlobal – advanced glassmorphism + gradient 2026 style
-   With curved bottom effect – original colors preserved
+   HeaderGlobal – modern glassmorphism 2026 style
+   Matches shop header: semi-transparent blur, moderate curve, high readability
    ============================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+/* ── Modern Variables (aligned with shop header) ── */
 :root {
-  /* Light mode – sophisticated soft blue-purple gradient */
-  --gl-bg-start:        #5b7fff;
-  --gl-bg-end:          #3b5998;
-  --gl-text:            #ffffff;
-  --gl-text-shadow:     0 1.5px 4px rgba(0,0,0,0.35);
-  --gl-hover-bg:        rgba(255,255,255,0.16);
-  --gl-border:          rgba(255,255,255,0.18);
-  --gl-shadow-base:     0 8px 32px rgba(0,0,0,0.20);
-  --gl-shadow-scrolled: 0 14px 48px rgba(0,0,0,0.28);
-  --gl-blur:            12px;
-  --gl-saturate:        1.18;
+  --gl-bg: rgba(255, 255, 255, 0.78);              /* light glass white */
+  --gl-blur: blur(24px) saturate(190%);
+  --gl-border: rgba(226, 232, 240, 0.45);
+  --gl-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
+  --gl-text: #111827;                              /* charcoal gray – non-blue, max contrast on light glass */
+  --gl-hover-bg: rgba(255, 255, 255, 0.20);
+  --gl-radius: 24px;                               /* moderate curve */
 }
 
 .dark {
-  /* Dark mode – deep, cinematic navy → black gradient */
-  --gl-bg-start:        #1e3a8a;
-  --gl-bg-end:          #0f172a;
-  --gl-text:            #f1f5f9;
-  --gl-text-shadow:     0 1.5px 4px rgba(0,0,0,0.55);
-  --gl-hover-bg:        rgba(241,245,249,0.11);
-  --gl-border:          rgba(241,245,249,0.14);
-  --gl-shadow-base:     0 10px 40px rgba(0,0,0,0.55);
-  --gl-shadow-scrolled: 0 16px 60px rgba(0,0,0,0.70);
-  --gl-blur:            16px;
-  --gl-saturate:        1.30;
+  --gl-bg: rgba(30, 41, 59, 0.88);                 /* dark slate glass */
+  --gl-blur: blur(20px) saturate(150%);
+  --gl-border: rgba(51, 65, 85, 0.55);
+  --gl-shadow: 0 12px 40px rgba(0, 0, 0, 0.48);
+  --gl-text: #f1f5f9;                              /* light slate – readable */
+  --gl-hover-bg: rgba(241, 245, 249, 0.16);
+  --gl-radius: 24px;
 }
 
+/* Header wrapper – extends to cover status bar (same as shop header) */
 .gl-header {
   position: sticky;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
+  padding-top: env(safe-area-inset-top);
+  margin-top: calc(-1 * env(safe-area-inset-top));
   background: transparent;
-  
-
-  /* Outer container has NO background → allows curve to be visible */
   overflow: hidden;
-  box-shadow: var(--gl-shadow-base);
+  box-shadow: var(--gl-shadow);
   border-bottom: 1px solid var(--gl-border);
-
   color: var(--gl-text);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease;
 }
 
 .gl-header.scrolled {
-  box-shadow: var(--gl-shadow-scrolled);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);     /* deeper on scroll – light/dark adjusted via var */
 }
 
-/* Inner wrapper carries gradient + blur + curve */
+/* Inner wrapper – carries glass + curve */
 .gl-header-inner {
-  background: #1E3A8A;
-  backdrop-filter: blur(var(--gl-blur)) saturate(var(--gl-saturate));
-  -webkit-backdrop-filter: blur(var(--gl-blur)) saturate(var(--gl-saturate));
+  background: var(--gl-bg);
+  backdrop-filter: var(--gl-blur);
+  -webkit-backdrop-filter: var(--gl-blur);
+  border-bottom: 1px solid var(--gl-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);     /* subtle under-curve depth */
 
-  /* Curved bottom – adjust radius to taste */
-  border-bottom-left-radius: 36px;
-  border-bottom-right-radius: 36px;
+  border-bottom-left-radius: var(--gl-radius);
+  border-bottom-right-radius: var(--gl-radius);
 
-  /* Extra shadow under the curve for depth */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-
-  /* Layout */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: env(safe-area-inset-top, 0) 1.375rem env(safe-area-inset-bottom, 0) 1.375rem;
+  padding: 1rem 1.375rem;                          /* content pad – safe-area handled by wrapper */
   min-height: 4rem;
+  transition: all 0.3s ease;
 }
 
-/* Back button */
+/* Left: Back button */
 .gl-header-left {
   flex: 0 0 auto;
 }
@@ -99,11 +88,11 @@
 .gl-back-btn:hover,
 .gl-back-btn:focus-visible {
   background: var(--gl-hover-bg);
-  transform: scale(1.16) translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  transform: scale(1.12) translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* Title – centered, readable on gradient */
+/* Title – centered, high contrast */
 .gl-header-title {
   margin: 0;
   font-size: 1.3rem;
@@ -112,14 +101,14 @@
   text-align: center;
   flex: 1 1 auto;
   color: var(--gl-text);
-  text-shadow: var(--gl-text-shadow);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);      /* subtle lift on glass */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 1.25rem;
 }
 
-/* Right side */
+/* Right side (ThemeToggle etc.) */
 .gl-header-right {
   flex: 0 0 auto;
   display: flex;
@@ -127,16 +116,12 @@
   gap: 1.125rem;
 }
 
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 640px) {
   .gl-header-inner {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    min-height: 3.75rem;
-    border-bottom-left-radius: 28px;
-    border-bottom-right-radius: 28px;
+    padding: 0.9rem 1rem;
+    --gl-radius: 20px;
   }
-
   .gl-header-title {
     font-size: 1.2rem;
   }
@@ -144,22 +129,18 @@
 
 @media (max-width: 480px) {
   .gl-header-inner {
-    border-bottom-left-radius: 24px;
-    border-bottom-right-radius: 24px;
+    --gl-radius: 16px;
   }
-
   .gl-header-title {
     font-size: 1.125rem;
     padding: 0 0.875rem;
   }
-
   .gl-back-btn {
     padding: 0.625rem;
   }
 }
 
-
-/* Respect reduced motion */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .gl-back-btn,
   .gl-back-btn:hover {
@@ -168,38 +149,42 @@
   }
 }
 
-
+/* ── Shop ID / other extras (updated to match glass style) ── */
 .shop-id-container {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--bg-shop-id);
+  background: rgba(255, 255, 255, 0.18);           /* glass match */
   padding: 8px 14px;
   border-radius: 14px;
-  border: 1px solid var(--border-shop-id);
+  border: 1px solid var(--gl-border);
   backdrop-filter: blur(10px);
-  position: relative;
   transition: all 0.2s ease;
 }
 
+.dark .shop-id-container {
+  background: rgba(241, 245, 249, 0.14);
+}
+
 .shop-id-container:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.22);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
 .shop-id-label {
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-label);
+  color: var(--gl-text);
   text-transform: uppercase;
   letter-spacing: 0.6px;
+  opacity: 0.85;
 }
 
 .shop-id-value {
   font-size: 15px;
   font-weight: 700;
-  color: var(--text-value);
+  color: var(--gl-text);
   letter-spacing: 0.4px;
   max-width: 120px;
   overflow: hidden;
@@ -218,13 +203,19 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: var(--accent-copy);
+  color: var(--gl-text);
+}
+
+.dark .shop-id-copy-btn {
+  background: rgba(241, 245, 249, 0.10);
 }
 
 .shop-id-copy-btn:hover {
   background: rgba(255, 255, 255, 0.22);
   transform: scale(1.1);
 }
+
+/* ... rest of your .copy-feedback, .empty-right-placeholder etc. can stay as-is or inherit vars ... */
 
 .shop-id-copy-btn.copied {
   background: rgba(34, 197, 94, 0.25);
