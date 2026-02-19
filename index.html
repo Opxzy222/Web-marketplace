@@ -2,42 +2,61 @@
 <html lang="en" class="ind-html">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <!-- Optimized viewport for mobile & PWA behavior -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no" />
-    <title>marketplace</title>
-    <!-- PWA manifest – required for installability + Android theme color -->
+
+    <title>Marketplace</title>
+
+    <!-- Favicon & PWA icons -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
-    <!-- Theme color – controls status bar (Android), address bar; fallback for light mode -->
-    <meta name="theme-color" content="#ffffff" />
-    <!-- Dark mode theme color fallback -->
+
+    <!-- Theme color – Android status bar / browser UI -->
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
-    <!-- Modern standard for full-screen PWA mode -->
+
+    <!-- iOS / PWA settings -->
     <meta name="mobile-web-app-capable" content="yes" />
-    <!-- iOS status bar style – "black-translucent" for blending with header color (modern approach) -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <!-- Tells browsers we support both light and dark modes -->
+    <meta name="apple-mobile-web-app-title" content="Marketplace" />
+
+    <!-- Color scheme support -->
     <meta name="color-scheme" content="light dark" />
-    <!-- Prevent FOUC – synchronously apply dark mode class before paint -->
+
+    <!-- Prevent FOUC – apply dark class synchronously before paint -->
     <script>
       (function() {
+        // Read saved preference or system preference
         const saved = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
         let isDark = false;
+
         if (saved === 'dark') {
           isDark = true;
         } else if (saved === 'light') {
           isDark = false;
         } else {
-          // 'system' or unset → follow system preference
+          // 'system' or no saved value → follow system
           isDark = prefersDark;
         }
+
+        // Apply class immediately (before body/content loads)
         if (isDark) {
           document.documentElement.classList.add('ind-dark');
+        }
+
+        // Optional: listen for system changes (only if following system)
+        if (!saved || saved === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            document.documentElement.classList.toggle('ind-dark', e.matches);
+          });
         }
       })();
     </script>
   </head>
+
   <body class="ind-body">
     <div id="root" class="ind-root"></div>
     <script type="module" src="/src/main.tsx"></script>

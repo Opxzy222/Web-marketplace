@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
-import '../../css/component/Header.css';
+import '../../css/component/Header.css';   // ← we'll use a new or merged file
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -13,27 +13,20 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const storedName = localStorage.getItem('user_name');
-    if (storedName) {
-      setUserName(storedName);
-    }
+    if (storedName) setUserName(storedName);
 
     const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) {
-      setGreeting('Good Morning');
-    } else if (hour >= 12 && hour < 17) {
-      setGreeting('Good Afternoon');
-    } else if (hour >= 17 && hour < 22) {
-      setGreeting('Good Evening');
-    } else {
-      setGreeting('Hello');
-    }
+    if (hour >= 5 && hour < 12)        setGreeting('Good Morning');
+    else if (hour >= 12 && hour < 17)  setGreeting('Good Afternoon');
+    else if (hour >= 17 && hour < 22)  setGreeting('Good Evening');
+    else                               setGreeting('Hello');
   }, []);
 
   const firstName = userName ? userName.split(' ')[0] : 'User';
 
   return (
     <header className="shop-header">
-      <div className="header-inner">
+      <div className="shop-header-inner">
         <div className="greeting-section">
           <h1 className="greeting-main">
             {greeting}, <span className="user-name">{firstName}</span>

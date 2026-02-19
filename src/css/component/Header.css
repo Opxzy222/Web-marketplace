@@ -1,144 +1,155 @@
-/* src/css/component/Header.css */
+/* =============================================
+   Shop Header – glassmorphism 2026 style
+   Matches HeaderGlobal exactly (blur, curve, light/dark)
+   ============================================= */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* ── Modern Variables ── */
+/* ── Variables (identical to HeaderGlobal) ── */
 :root {
-  --header-bg: rgba(255, 255, 255, 0.78);          /* glass white */
-  --header-blur: blur(24px) saturate(190%);
-  --header-border: rgba(226, 232, 240, 0.45);
-  --header-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
-  --header-text: #0f172a;                          /* main greeting – deep slate, perfect */
-  --header-accent: #111827;                        /* charcoal gray – non-blue, max readability on light glass */
-  --header-radius: 24px;
+  --gl-bg: rgba(255, 255, 255, 0.78);
+  --gl-blur: blur(24px) saturate(190%);
+  --gl-border: rgba(226, 232, 240, 0.45);
+  --gl-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
+  --gl-text: #111827;
+  --gl-hover-bg: rgba(255, 255, 255, 0.20);
+  --gl-radius: 24px;
 }
 
 .dark {
-  --header-bg: rgba(30, 41, 59, 0.88);
-  --header-blur: blur(20px) saturate(150%);
-  --header-border: rgba(51, 65, 85, 0.55);
-  --header-shadow: 0 12px 40px rgba(0, 0, 0, 0.48);
-  --header-text: #f1f5f9;
-  --header-accent: #e2e8f0;                        /* light gray – non-blue, bright & readable on dark glass */
-  --header-radius: 24px;
+  --gl-bg: rgba(30, 41, 59, 0.88);
+  --gl-blur: blur(20px) saturate(150%);
+  --gl-border: rgba(51, 65, 85, 0.55);
+  --gl-shadow: 0 12px 40px rgba(0, 0, 0, 0.48);
+  --gl-text: #f1f5f9;
+  --gl-hover-bg: rgba(241, 245, 249, 0.16);
+  --gl-radius: 24px;
 }
 
-/* Header wrapper – extends to cover status bar */
+/* Header wrapper – full-width, sticky, safe-area */
 .shop-header {
   position: sticky;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
-  width: 100%;
   padding-top: env(safe-area-inset-top);
   margin-top: calc(-1 * env(safe-area-inset-top));
   background: transparent;
-}
-
-/* Inner – glass effect + moderate curve */
-.header-inner {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: calc(1.1rem + env(safe-area-inset-top)) 1.5rem 1.1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--header-bg);
-  backdrop-filter: var(--header-blur);
-  -webkit-backdrop-filter: var(--header-blur);
-  border-bottom: 1px solid var(--header-border);
-  box-shadow: var(--header-shadow);
-  border-bottom-left-radius: var(--header-radius);
-  border-bottom-right-radius: var(--header-radius);
+  overflow: hidden;
+  box-shadow: var(--gl-shadow);
+  border-bottom: 1px solid var(--gl-border);
+  color: var(--gl-text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   transition: all 0.3s ease;
 }
 
-/* Greeting */
-.greeting-section {
+/* Inner glass + curve container */
+.shop-header-inner {
+  background: var(--gl-bg);
+  backdrop-filter: var(--gl-blur);
+  -webkit-backdrop-filter: var(--gl-blur);
+  border-bottom: 1px solid var(--gl-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
+
+  border-bottom-left-radius: var(--gl-radius);
+  border-bottom-right-radius: var(--gl-radius);
+
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.375rem;
+  min-height: 4.5rem;           /* slightly taller to feel welcoming */
+  transition: all 0.3s ease;
+}
+
+/* Greeting area */
+.greeting-section {
+  flex: 1 1 auto;
 }
 
 .greeting-main {
   margin: 0;
-  font-size: 1.65rem;
-  font-weight: 700;
-  color: var(--header-text);
-  letter-spacing: -0.02em;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--gl-text);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .user-name {
-  color: var(--header-accent);
-  font-weight: 700;               /* bold emphasis */
-  opacity: 1;
-  letter-spacing: -0.01em;        /* subtle tightness for modern feel */
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.10); /* stronger lift on glass */
-  transition: all 0.2s ease;
+  font-weight: 700;
+  color: var(--gl-text);
 }
 
-.header-inner:hover .user-name {
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.15); /* pop on hover */
-}
-
-/* Avatar – glass style */
+/* Avatar button */
 .avatar-btn {
   background: none;
   border: none;
-  padding: 0;
+  padding: 0.5rem;
+  border-radius: 9999px;
   cursor: pointer;
-  border-radius: 50%;
-}
-
-.avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.20);
-  color: var(--header-text);
-  font-weight: 700;
-  font-size: 1.3rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  transition: all 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.28s ease;
 }
 
-.dark .avatar {
-  background: rgba(241, 245, 249, 0.16);
-  border: 1px solid rgba(241, 245, 249, 0.10);
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #6366f1, #a855f7); /* vibrant fallback */
+  color: white;
+  font-weight: 700;
+  font-size: 1.125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  transition: all 0.28s ease;
 }
 
 .avatar-btn:hover .avatar,
 .avatar-btn:focus-visible .avatar {
-  transform: scale(1.08);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transform: scale(1.14) translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .header-inner {
-    padding: calc(1rem + env(safe-area-inset-top)) 1.25rem 1rem;
-    --header-radius: 20px;
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .shop-header-inner {
+    padding: 0.9rem 1rem;
+    --gl-radius: 20px;
   }
-  .greeting-main { font-size: 1.5rem; }
-  .avatar { width: 44px; height: 44px; font-size: 1.18rem; }
+  .greeting-main {
+    font-size: 1.25rem;
+  }
+  .avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 480px) {
-  .header-inner {
-    padding: calc(0.9rem + env(safe-area-inset-top)) 1rem 0.9rem;
-    --header-radius: 16px;
+  .shop-header-inner {
+    --gl-radius: 16px;
   }
-  .greeting-main { font-size: 1.38rem; }
-  .avatar { width: 40px; height: 40px; font-size: 1.1rem; }
+  .greeting-main {
+    font-size: 1.125rem;
+  }
 }
 
-/* Reduced motion */
+/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .avatar-btn .avatar,
+  .avatar-btn,
   .avatar-btn:hover .avatar,
-  .avatar-btn:focus-visible .avatar {
+  .avatar {
     transition: none;
     transform: none;
   }

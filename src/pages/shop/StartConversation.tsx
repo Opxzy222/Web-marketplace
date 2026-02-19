@@ -9,7 +9,6 @@ import {
   Video,
   FileText,
   Menu,
-  Check,
   CheckCheck,
   Loader2,
   AlertCircle,
@@ -25,41 +24,31 @@ const StartConversation = () => {
   const location = useLocation();
   const { shopId: rawShopId, name } = location.state || {};
 
-  // Normalize shopId early
   const shopId = rawShopId ? String(rawShopId) : null;
 
-  const [userId, setUserId]         = useState(null);
-  const [sessionId, setSessionId]   = useState(null);
-  const [conversationId, setConversationId] = useState(null);
-  const [messages, setMessages]     = useState([]);
+  const [userId, setUserId] = useState<number | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<any[]>([]);
   const [inputMessage, setInputMessage] = useState('');
-  const [loading, setLoading]       = useState(true);
+  const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [menuVisible, setMenuVisible] = useState(false);   // ← this line was missing!
+  const [menuVisible, setMenuVisible] = useState(false);
 
-  const messagesEndRef     = useRef(null);
-  const wsRef              = useRef(null);
-  const receivedMessagesRef = useRef(new Set());
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const wsRef = useRef<WebSocket | null>(null);
+  const receivedMessagesRef = useRef(new Set<number>());
 
   // ────────────────────────────────────────────────
-  // 1. Load auth & initial conversation data
+  // Initial load & auth
   // ────────────────────────────────────────────────
   useEffect(() => {
     if (!shopId || shopId === 'undefined' || shopId === 'null') {
-      console.error('Invalid or missing shopId in navigation state', { rawShopId, locationState: location.state });
       setErrorMessage('Cannot start chat: shop information is missing.');
       setLoading(false);
       return;
     }
-
-    console.log('Chat started with:', {
-      shopId,
-      shopIdType: typeof shopId,
-      name,
-      userIdFromStorage: localStorage.getItem('user_id'),
-      tokenExists: !!localStorage.getItem('sessionToken'),
-    });
 
     const loadInitialData = async () => {
       setLoading(true);
@@ -67,7 +56,7 @@ const StartConversation = () => {
       setErrorMessage('');
 
       try {
-        const token   = localStorage.getItem('sessionToken');
+        const token = localStorage.getItem('sessionToken');
         const userStr = localStorage.getItem('user_id');
 
         if (!token || !userStr) {
@@ -76,44 +65,37 @@ const StartConversation = () => {
         }
 
         const uid = parseInt(userStr, 10);
-        if (isNaN(uid)) throw new Error('Invalid user id in storage');
+        if (isNaN(uid)) throw new Error('Invalid user id');
 
         setUserId(uid);
         setSessionId(token);
 
-        // Try cache first
+        // Cache check
         const convCacheKey = `conversation_${shopId}`;
-        const cachedConv   = localStorage.getItem(convCacheKey);
+        const cachedConv = localStorage.getItem(convCacheKey);
 
-        let convId = null;
         if (cachedConv) {
-          try {
-            const { id, timestamp } = JSON.parse(cachedConv);
-            if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
-              convId = String(id);
-              setConversationId(convId);
+          const { id, timestamp } = JSON.parse(cachedConv);
+          if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
+            const convId = String(id);
+            setConversationId(convId);
 
-              const msgCacheKey = `messages_${convId}`;
-              const cachedMsgs = localStorage.getItem(msgCacheKey);
-              if (cachedMsgs) {
-                const parsed = JSON.parse(cachedMsgs);
-                setMessages(parsed);
-                parsed.forEach(m => {
-                  if (m.id) receivedMessagesRef.current.add(Number(m.id));
-                });
-              }
-            } else {
-              localStorage.removeItem(convCacheKey);
+            const msgCacheKey = `messages_${convId}`;
+            const cachedMsgs = localStorage.getItem(msgCacheKey);
+            if (cachedMsgs) {
+              const parsed = JSON.parse(cachedMsgs);
+              setMessages(parsed);
+              parsed.forEach((m: any) => {
+                if (m.id) receivedMessagesRef.current.add(Number(m.id));
+              });
             }
-          } catch (e) {
-            console.warn('Invalid conversation cache format', e);
+          } else {
             localStorage.removeItem(convCacheKey);
           }
         }
 
-        // Fetch fresh data
         await fetchMessages(token, uid);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Initial load failed:', err);
         setFetchError(true);
         setErrorMessage(err.response?.data?.error || 'Failed to load conversation');
@@ -125,27 +107,21 @@ const StartConversation = () => {
     loadInitialData();
 
     return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
+      if (wsRef.current) wsRef.current.close();
     };
-  }, [shopId, navigate, location.state]);
+  }, [shopId, navigate]);
 
   // ────────────────────────────────────────────────
-  // Fetch messages (HTTP fallback / conversation start)
+  // Fetch messages (initial or retry)
   // ────────────────────────────────────────────────
-  const fetchMessages = async (token, uid) => {
+  const fetchMessages = async (token: string, uid: number) => {
     try {
-      const url = `https://retail-alvinia-goza-f6a0e4f7.koyeb.app/messages/?user_id=${uid}&shop_id=${shopId}`;
-      console.log('Fetching messages from:', url);
-
-      const res = await axios.get(url, {
-        headers: { Authorization: token },
-      });
+      const res = await axios.get(
+        `https://retail-alvinia-goza-f6a0e4f7.koyeb.app/messages/?user_id=${uid}&shop_id=${shopId}`,
+        { headers: { Authorization: token } }
+      );
 
       const data = res.data;
-      console.log('Fetch messages response:', data);
-
       const newConvId = String(data.conversation_id);
 
       if (newConvId && newConvId !== 'null' && newConvId !== 'undefined') {
@@ -155,7 +131,7 @@ const StartConversation = () => {
           timestamp: Date.now(),
         }));
 
-        const normalized = (data.messages || []).map(msg => ({
+        const normalized = (data.messages || []).map((msg: any) => ({
           ...msg,
           id: Number(msg.id || msg.message_id),
           sender_id: msg.sender_id || msg.sender_user_id || msg.senderid,
@@ -167,132 +143,104 @@ const StartConversation = () => {
         setMessages(normalized);
         localStorage.setItem(`messages_${newConvId}`, JSON.stringify(normalized));
 
-        normalized.forEach(m => {
+        normalized.forEach((m: any) => {
           if (m.id) receivedMessagesRef.current.add(Number(m.id));
         });
-      } else {
-        console.warn('No valid conversation_id returned from server');
       }
-    } catch (err) {
-      console.error('Fetch messages failed:', {
-        status: err.response?.status,
-        data: err.response?.data,
-        message: err.message,
-        url: err.config?.url,
-      });
+    } catch (err: any) {
+      console.error('Fetch messages failed:', err);
       setFetchError(true);
       setErrorMessage(err.response?.data?.error || 'Could not load messages');
     }
   };
 
   // ────────────────────────────────────────────────
-  // WebSocket connection
+  // WebSocket
   // ────────────────────────────────────────────────
   useEffect(() => {
-    if (!conversationId || conversationId === 'undefined' || conversationId === 'null' || !/^\d+$/.test(conversationId) || !userId || !sessionId) {
-      console.log('Skipping WebSocket connect - invalid ID or missing data:', { conversationId, userId, sessionId });
-      return;
-    }
+    if (!conversationId || !/^\d+$/.test(conversationId) || !userId || !sessionId) return;
 
-    const connectWebSocket = () => {
-      const url = `wss://retail-alvinia-goza-f6a0e4f7.koyeb.app/ws/chat/${conversationId}?user_id=${userId}`;
-      console.log('Connecting WebSocket:', url);
+    const url = `wss://retail-alvinia-goza-f6a0e4f7.koyeb.app/ws/chat/${conversationId}?user_id=${userId}`;
 
+    const connect = () => {
       wsRef.current = new WebSocket(url);
 
-      wsRef.current.onopen = () => {
-        console.log('WebSocket connected successfully');
-      };
+      wsRef.current.onopen = () => console.log('WS connected');
 
       wsRef.current.onmessage = (event) => {
-        let data;
         try {
-          data = JSON.parse(event.data);
-        } catch (e) {
-          console.warn('Invalid WebSocket message format', event.data);
-          return;
-        }
+          const data = JSON.parse(event.data);
+          const now = Date.now();
+          const msgTime = new Date(data.timestamp || now).getTime();
+          if (now - msgTime > CACHE_EXPIRATION_MS) return;
 
-        const now = Date.now();
-        const msgTime = new Date(data.timestamp || Date.now()).getTime();
-        if (now - msgTime > CACHE_EXPIRATION_MS) return;
+          setMessages((prev) => {
+            let updated = [...prev];
 
-        setMessages(prev => {
-          let updated = [...prev];
-
-          if (data.type === 'read_update' && data.message_ids) {
-            const ids = data.message_ids.map(Number).filter(Boolean);
-            updated = updated.map(m => {
-              if (ids.includes(m.id) && !m.read) {
-                return { ...m, read: true };
-              }
-              return m;
-            });
-          } else {
-            const msgId   = Number(data.message_id || data.id);
-            const tempId  = data.temp_id;
-            const isOwn   = Number(data.sender_id || data.sender_user_id) === userId;
-
-            if (receivedMessagesRef.current.has(msgId)) return prev;
-            if (tempId && receivedMessagesRef.current.has(tempId)) return prev;
-
-            receivedMessagesRef.current.add(msgId);
-            if (tempId) receivedMessagesRef.current.add(tempId);
-
-            const normalized = {
-              id: msgId,
-              temp_id: tempId,
-              sender_id: data.sender_id || data.sender_user_id,
-              content: data.content || data.message || null,
-              timestamp: data.timestamp || new Date().toISOString(),
-              type: data.type || 'text',
-              pending: false,
-              read: !!data.read,
-            };
-
-            const existingIdx = updated.findIndex(m =>
-              m.temp_id === tempId ||
-              (isOwn && m.content === normalized.content && m.pending)
-            );
-
-            if (existingIdx !== -1) {
-              updated[existingIdx] = {
-                ...updated[existingIdx],
-                ...normalized,
-                pending: false,
-                id: msgId,
-              };
+            if (data.type === 'read_update' && data.message_ids) {
+              const ids = data.message_ids.map(Number).filter(Boolean);
+              updated = updated.map((m) =>
+                ids.includes(m.id) && !m.read ? { ...m, read: true } : m
+              );
             } else {
-              updated.push(normalized);
+              const msgId = Number(data.message_id || data.id);
+              const tempId = data.temp_id;
+              const isOwn = Number(data.sender_id || data.sender_user_id) === userId;
+
+              if (receivedMessagesRef.current.has(msgId) || (tempId && receivedMessagesRef.current.has(tempId))) {
+                return prev;
+              }
+
+              receivedMessagesRef.current.add(msgId);
+              if (tempId) receivedMessagesRef.current.add(tempId as number);
+
+              const normalized = {
+                id: msgId,
+                temp_id: tempId,
+                sender_id: data.sender_id || data.sender_user_id,
+                content: data.content || data.message || null,
+                timestamp: data.timestamp || new Date().toISOString(),
+                type: data.type || 'text',
+                pending: false,
+                read: !!data.read,
+              };
+
+              const existingIdx = updated.findIndex(
+                (m) =>
+                  m.temp_id === tempId ||
+                  (isOwn && m.content === normalized.content && m.pending)
+              );
+
+              if (existingIdx !== -1) {
+                updated[existingIdx] = { ...updated[existingIdx], ...normalized, pending: false, id: msgId };
+              } else {
+                updated.push(normalized);
+              }
             }
-          }
 
-          updated = updated.filter(m => {
-            const t = new Date(m.timestamp).getTime();
-            return now - t <= CACHE_EXPIRATION_MS;
+            updated = updated.filter((m) => {
+              const t = new Date(m.timestamp).getTime();
+              return now - t <= CACHE_EXPIRATION_MS;
+            });
+
+            localStorage.setItem(`messages_${conversationId}`, JSON.stringify(updated));
+            return updated;
           });
-
-          localStorage.setItem(`messages_${conversationId}`, JSON.stringify(updated));
-
-          return updated;
-        });
+        } catch (e) {
+          console.warn('Invalid WS message', e);
+        }
       };
 
-      wsRef.current.onerror = (e) => {
-        console.error('WebSocket error:', e);
-      };
-
+      wsRef.current.onerror = (e) => console.error('WS error:', e);
       wsRef.current.onclose = () => {
-        console.log('WebSocket closed. Reconnecting in 3s...');
+        console.log('WS closed → reconnecting in 3s...');
         setTimeout(() => {
-          if (conversationId && userId && sessionId && !wsRef.current) {
-            connectWebSocket();
-          }
+          if (conversationId && userId && sessionId && !wsRef.current) connect();
         }, 3000);
       };
     };
 
-    connectWebSocket();
+    connect();
 
     return () => {
       if (wsRef.current) {
@@ -303,7 +251,7 @@ const StartConversation = () => {
   }, [conversationId, userId, sessionId]);
 
   // ────────────────────────────────────────────────
-  // Send message – WS preferred, HTTP fallback
+  // Send message
   // ────────────────────────────────────────────────
   const sendMessage = useCallback(async () => {
     const text = inputMessage.trim();
@@ -311,7 +259,7 @@ const StartConversation = () => {
 
     setInputMessage('');
 
-    const tempId = `${Date.now()}-${Math.random().toString(36).slice(2,9)}`;
+    const tempId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     const tempMsg = {
       id: tempId,
       temp_id: tempId,
@@ -323,76 +271,56 @@ const StartConversation = () => {
       read: false,
     };
 
-    setMessages(prev => [...prev, tempMsg]);
+    setMessages((prev) => [...prev, tempMsg]);
 
     const sendViaWS = () => {
       if (wsRef.current?.readyState === WebSocket.OPEN) {
-        wsRef.current.send(JSON.stringify({
-          content: text,
-          temp_id: tempId,
-          sender_id: userId,
-          conversation_id: conversationId,
-          timestamp: new Date().toISOString(),
-        }));
+        wsRef.current.send(
+          JSON.stringify({
+            content: text,
+            temp_id: tempId,
+            sender_id: userId,
+            conversation_id: conversationId,
+            timestamp: new Date().toISOString(),
+          })
+        );
         return true;
       }
       return false;
     };
 
-    const sendViaHTTP = async () => {
-      try {
-        const payload = {
-          sender_id: userId,
-          shop_id: shopId,
-          content: text,
-        };
+    if (conversationId && sendViaWS()) return;
 
-        const res = await axios.post(
-          'https://retail-alvinia-goza-f6a0e4f7.koyeb.app/messages/',
-          payload,
-          { headers: { Authorization: sessionId } }
-        );
+    // Fallback to HTTP
+    try {
+      const res = await axios.post(
+        'https://retail-alvinia-goza-f6a0e4f7.koyeb.app/messages/',
+        { sender_id: userId, shop_id: shopId, content: text },
+        { headers: { Authorization: sessionId } }
+      );
 
-        const { id: serverId, conversation_id: newConvId } = res.data;
+      const { id: serverId, conversation_id: newConvId } = res.data;
+      const convIdStr = String(newConvId);
 
-        const convIdStr = String(newConvId);
+      setConversationId(convIdStr);
+      localStorage.setItem(`conversation_${shopId}`, JSON.stringify({ id: convIdStr, timestamp: Date.now() }));
 
-        setConversationId(convIdStr);
-        localStorage.setItem(`conversation_${shopId}`, JSON.stringify({
-          id: convIdStr,
-          timestamp: Date.now(),
-        }));
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.temp_id === tempId
+            ? { ...m, id: Number(serverId), conversation_id: convIdStr, pending: false, temp_id: null }
+            : m
+        )
+      );
 
-        setMessages(prev =>
-          prev.map(m =>
-            m.temp_id === tempId
-              ? {
-                  ...m,
-                  id: Number(serverId),
-                  conversation_id: convIdStr,
-                  pending: false,
-                  temp_id: null,
-                }
-              : m
-          )
-        );
-
-        receivedMessagesRef.current.add(Number(serverId));
-      } catch (err) {
-        console.error('HTTP send failed:', err);
-        setMessages(prev => prev.filter(m => m.temp_id !== tempId));
-      }
-    };
-
-    if (conversationId && sendViaWS()) {
-      // WS sent → optimistic update already done
-    } else {
-      // No WS or first message → use HTTP
-      await sendViaHTTP();
+      receivedMessagesRef.current.add(Number(serverId));
+    } catch (err) {
+      console.error('HTTP send failed:', err);
+      setMessages((prev) => prev.filter((m) => m.temp_id !== tempId));
     }
   }, [inputMessage, userId, sessionId, shopId, conversationId]);
 
-  // Auto-scroll
+  // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -400,7 +328,7 @@ const StartConversation = () => {
   if (!shopId) {
     return (
       <PageShell title="Chat">
-        <div className="chat-empty">
+        <div className="scon-chat-empty">
           <AlertCircle size={64} />
           <h2>No Shop Selected</h2>
           <p>Please select a shop from the shop list.</p>
@@ -411,64 +339,71 @@ const StartConversation = () => {
 
   return (
     <PageShell title={name || 'Chat'} isLoading={loading} showBackButton={true}>
-      <div className="chat-wrapper">
-        <div className="chat-header">
-          <button onClick={() => navigate(-1)} className="back-btn">
+      <div className="scon-chat-wrapper">
+        <div className="scon-chat-header">
+          <button
+            className="scon-back-btn"
+            onClick={() => navigate(-1)}
+            aria-label="Go back"
+          >
             <ArrowLeft size={24} />
           </button>
           <h1>{name || 'Conversation'}</h1>
           {fetchError && (
-            <button
-              onClick={() => fetchMessages(sessionId, userId)}
-              className="retry-btn"
-            >
+            <button className="scon-retry-btn" onClick={() => fetchMessages(sessionId!, userId!)}>
               Retry
             </button>
           )}
         </div>
 
-        <div className="messages-container">
+        <div className="scon-messages-container">
           {errorMessage && (
-            <div className="error-banner">
+            <div className="scon-error-banner">
               <AlertCircle size={20} />
               <span>{errorMessage}</span>
             </div>
           )}
 
           {loading ? (
-            <div className="loading-messages">
-              <Loader2 className="spin" size={32} />
+            <div className="scon-loading-messages">
+              <Loader2 className="scon-spin" size={32} />
               <p>Loading messages...</p>
             </div>
           ) : messages.length === 0 ? (
-            <div className="empty-chat">
+            <div className="scon-empty-chat">
               <MessageCircle size={64} />
               <h3>No messages yet</h3>
               <p>Start the conversation!</p>
             </div>
           ) : (
-            <div className="messages-list">
-              {messages.map(msg => (
+            <div className="scon-messages-list">
+              {messages.map((msg) => (
                 <div
                   key={msg.id || msg.temp_id}
-                  className={`message ${msg.sender_id === userId ? 'user-message' : 'shop-message'}`}
+                  className={`scon-message ${msg.sender_id === userId ? 'scon-user-message' : 'scon-shop-message'}`}
                 >
-                  <div className="message-content">
+                  <div className="scon-message-content">
                     <p>{msg.content}</p>
-                    <span className="message-time">
-                      {new Date(msg.timestamp).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </span>
 
-                    {msg.pending && <Loader2 size={16} className="spin small" />}
-                    {!msg.pending && msg.sender_id === userId && (
-                      <CheckCheck
-                        size={16}
-                        color={msg.read ? '#2563eb' : '#6b7280'}
-                      />
-                    )}
+                    <div className="scon-message-meta">
+                      <span className="scon-message-time">
+                        {new Date(msg.timestamp).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
+
+                      {msg.pending ? (
+                        <Loader2 size={14} className="scon-spin" />
+                      ) : (
+                        msg.sender_id === userId && (
+                          <CheckCheck
+                            size={14}
+                            color={msg.read ? 'var(--scon-read-check)' : 'var(--scon-unread-check)'}
+                          />
+                        )
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -477,41 +412,53 @@ const StartConversation = () => {
           )}
         </div>
 
-        <div className="input-section">
-          <button className="attach-btn" onClick={() => setMenuVisible(true)}>
+        <div className="scon-input-section">
+          <button
+            className="scon-attach-btn"
+            onClick={() => setMenuVisible(true)}
+            aria-label="Attach media"
+          >
             <Menu size={20} />
           </button>
 
           <input
             type="text"
+            className="scon-message-input"
             value={inputMessage}
-            onChange={e => setInputMessage(e.target.value)}
-            onKeyDown={e => {
+            onChange={(e) => setInputMessage(e.target.value)}
+            onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
               }
             }}
             placeholder="Type a message..."
-            className="message-input"
+            disabled={loading}
           />
 
           <button
+            className="scon-send-btn"
             onClick={sendMessage}
-            className="send-btn"
             disabled={!inputMessage.trim() || loading}
+            aria-label="Send message"
           >
             <Send size={20} />
           </button>
         </div>
 
         {menuVisible && (
-          <div className="media-modal" onClick={() => setMenuVisible(false)}>
-            <div className="modal-content" onClick={e => e.stopPropagation()}>
+          <div className="scon-media-modal" onClick={() => setMenuVisible(false)}>
+            <div className="scon-modal-content" onClick={(e) => e.stopPropagation()}>
               <h3>Send Media</h3>
-              <button disabled><ImageIcon size={20} /> Image (coming soon)</button>
-              <button disabled><Video size={20} /> Video (coming soon)</button>
-              <button disabled><FileText size={20} /> PDF (coming soon)</button>
+              <button disabled>
+                <ImageIcon size={20} /> Image (coming soon)
+              </button>
+              <button disabled>
+                <Video size={20} /> Video (coming soon)
+              </button>
+              <button disabled>
+                <FileText size={20} /> PDF (coming soon)
+              </button>
               <button onClick={() => setMenuVisible(false)}>Close</button>
             </div>
           </div>

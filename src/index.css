@@ -1,33 +1,31 @@
 /* Define theme variables */
 .ind-html {
-  --background: #f8fafc; /* light bg */
+  --background: #f8fafc;
   --foreground: #0f172a;
   --card: #ffffff;
   --card-foreground: #0f172a;
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
-  --accent: #2563eb; /* blue-600 for light */
+  --accent: #2563eb;
   --border: #e2e8f0;
   --radius: 0.75rem;
 
-  /* New: Header-specific vars for modern look (light mode: soft blue) */
-  --header-bg: #eff6ff; /* blue-50 inspired, soft */
-  --header-fg: #1e40af; /* blue-800 for contrast */
+  --header-bg: #f8fafc;     /* very light neutral for light mode (was #eff6ff) */
+  --header-fg: #111827;     /* charcoal gray – high contrast, non-blue */
 }
 
 .ind-html.ind-dark {
-  --background: #0f172a; /* dark bg */
+  --background: #0f172a;
   --foreground: #f8fafc;
   --card: #1e293b;
   --card-foreground: #f8fafc;
   --muted: #1e293b;
   --muted-foreground: #94a3b8;
-  --accent: #3b82f6; /* blue-500 for dark */
+  --accent: #3b82f6;
   --border: #334155;
 
-  /* New: Header vars for dark mode (deep indigo) */
-  --header-bg: #1e293b; /* slate-800 inspired */
-  --header-fg: #bfdbfe; /* blue-200 for contrast */
+  --header-bg: #0f172a;     /* very dark slate – makes status bar appear solid dark */
+  --header-fg: #f1f5f9;     /* light slate – readable */
 }
 
 /* Apply base styles */
@@ -40,10 +38,10 @@
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
-  position: relative; /* for pseudo-elements */
+  position: relative;
 }
 
-/* Modern status bar overlay for iOS blending (glassmorphic effect) */
+/* Modern status bar overlay – stronger in dark mode */
 .ind-body::before {
   content: '';
   position: fixed;
@@ -51,16 +49,21 @@
   left: 0;
   right: 0;
   height: env(safe-area-inset-top);
-  background-color: var(--header-bg); /* blends with header */
-  backdrop-filter: blur(12px) saturate(120%);
-  -webkit-backdrop-filter: blur(12px) saturate(120%);
-  opacity: 0.85; /* subtle transparency */
-  z-index: 9999; /* above content, below potential overlays */
+  background-color: var(--header-bg);
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  opacity: 0.88;                    /* light mode: subtle glass */
+  z-index: 9999;
   pointer-events: none;
-  transition: background-color 0.3s ease;
+  transition: all 0.4s ease;
 }
 
-/* Mobile & touch improvements */
+.ind-html.ind-dark .ind-body::before {
+  opacity: 0.98;                    /* almost solid in dark mode – looks like native dark bar */
+  backdrop-filter: blur(10px) saturate(100%); /* less saturation = deeper, less washed-out dark */
+}
+
+/* Rest unchanged */
 .ind-html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
@@ -72,15 +75,13 @@
   touch-action: manipulation;
 }
 
-/* Better focus rings */
 .ind-html :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 4px; /* modern rounded focus */
+  border-radius: 4px;
   transition: outline 0.1s ease;
 }
 
-/* Full height chain (no forced background) */
 .ind-html,
 .ind-body,
 .ind-root {

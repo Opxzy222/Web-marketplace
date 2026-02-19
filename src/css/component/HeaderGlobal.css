@@ -54,16 +54,15 @@
   backdrop-filter: var(--gl-blur);
   -webkit-backdrop-filter: var(--gl-blur);
   border-bottom: 1px solid var(--gl-border);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);     /* subtle under-curve depth */
-
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
   border-bottom-left-radius: var(--gl-radius);
   border-bottom-right-radius: var(--gl-radius);
 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.375rem;                          /* content pad – safe-area handled by wrapper */
-  min-height: 4rem;
+  padding: 0.75rem 1.25rem;           /* tighter padding */
+  min-height: 3.5rem;                  /* significantly reduced height */
   transition: all 0.3s ease;
 }
 
@@ -193,7 +192,7 @@
 }
 
 .shop-id-copy-btn {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.7);
   border: none;
   border-radius: 10px;
   width: 38px;
