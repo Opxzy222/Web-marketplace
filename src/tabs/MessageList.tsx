@@ -15,7 +15,7 @@ import {
   Grid,
 } from 'lucide-react';
 import PageShell from '../components/PageShell';
-import '../css/tab/MessageList.css';
+import '../css/tab/MessageList.css'; // ← remember to update selectors in CSS too!
 
 const MessageList: React.FC = () => {
   const navigate = useNavigate();
@@ -33,274 +33,290 @@ const MessageList: React.FC = () => {
   const lastFetchTimeRef = useRef(0);
   const lastMessagesRef = useRef<any[]>([]);
 
-  // ─── Load session token ────────────────────────────────────────────
+  // ─── Session Token ─────────────────────────────────────────────────
   const fetchSessionId = useCallback(async () => {
     try {
       const token = localStorage.getItem('sessionToken');
-      console.log('Loaded sessionToken:', token ? 'present' : 'missing');
       setSessionId(token);
       return token;
-    } catch (error) {
-      console.error('Error reading sessionToken:', error);
+    } catch (err) {
+      console.error('Failed to read sessionToken', err);
       return null;
     }
   }, []);
 
-  // ─── Cache helpers ─────────────────────────────────────────────────
+  // ─── Cache Helpers ─────────────────────────────────────────────────
   const cacheMessages = useCallback((msgs: any[]) => {
     try {
       localStorage.setItem('message_list', JSON.stringify(msgs));
-    } catch (error) {
-      console.error('Error caching messages:', error);
+    } catch (err) {
+      console.error('Cache save failed', err);
     }
   }, []);
 
   const loadCachedMessages = useCallback((): any[] => {
     try {
-      const cached = localStorage.getItem('message_list');
-      return cached ? JSON.parse(cached) : [];
-    } catch (error) {
-      console.error('Error loading cached messages:', error);
+      const raw = localStorage.getItem('message_list');
+      return raw ? JSON.parse(raw) : [];
+    } catch {
       return [];
     }
   }, []);
 
-  // ─── Filter logic (moved BEFORE fetchMessages) ─────────────────────
-  const filterMessages = useCallback((msgs: any[], tab: string) => {
+  // ─── Filtering ─────────────────────────────────────────────────────
+  const filterMessages = useCallback((items: any[], tab: string) => {
     if (!isMountedRef.current) return;
-    let filtered = msgs;
-    if (tab === 'Space') filtered = msgs.filter(msg => msg.role === 'seller');
-    else if (tab === 'Customers') filtered = msgs.filter(msg => msg.role === 'buyer');
-    setFilteredMessages(filtered);
+    let result = items;
+    if (tab === 'Space') result = items.filter(m => m.role === 'seller');
+    if (tab === 'Customers') result = items.filter(m => m.role === 'buyer');
+    setFilteredMessages(result);
   }, []);
 
-  // ─── Fetch messages ────────────────────────────────────────────────
-  const fetchMessages = useCallback(async (force = false) => {
-    if (!sessionId) {
-      console.log('fetchMessages skipped: no sessionId yet');
-      return;
-    }
-    if (isFetchingRef.current) {
-      console.log('fetchMessages skipped: already fetching');
-      return;
-    }
+  // ─── Data Fetching ─────────────────────────────────────────────────
+  const fetchMessages = useCallback(
+    async (force = false) => {
+      if (!sessionId) return;
+      if (isFetchingRef.current) return;
 
-    console.log('fetchMessages started with sessionId:', sessionId);
+      const now = Date.now();
+      if (!force && now - lastFetchTimeRef.current < 30_000 && messages.length > 0) {
+        return;
+      }
 
-    const now = Date.now();
-    if (!force && now - lastFetchTimeRef.current < 30000 && messages.length > 0) {
-      console.log('fetchMessages skipped: using recent cache');
-      return;
-    }
+      isFetchingRef.current = true;
+      setLoading(true);
+      setFetchError(false);
 
-    isFetchingRef.current = true;
-    setLoading(true);
-    setFetchError(false);
+      try {
+        const { data } = await axios.get('https://retail-alvinia-goza-f6a0e4f7.koyeb.app/message-list/', {
+          headers: { Authorization: sessionId },
+        });
 
-    try {
-      const res = await axios.get('https://retail-alvinia-goza-f6a0e4f7.koyeb.app/message-list/', {
-        headers: { Authorization: sessionId },
-      });
+        const newList = Array.isArray(data) ? data : [];
+        const hasChanged = JSON.stringify(newList) !== JSON.stringify(lastMessagesRef.current);
 
-      const newMessages = res.data || [];
-      console.log('Fetched messages count:', newMessages.length);
-
-      if (isMountedRef.current) {
-        const changed = JSON.stringify(newMessages) !== JSON.stringify(lastMessagesRef.current);
-        if (changed || force) {
-          setMessages(newMessages);
-          lastMessagesRef.current = newMessages;
-          cacheMessages(newMessages);
-          filterMessages(newMessages, activeTab); // ← safe now
+        if (hasChanged || force) {
+          setMessages(newList);
+          lastMessagesRef.current = newList;
+          cacheMessages(newList);
+          filterMessages(newList, activeTab);
         }
-        lastFetchTimeRef.current = now;
-      }
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-      if (isMountedRef.current) setFetchError(true);
-    } finally {
-      if (isMountedRef.current) {
-        setLoading(false);
-        isFetchingRef.current = false;
-      }
-    }
-  }, [sessionId, activeTab, cacheMessages, filterMessages, messages.length]);
 
-  // ─── Mount / Initialize ────────────────────────────────────────────
+        lastFetchTimeRef.current = now;
+      } catch (err) {
+        console.error('Message list fetch failed', err);
+        if (isMountedRef.current) setFetchError(true);
+      } finally {
+        if (isMountedRef.current) {
+          setLoading(false);
+          isFetchingRef.current = false;
+        }
+      }
+    },
+    [sessionId, activeTab, cacheMessages, filterMessages, messages.length],
+  );
+
+  // ─── Lifecycle ─────────────────────────────────────────────────────
   useEffect(() => {
     isMountedRef.current = true;
-
-    const init = async () => {
-      setLoading(true);
-      await fetchSessionId(); // sets sessionId → triggers the next effect
-    };
-
-    init();
-
+    fetchSessionId();
     return () => {
       isMountedRef.current = false;
     };
   }, [fetchSessionId]);
 
-  // ─── Fetch & load cache when sessionId is ready ────────────────────
   useEffect(() => {
-    if (!sessionId) {
-      console.log('Waiting for sessionId before loading messages');
-      setLoading(false);
-      return;
+    if (!sessionId) return;
+
+    const cached = loadCachedMessages();
+    if (cached.length > 0) {
+      setMessages(cached);
+      lastMessagesRef.current = cached;
+      filterMessages(cached, activeTab);
     }
 
-    const loadData = async () => {
-      const cached = loadCachedMessages();
-      if (cached.length > 0 && isMountedRef.current) {
-        console.log('Loaded cached messages:', cached.length);
-        setMessages(cached);
-        lastMessagesRef.current = cached;
-        filterMessages(cached, activeTab);
-      }
+    fetchMessages(true);
 
-      // Fetch fresh data
-      await fetchMessages(true);
-    };
-
-    loadData();
-
-    // Auto-refresh every 60s
     const interval = setInterval(() => {
       if (isMountedRef.current && sessionId) fetchMessages();
-    }, 60000);
+    }, 60_000);
 
     return () => clearInterval(interval);
   }, [sessionId, activeTab, fetchMessages, loadCachedMessages, filterMessages]);
 
-  // Tab change
-  const handleTabChange = useCallback((tab: string) => {
+  // ─── Handlers ──────────────────────────────────────────────────────
+  const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     filterMessages(messages, tab);
-  }, [messages, filterMessages]);
+  };
 
-  // Refresh
-  const handleRefresh = useCallback(async () => {
+  const handleRefresh = async () => {
     setRefreshing(true);
     await fetchMessages(true);
     setRefreshing(false);
-  }, [fetchMessages]);
+  };
 
-  // Navigation
-  const handleMessageClick = useCallback((message: any) => {
+  const handleMessageClick = (msg: any) => {
     navigate('/conversation', {
       state: {
-        name: message.name,
-        conversation_id: message.conversation_id,
-        shop_id: message.shop_id,
-        shop_is_active: message.shop_is_active,
-        role: message.role,
-        shopId: message.shopId,
+        name: msg.name,
+        conversation_id: msg.conversation_id,
+        shop_id: msg.shop_id,
+        shop_is_active: msg.shop_is_active,
+        role: msg.role,
+        shopId: msg.shopId,
       },
     });
-  }, [navigate]);
+  };
 
-  const handleShopClick = useCallback((message: any) => {
-    navigate(`/shop-page/${message.shop_id}`);
-  }, [navigate]);
+  const handleShopClick = (msg: any) => {
+    navigate(`/shop-page/${msg.shop_id}`);
+  };
 
-  // Message item render (unchanged)
+  // ─── Message Row Component ─────────────────────────────────────────
   const MessageItem = ({ item }: { item: any }) => {
-    const isUnread = item.is_unread_by_receiver;
+    const isUnread = !!item.is_unread_by_receiver;
     const isDeleted = !item.shop_is_active;
-    const formattedDate = new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    const hasAttachment = item.last_message?.startsWith('chat_attachments/');
-    const isVideo = hasAttachment && /\.(mp4|mov|avi)$/i.test(item.last_message);
+    const dateStr = new Date(item.date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
 
-    const profileImg = item.profile_image ? `https://api.gogo-digital.com${item.profile_image}` : null;
+    // ─── Last message handling ────────────────────────────────────────
+    const lastMsg = item.last_message ?? ''; // safe guard null/undefined
+    const hasMedia = typeof lastMsg === 'string' && lastMsg.startsWith('chat_attachments/');
+    const isVideo = hasMedia && /\.(mp4|mov|avi|webm|mkv)$/i.test(lastMsg);
+
+    const previewText = hasMedia
+      ? isVideo
+        ? 'Video'
+        : 'Photo'
+      : lastMsg.trim() || 'No message yet';
+
+    const accentColor = isDeleted
+      ? 'var(--accent-danger, #ef4444)'
+      : isUnread
+      ? 'var(--accent-primary, #3b82f6)'
+      : 'var(--text-secondary, #64748b)';
+
+    const messageStyle = {
+      color: accentColor,
+      fontWeight: isUnread ? 500 : 400,
+      opacity: lastMsg ? 1 : 0.65,
+    };
 
     return (
-      <div className={`message-item ${isUnread ? 'unread' : ''} ${isDeleted ? 'deleted' : ''}`}>
-        <button className="profile-image-container" onClick={() => handleShopClick(item)}>
-          {profileImg ? (
-            <img src={profileImg} alt="Profile" className="profile-image" />
-          ) : (
-            <div className="profile-placeholder">
-              <Store size={24} />
-            </div>
-          )}
-        </button>
-        <button className="text-container" onClick={() => handleMessageClick(item)}>
-          <div className="message-header">
-            <h3 className="name">{item.name || 'Unknown'}{isDeleted && ' (Deleted)'}</h3>
-            <span className="date">{formattedDate}</span>
-          </div>
-          <div className="last-message-container">
-            {hasAttachment ? (
-              isVideo ? <Video size={18} className="media-icon" /> : <ImageIcon size={18} className="media-icon" />
+      <div className={`msl-message-item ${isUnread ? 'msl-unread' : ''} ${isDeleted ? 'msl-deleted' : ''}`}>
+        {/* Left: Avatar */}
+        <button className="msl-avatar-btn" onClick={() => handleShopClick(item)}>
+          <div className="msl-profile-image-container">
+            {item.profile_image ? (
+              <img src={item.profile_image} alt="" className="msl-profile-image" loading="lazy" />
             ) : (
-              <p className="last-message">{item.last_message || 'No message'}</p>
+              <div className="msl-profile-placeholder">
+                <Store size={28} />
+              </div>
             )}
           </div>
         </button>
+
+        {/* Right side: name + date + preview */}
+        <div className="msl-content-side" onClick={() => handleMessageClick(item)}>
+          <div className="msl-header-row">
+            <h3 className="msl-name">
+              {item.name || 'Unknown'}
+              {isDeleted && ' (Deleted)'}
+            </h3>
+            <time className="msl-date">{dateStr}</time>
+          </div>
+
+          <div className="msl-preview-row">
+            {hasMedia ? (
+              <div className="msl-media-indicator" style={{ color: accentColor }}>
+                {isVideo ? <Video size={18} /> : <ImageIcon size={18} />}
+                <span className="msl-media-label">{previewText}</span>
+              </div>
+            ) : (
+              <p className="msl-last-message" style={{ color: accentColor }}>
+                {previewText}
+              </p>
+            )}
+          </div>
+        </div>
       </div>
     );
   };
 
+  // ───────────────────────────────────────────────────────────────────
   const tabs = [
-    { key: 'All', icon: Grid, label: 'All' },
-    { key: 'Space', icon: Users, label: 'Space' },
-    { key: 'Customers', icon: User, label: 'Customers' },
+    { id: 'All',       icon: Grid,   label: 'All' },
+    { id: 'Space',     icon: Users,  label: 'Space' },
+    { id: 'Customers', icon: User,   label: 'Customers' },
   ];
 
   return (
-    <PageShell title="Messages" isLoading={loading}>
-      <div className="message-list-wrapper">
-        <div className="tabs-nav">
-          {tabs.map(({ key, icon: Icon, label }) => (
+    <PageShell title="Messages" isLoading={loading && messages.length === 0}>
+      <div className="msl-message-list-container">
+        <div className="msl-tabs-header">
+          {tabs.map(({ id, icon: Icon, label }) => (
             <button
-              key={key}
-              className={`tab-btn ${activeTab === key ? 'active' : ''}`}
-              onClick={() => handleTabChange(key)}
+              key={id}
+              type="button"
+              className={`msl-tab-item ${activeTab === id ? 'msl-active' : ''}`}
+              onClick={() => handleTabChange(id)}
               disabled={loading || refreshing}
             >
-              <Icon size={20} />
+              <Icon size={18} />
               <span>{label}</span>
             </button>
           ))}
+
           <button
-            className="refresh-tab-btn"
+            type="button"
+            className="msl-refresh-btn-tab"
             onClick={handleRefresh}
             disabled={refreshing || loading}
+            aria-label="Refresh messages"
           >
-            <RefreshCw size={20} className={refreshing ? 'spin' : ''} />
+            <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
           </button>
         </div>
 
-        {loading ? (
-          <div className="status-bar loading">
-            <Loader2 className="spin" size={24} />
-            <span>Loading Messages...</span>
+        {loading && filteredMessages.length === 0 ? (
+          <div className="msl-empty-state msl-loading">
+            <Loader2 size={36} className="animate-spin" />
+            <p>Loading conversations…</p>
           </div>
         ) : fetchError ? (
-          <div className="status-bar error">
-            <AlertCircle size={24} />
-            <span>Failed to load messages</span>
-            <button onClick={() => fetchMessages(true)} className="retry-btn">
+          <div className="msl-empty-state msl-error">
+            <AlertCircle size={40} />
+            <h3>Couldn't load messages</h3>
+            <button className="msl-retry-button" onClick={() => fetchMessages(true)}>
               Try Again
             </button>
           </div>
         ) : filteredMessages.length === 0 ? (
-          <div className="empty-state">
-            <MessageCircle size={64} />
+          <div className="msl-empty-state">
+            <MessageCircle size={48} strokeWidth={1.4} />
             <h3>
-              {activeTab === 'Space' ? 'No shop messages' :
-               activeTab === 'Customers' ? 'No customer messages' : 'No messages yet'}
+              {activeTab === 'Space'
+                ? 'No shop messages yet'
+                : activeTab === 'Customers'
+                ? 'No customer messages yet'
+                : 'No conversations yet'}
             </h3>
-            <button onClick={() => fetchMessages(true)} className="refresh-btn">
-              <RefreshCw size={20} />
+            <button className="msl-refresh-button" onClick={() => fetchMessages(true)}>
+              <RefreshCw size={18} />
               Refresh
             </button>
           </div>
         ) : (
-          <div className="messages-scroll">
-            {filteredMessages.map((item) => (
-              <MessageItem key={`${item.id || item.conversation_id}-${activeTab}`} item={item} />
+          <div className="msl-messages-list">
+            {filteredMessages.map(item => (
+              <MessageItem
+                key={`${item.conversation_id || item.id}-${activeTab}`}
+                item={item}
+              />
             ))}
           </div>
         )}

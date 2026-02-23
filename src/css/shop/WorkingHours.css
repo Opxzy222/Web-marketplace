@@ -1,0 +1,389 @@
+/* WorkingHours.css - Google Business Hours UI */
+
+:root {
+  --bg-primary: #f8f9fa;
+  --card-bg: #ffffff;
+  --blue-primary: #3a7bd5;
+  --green-success: #10b981;
+  --red-closed: #ef4444;
+  --yellow-accent: #fbbf24;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+  --radius-md: 16px;
+  --border-light: #e5e7eb;
+}
+
+.working-hours {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+}
+
+/* Header */
+.hours-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, var(--blue-primary), #2563eb);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.back-btn {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: rgba(255,255,255,0.3);
+  transform: scale(1.05);
+}
+
+.hours-header h1 {
+  flex: 1;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Main Content */
+.hours-main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
+/* 24/7 Toggle */
+.toggle-section {
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--green-success);
+}
+
+.toggle-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggle-content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+}
+
+.toggle-content p {
+  color: #6b7280;
+  margin: 0;
+  font-size: 15px;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 56px;
+  height: 32px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #d1d5db;
+  border-radius: 16px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 24px;
+  width: 24px;
+  left: 4px;
+  top: 4px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+input:checked + .toggle-slider {
+  background: var(--green-success);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(24px);
+}
+
+/* Copy Monday Button */
+.copy-monday-btn {
+  background: var(--card-bg);
+  border: 2px dashed #bfdbfe;
+  color: #3b82f6;
+  padding: 16px 24px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.copy-monday-btn:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}
+
+/* Schedule Grid */
+.schedule-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+/* Schedule Card */
+.schedule-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid #3b82f6;
+  transition: all 0.3s ease;
+}
+
+.schedule-card.closed {
+  border-left-color: var(--red-closed);
+  background: #fef2f2;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.card-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.toggle-switch.small {
+  width: 44px;
+  height: 24px;
+}
+
+.toggle-switch.small .toggle-slider {
+  border-radius: 12px;
+}
+
+.toggle-switch.small .toggle-slider:before {
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  top: 3px;
+}
+
+.toggle-switch.small input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+}
+
+.time-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.time-separator {
+  font-size: 15px;
+  color: #6b7280;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.time-btn {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1e40af;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.time-btn:hover:not(.disabled) {
+  background: #dbeafe;
+  border-color: #60a5fa;
+  transform: translateY(-1px);
+}
+
+.time-btn.disabled {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Save Button */
+.save-hours-btn {
+  background: linear-gradient(135deg, var(--green-success), #059669);
+  color: white;
+  border: none;
+  padding: 18px 32px;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.save-hours-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.save-hours-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Success Toast */
+.success-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #d1fae5;
+  color: #065f46;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+  z-index: 1000;
+  animation: slideInRight 0.3s ease;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 90vw;
+  max-height: 90vh;
+  box-shadow: var(--shadow-md);
+  width: 320px;
+}
+
+.time-picker input {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 24px;
+  text-align: center;
+  letter-spacing: 4px;
+  background: #f9fafb;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.btn-primary, .btn-secondary {
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: var(--green-success);
+  color: white;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #6b7280;
+  border: 2px solid #e5e7eb;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+  transform: translateY(-1px);
+}
+
+/* Loading & Error */
+.loading, .error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.error {
+  color: #ef4444;
+}
+
+/* Animations */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hours-main { padding: 16px; }
+  .schedule-grid { gap: 12px; }
+  .time-row { flex-direction: column; gap: 8px; }
+  .time-separator { order: -1; align-self: stretch; display: flex; align-items: center; }
+}

@@ -1,21 +1,23 @@
-// WelcomeWorkingHours.jsx - Onboarding Business Hours
+// WorkingHours.jsx - Google Business Hours Editor
 import React, { useState, useEffect, useCallback } from 'react';
-import "../../css/shop/WorkingHours.css"; // Same styling system
+import "../../css/shop/WorkingHours.css";
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-export default function WelcomeWorkingHours({ searchParams }) {
+export default function WorkingHours({ searchParams }) {
   const shopId = searchParams?.shopId;
   
   const [is24_7, setIs24_7] = useState(false);
   const [hours, setHours] = useState({});
   const [selectedDay, setSelectedDay] = useState(null);
-  const [selectedType, setSelectedType] = useState(null);
+  const [selectedType, setSelectedType] = useState(null); // 'open' | 'close'
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [tempTime, setTempTime] = useState(new Date());
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
-  // Fetch existing hours (onboarding flow)
+  // Initialize data
   useEffect(() => {
     if (shopId) {
       fetchHours();
@@ -24,9 +26,11 @@ export default function WelcomeWorkingHours({ searchParams }) {
 
   const fetchHours = async () => {
     try {
+      setIsLoading(true);
       const response = await fetch(`/api/shop/${shopId}/working-hours/`);
       const data = await response.json();
       
+      // Normalize data structure
       const normalized = DAYS.reduce((acc, day) => {
         const dayKey = day.toLowerCase();
         acc[day] = data[dayKey] || { open: null, close: null };
@@ -36,27 +40,16 @@ export default function WelcomeWorkingHours({ searchParams }) {
       setHours(normalized);
       setIs24_7(data.is_24_7 || false);
     } catch (error) {
-      console.error('Fetch failed:', error);
-      // Default to 9-5 weekdays
-      initDefaultHours();
+      console.error('Failed to fetch hours:', error);
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  const initDefaultHours = () => {
-    setHours({
-      Monday: { open: '09:00:00', close: '17:00:00' },
-      Tuesday: { open: '09:00:00', close: '17:00:00' },
-      Wednesday: { open: '09:00:00', close: '17:00:00' },
-      Thursday: { open: '09:00:00', close: '17:00:00' },
-      Friday: { open: '09:00:00', close: '17:00:00' },
-      Saturday: { open: '10:00:00', close: '16:00:00' },
-      Sunday: { open: null, close: null }
-    });
   };
 
   const saveHours = async () => {
     if (!shopId) return;
     
+    setIsSaving(true);
     try {
       const payload = {
         is_24_7,
@@ -78,16 +71,13 @@ export default function WelcomeWorkingHours({ searchParams }) {
         body: JSON.stringify(payload)
       });
 
-      setShowSuccess(true);
-      
-      // Auto-redirect after success (onboarding flow)
-      setTimeout(() => {
-        window.location.href = `/shop/UpdateProduct?shop_id=${shopId}`;
-      }, 2000);
-      
+      setSuccessMessage('Hours updated successfully!');
+      setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       console.error('Save failed:', error);
-      alert('Failed to save hours');
+      alert('Failed to save hours. Please try again.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -139,9 +129,9 @@ export default function WelcomeWorkingHours({ searchParams }) {
 
   const parseTime = (timeStr) => {
     if (!timeStr) return new Date();
-    const [h, m] = timeStr.split(':').slice(0, 2);
+    const [hours, minutes] = timeStr.split(':').slice(0, 2);
     const now = new Date();
-    now.setHours(parseInt(h), parseInt(m), 0, 0);
+    now.setHours(parseInt(hours), parseInt(minutes), 0, 0);
     return now;
   };
 
@@ -152,7 +142,7 @@ export default function WelcomeWorkingHours({ searchParams }) {
   };
 
   const formatDisplayTime = (timeStr) => {
-    if (!timeStr) return 'Select Time';
+    if (!timeStr) return 'Closed';
     const [h, m] = timeStr.split(':').slice(0, 2);
     const hour = parseInt(h);
     const period = hour >= 12 ? 'PM' : 'AM';
@@ -160,59 +150,59 @@ export default function WelcomeWorkingHours({ searchParams }) {
     return `${displayHour}:${m} ${period}`;
   };
 
+  if (isLoading) {
+    return <div className="loading">Loading hours...</div>;
+  }
+
   if (!shopId) {
     return <div className="error">Shop ID required</div>;
   }
 
   return (
-    <div className="working-hours onboarding-flow">
+    <div className="working-hours">
       {/* Header */}
       <header className="hours-header">
         <button className="back-btn" onClick={() => window.history.back()}>
           ←
         </button>
-        <h1>Set Business Hours</h1>
+        <h1>Business Hours</h1>
       </header>
 
       <main className="hours-main">
-        {/* Welcome Card */}
-        <div className="welcome-card">
-          <div className="welcome-icon">🕒</div>
-          <h2>Tell us when you're open</h2>
-          <p>Customers will see your availability across the app</p>
-        </div>
-
         {/* 24/7 Toggle */}
         <section className="toggle-section">
           <div className="toggle-content">
             <div>
-              <h3>I'm open 24/7</h3>
-              <p>No specific hours needed</p>
+              <h2>Open 24/7</h2>
+              <p>Your business is always open</p>
             </div>
-            <label className="toggle-switch">
+            <label class="toggle-switch">
               <input 
                 type="checkbox" 
                 checked={is24_7}
                 onChange={(e) => {
                   setIs24_7(e.target.checked);
                   if (e.target.checked) {
-                    setHours({});
+                    setHours(DAYS.reduce((acc, day) => {
+                      acc[day] = { open: null, close: null };
+                      return acc;
+                    }, {}));
                   }
                 }}
               />
-              <span className="toggle-slider"></span>
+              <span class="toggle-slider"></span>
             </label>
           </div>
         </section>
 
         {!is24_7 && (
           <>
-            {/* Quick Setup */}
+            {/* Copy Monday */}
             <button className="copy-monday-btn" onClick={copyMondayHours}>
-              ✨ Use Monday's hours for all days
+              📋 Copy Monday's hours to all days
             </button>
 
-            {/* Schedule Cards */}
+            {/* Day Schedule Cards */}
             <div className="schedule-grid">
               {DAYS.map(day => (
                 <ScheduleCard
@@ -229,27 +219,24 @@ export default function WelcomeWorkingHours({ searchParams }) {
           </>
         )}
 
-        {/* Continue Button */}
+        {/* Save Button */}
         <button 
-          className="save-hours-btn primary"
+          className="save-hours-btn"
           onClick={saveHours}
+          disabled={isSaving}
         >
-          Continue Setup
+          {isSaving ? 'Saving...' : 'Save Hours'}
         </button>
 
-        {/* Success Overlay */}
-        {showSuccess && (
-          <div className="success-overlay">
-            <div className="checkmark-container">
-              <div className="checkmark">✅</div>
-              <h3>Hours Saved!</h3>
-              <p>Redirecting to products...</p>
-            </div>
+        {/* Success Message */}
+        {successMessage && (
+          <div className="success-toast">
+            ✅ {successMessage}
           </div>
         )}
       </main>
 
-      {/* Time Picker */}
+      {/* Time Picker Modal */}
       {showTimePicker && (
         <TimePickerModal
           time={tempTime}
@@ -262,7 +249,7 @@ export default function WelcomeWorkingHours({ searchParams }) {
   );
 }
 
-// Reusable components (same as WorkingHours)
+// Reusable Schedule Card Component
 const ScheduleCard = ({ day, hours, isClosed, onToggleClosed, onSelectTime, formatTime }) => (
   <article className={`schedule-card ${isClosed ? 'closed' : ''}`}>
     <div className="card-header">
@@ -307,25 +294,28 @@ const TimeButton = ({ time, label, disabled, formatTime, onPress }) => (
   </button>
 );
 
-const TimePickerModal = ({ time, onConfirm, onCancel, onChange }) => (
-  <div className="modal-overlay" onClick={onCancel}>
-    <div className="modal-content" onClick={e => e.stopPropagation()}>
-      <div className="time-picker">
-        <input 
-          type="time" 
-          value={time.toTimeString().slice(0,5)}
-          onChange={(e) => onChange(new Date(`1970-01-01T${e.target.value}:00`))}
-          step={300}
-        />
-      </div>
-      <div className="modal-actions">
-        <button className="btn-secondary" onClick={onCancel}>
-          Cancel
-        </button>
-        <button className="btn-primary" onClick={onConfirm}>
-          Confirm
-        </button>
+// Time Picker Modal
+const TimePickerModal = ({ time, onConfirm, onCancel, onChange }) => {
+  return (
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <div className="time-picker">
+          <input 
+            type="time" 
+            value={time.toTimeString().slice(0,5)}
+            onChange={(e) => onChange(new Date(`1970-01-01T${e.target.value}:00`))}
+            step={300} // 5 minutes
+          />
+        </div>
+        <div className="modal-actions">
+          <button className="btn-secondary" onClick={onCancel}>
+            Cancel
+          </button>
+          <button className="btn-primary" onClick={onConfirm}>
+            Confirm
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};

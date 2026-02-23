@@ -4,35 +4,39 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
-  Camera,
+  Search,
   Image as ImageIcon,
   X,
+  ChevronDown,
+  Camera,
 } from "lucide-react";
 import axios from "axios";
-import PageShell from "../../components/PageShell"; // ← new import
-import "../../css/shop/ShopProducts.css";
+import PageShell from "../../components/PageShell";
+import "../../css/shop/ShopProducts.css"; // ← we'll style this next
 
 const ShopProduct = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { shopId, category } = location.state || {};
 
-  const [products, setProducts] = useState(null);
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
 
-  // Gallery state
+  // Gallery
   const [galleryVisible, setGalleryVisible] = useState(false);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
-  const [currentGalleryIndex, setCurrentGalleryIndex] = useState(0);
+  const [galleryStartIndex, setGalleryStartIndex] = useState(0);
+
+  // Collapsible categories
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
   const isMountedRef = useRef(true);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Load subscription status
+  // ─── Subscription check ───
   useEffect(() => {
     try {
       const cache = localStorage.getItem("subscription_cache");
@@ -45,33 +49,20 @@ const ShopProduct = () => {
     }
   }, []);
 
-  const isSubscribed = ["regular", "standard", "premium"].includes(
-    subscriptionStatus || ""
-  );
+  const isSubscribed = ["regular", "standard", "premium"].includes(subscriptionStatus || "");
 
-  // Simple custom debounce
-  const debouncedFetch = useCallback((callback: () => void) => {
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-    }
-    debounceTimerRef.current = setTimeout(() => {
-      callback();
-    }, 300);
-  }, []);
-
+  // ─── Fetch session & products ───
   const fetchSessionId = useCallback(() => {
     try {
       const token = localStorage.getItem("sessionToken");
-      if (isMountedRef.current) {
-        setSessionId(token);
-      }
+      if (isMountedRef.current) setSessionId(token);
     } catch (err) {
       console.error("Error reading sessionToken:", err);
     }
   }, []);
 
   const fetchShopProducts = useCallback(() => {
-    if (!isMountedRef.current || !shopId) return;
+    if (!shopId) return;
 
     setLoading(true);
     setError(null);
@@ -94,7 +85,6 @@ const ShopProduct = () => {
       })
       .catch((err) => {
         if (isMountedRef.current) {
-          console.error("Fetch products error:", err);
           setError(
             err.message.includes("Network")
               ? "Network error. Please check your connection."
@@ -103,231 +93,321 @@ const ShopProduct = () => {
         }
       })
       .finally(() => {
-        if (isMountedRef.current) {
-          setLoading(false);
-        }
+        if (isMountedRef.current) setLoading(false);
       });
   }, [shopId, sessionId]);
 
-  // Initial fetches
   useEffect(() => {
     isMountedRef.current = true;
     fetchSessionId();
-
-    debouncedFetch(() => {
-      fetchShopProducts();
-    });
+    fetchShopProducts();
 
     return () => {
       isMountedRef.current = false;
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
     };
-  }, [fetchSessionId, fetchShopProducts, debouncedFetch]);
+  }, [fetchSessionId, fetchShopProducts]);
 
-  const openImageGallery = (images: string[], startIndex = 0) => {
+  // ─── Gallery handlers ───
+  const openGallery = useCallback((images: string[], startIndex = 0) => {
     if (!images?.length) return;
     setGalleryImages(images);
-    setCurrentGalleryIndex(startIndex);
+    setGalleryStartIndex(startIndex);
     setGalleryVisible(true);
-  };
+  }, []);
 
-  const closeGallery = () => {
+  const closeGallery = useCallback(() => {
     setGalleryVisible(false);
     setGalleryImages([]);
-    setCurrentGalleryIndex(0);
-  };
+    setGalleryStartIndex(0);
+  }, []);
 
-  const handleUpdateProduct = () => {
-    navigate("/update-products", { state: { shopId, category } });
-  };
+  // ─── Category toggle ───
+  const toggleCategory = useCallback((catName: string) => {
+    setExpandedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(catName)) next.delete(catName);
+      else next.add(catName);
+      return next;
+    });
+  }, []);
 
-  const filteredProducts = useMemo(() => {
-    if (!products) return [];
+  // ─── Filtered + flattened data (with search) ───
+  const flatData = useMemo(() => {
+    const result: any[] = [];
+    const query = searchQuery.toLowerCase().trim();
 
-    return products
-      .map((categoryData: any) => {
-        const filteredSubs = categoryData.subcategories
-          .map((sub: any) => {
-            const filtered = sub.products.filter((p: any) =>
-              p.product_name.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-            return { ...sub, products: filtered };
-          })
-          .filter((sub: any) => sub.products.length > 0);
+    products.forEach((cat: any) => {
+      if (!cat?.category || !Array.isArray(cat.subcategories)) return;
 
-        return { ...categoryData, subcategories: filteredSubs };
-      })
-      .filter((cat: any) => cat.subcategories.length > 0);
-  }, [products, searchQuery]);
+      const totalProducts = cat.subcategories.reduce(
+        (sum: number, sub: any) => sum + sub.products.length,
+        0
+      );
 
-  // ────────────────────────────────────────────────
-  // Render Helpers
-  // ────────────────────────────────────────────────
+      result.push({ type: "category", data: cat, count: totalProducts });
 
-  const renderProduct = (product: any) => {
+      const isExpanded = expandedCategories.has(cat.category) || query.length > 0;
+
+      if (!isExpanded) return;
+
+      cat.subcategories.forEach((sub: any) => {
+        const filteredProducts = sub.products.filter((p: any) =>
+          p.product_name?.toLowerCase().includes(query)
+        );
+
+        if (filteredProducts.length === 0) return;
+
+        result.push({ type: "subcategory", data: sub });
+        filteredProducts.forEach((p: any) =>
+          result.push({ type: "product", data: p })
+        );
+      });
+    });
+
+    return result;
+  }, [products, searchQuery, expandedCategories]);
+
+  // ─── Render single product card ───
+  const renderProductCard = (product: any) => {
     const images = product.images || [];
-    const primary = images[0];
+    const primary = images[0] || null;
+    const hasMultiple = images.length > 1;
 
     return (
-      <div key={product.id} className="product-card">
-        <button
-          className="image-wrapper"
-          onClick={() => primary && openImageGallery(images, 0)}
+      <motion.div
+        key={product.id}
+        className="sps-product-card"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{ scale: 1.02, boxShadow: "0 10px 25px rgba(0,0,0,0.12)" }}
+        transition={{ duration: 0.25 }}
+      >
+        <motion.button
+          className="sps-primary-image-wrapper"
+          onClick={() => primary && openGallery(images, 0)}
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.97 }}
           type="button"
         >
           {primary ? (
-            <div className="primary-image-container">
+            <div className="sps-primary-image-container">
               <img
                 src={primary}
                 alt={product.product_name}
-                className="product-img"
+                className="sps-product-img"
                 loading="lazy"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = "/fallback-image.jpg";
                 }}
               />
-              {images.length > 1 && (
-                <div className="image-count-badge">
-                  +{images.length - 1}
-                </div>
+              {hasMultiple && (
+                <div className="sps-image-count-badge">+{images.length - 1}</div>
               )}
             </div>
           ) : (
-            <div className="placeholder-container">
-              <ImageIcon size={32} />
-              <span>No Image</span>
+            <div className="sps-placeholder-container">
+              <ImageIcon size={28} />
+              <span className="sps-placeholder-text">No Image</span>
             </div>
           )}
-        </button>
+        </motion.button>
 
-        <div className="text-column">
-          <h4 className="product-name">{product.product_name}</h4>
+        <div className="sps-text-column">
+          <h3 className="sps-product-name">{product.product_name}</h3>
 
-          <div className="price-row">
+          <div className="sps-price-row">
             <span
-              className={`availability-badge ${
-                product.is_available ? "available" : "not-available"
-              }`}
+              className={`sps-availability ${product.is_available ? "available" : "not-available"}`}
             >
               {product.is_available ? "Available" : "Unavailable"}
             </span>
-
-            <span className="price-text">
+            <span className="sps-price-text">
               {product.price != null
                 ? `₦${Math.floor(product.price).toLocaleString()}`
                 : "N/A"}
             </span>
           </div>
         </div>
-      </div>
+      </motion.div>
     );
   };
 
-  // ────────────────────────────────────────────────
-  // Single return using PageShell
-  // ────────────────────────────────────────────────
-  // ... imports unchanged
-
-return (
-  <PageShell
-    title={`${category === "Services" ? "Services" : "Products"} Listing`}
-    isLoading={loading}
-    error={error}
-    onRetry={fetchShopProducts}
-  >
-    <div className="sps-content-wrapper">
-      <button className="sps-update-button" onClick={handleUpdateProduct}>
-        Update {category === "Services" ? "services" : "products"}
-      </button>
-
-      <input
-        className="sps-search-input"
-        placeholder="Search in your inventory..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-
-      {(!products || products.length === 0) && (
-        <p className="sps-no-items">No items available yet.</p>
-      )}
-
-      <div className="sps-content-container">
-        <AnimatePresence>
-          {filteredProducts.map((categoryData: any) => (
-            <motion.div
-              key={categoryData.category}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="sps-category-section"
+  // ─── Main JSX ───
+  return (
+    <PageShell
+      title={`${category === "Services" ? "Services" : "Products"} Listing`}
+      isLoading={loading}
+      error={error}
+      onRetry={fetchShopProducts}
+    >
+      <motion.div
+        className="sps-container"
+        initial={{ opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Search */}
+        <motion.div
+          className="sps-search-container"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+        >
+          <Search size={20} />
+          <input
+            type="text"
+            placeholder="Search in your inventory..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="sps-search-input"
+          />
+          {searchQuery && (
+            <motion.button
+              className="sps-clear-search"
+              onClick={() => setSearchQuery("")}
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
             >
-              <h2 className="sps-category-title">{categoryData.category}</h2>
-
-              {categoryData.subcategories.map((sub: any) => (
-                <div
-                  key={sub.subcategory}
-                  className="sps-subcategory-section"
-                >
-                  <h3 className="sps-subcategory-title">{sub.subcategory}</h3>
-
-                  <div className="sps-products-grid">
-                    {sub.products.map(renderProduct)}
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-    </div>
-
-    {/* Gallery */}
-    {galleryVisible && (
-      <div className="sps-gallery-overlay" onClick={closeGallery}>
-        <div className="sps-gallery-container" onClick={(e) => e.stopPropagation()}>
-          <div
-            className="sps-gallery-scroll"
-            style={{ transform: `translateX(-${currentGalleryIndex * 100}%)` }}
-          >
-            {galleryImages.map((url, idx) => (
-              <div key={idx} className="sps-gallery-page">
-                <img
-                  src={url}
-                  alt={`Item image ${idx + 1}`}
-                  className="sps-gallery-image"
-                  loading="lazy"
-                />
-                {galleryImages.length > 1 && (
-                  <div className="sps-gallery-count-badge">
-                    {idx + 1} / {galleryImages.length}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <button className="sps-close-gallery-btn" onClick={closeGallery}>
-            <X size={32} />
-          </button>
-
-          {galleryImages.length > 1 && (
-            <div className="sps-gallery-nav">
-              <button className="sps-nav-btn sps-prev" onClick={() => setCurrentGalleryIndex(i => Math.max(0, i - 1))}>
-                ←
-              </button>
-              <button className="sps-nav-btn sps-next" onClick={() => setCurrentGalleryIndex(i => Math.min(galleryImages.length - 1, i + 1))}>
-                →
-              </button>
-            </div>
+              <X size={18} />
+            </motion.button>
           )}
+        </motion.div>
+
+        {/* Update button */}
+        <motion.button
+          className="sps-update-button"
+          onClick={() => navigate("/update-products", { state: { shopId, category } })}
+          whileHover={{ scale: 1.03, boxShadow: "0 6px 16px rgba(0,0,0,0.15)" }}
+          whileTap={{ scale: 0.97 }}
+        >
+          Update {category === "Services" ? "Services" : "Products"}
+        </motion.button>
+
+        {/* List */}
+        <div className="sps-list-content">
+          <AnimatePresence>
+            {flatData.length === 0 && !loading ? (
+              <motion.div
+                className="sps-empty-state"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+              >
+                <Search size={48} strokeWidth={1.5} />
+                <h3>No items found</h3>
+                <p>Try adjusting your search or add new items</p>
+              </motion.div>
+            ) : (
+              flatData.map((item, idx) => {
+                if (item.type === "category") {
+                  const { data: cat, count } = item;
+                  const isExpanded = expandedCategories.has(cat.category);
+
+                  return (
+                    <motion.div
+                      key={`cat-${cat.category}`}
+                      className="sps-category-header"
+                      onClick={() => toggleCategory(cat.category)}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="sps-category-title-row">
+                        <h2 className="sps-category-title">{cat.category}</h2>
+                        <motion.div
+                          className="sps-item-count-badge"
+                          whileHover={{ scale: 1.1 }}
+                        >
+                          {count}
+                        </motion.div>
+                      </div>
+                      <motion.div
+                        className={`sps-chevron ${isExpanded ? "expanded" : ""}`}
+                        animate={{ rotate: isExpanded ? 180 : 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <ChevronDown size={20} />
+                      </motion.div>
+                    </motion.div>
+                  );
+                }
+
+                if (item.type === "subcategory") {
+                  return (
+                    <motion.h3
+                      key={`sub-${item.data.subcategory}`}
+                      className="sps-subcategory-title"
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {item.data.subcategory}
+                    </motion.h3>
+                  );
+                }
+
+                if (item.type === "product") {
+                  return renderProductCard(item.data);
+                }
+
+                return null;
+              })
+            )}
+          </AnimatePresence>
         </div>
-      </div>
-    )}
-  </PageShell>
-);
+      </motion.div>
+
+      {/* ─── Gallery Overlay ─── */}
+      <AnimatePresence>
+        {galleryVisible && (
+          <motion.div
+            className="sps-gallery-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeGallery}
+          >
+            <motion.div
+              className="sps-gallery-container"
+              initial={{ scale: 0.85 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.85 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div
+                className="sps-gallery-pages"
+                style={{
+                  transform: `translateX(-${galleryStartIndex * 100}%)`,
+                }}
+              >
+                {galleryImages.map((url, idx) => (
+                  <div key={idx} className="sps-gallery-page">
+                    <img
+                      src={url}
+                      alt={`Image ${idx + 1}`}
+                      className="sps-gallery-image"
+                    />
+                    {galleryImages.length > 1 && (
+                      <div className="sps-gallery-count">
+                        {idx + 1} / {galleryImages.length}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <motion.button
+                className="sps-close-gallery"
+                onClick={closeGallery}
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <X size={32} />
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </PageShell>
+  );
 };
 
 export default ShopProduct;

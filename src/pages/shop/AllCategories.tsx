@@ -1,47 +1,48 @@
 // components/AllCategories.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import PageShell from '../../components/PageShell';           // adjust path if needed
 import '../../css/shop/AllCategories.css';
 
 const categoryImages: Record<string, string> = {
-  'Agriculture & Food': '/assets/categories/Agriculture.jpg',
-  'Babies & Kiddies': '/assets/categories/Babies.jpg',
-  'Books & Stationery': '/assets/categories/Books.jpg',
-  'Commercial Equipments & Tools': '/assets/categories/Commercial.jpg',
-  'Construction Tools & Materials': '/assets/categories/Construction.jpg',
-  'Custom & Personalized': '/assets/categories/Custom.jpg',
-  'Electronics': '/assets/categories/Electronics.jpg',
-  'Fashion': '/assets/categories/Fashion.jpg',
-  'Food & Restaurants': '/assets/categories/Food.jpg',
-  'Fuel & Automotive Retail': '/assets/categories/Fuel.jpg',
-  'Furniture': '/assets/categories/Furniture.jpg',
-  'Green & Eco-friendly': '/assets/categories/Green.jpg',
-  'Grocery & Supermarkets': '/assets/categories/Grocery.jpg',
-  'Health & Beauty': '/assets/categories/Health.jpg',
-  'Hospitality & Accommodations': '/assets/categories/Hospitality.jpg',
-  'Industrial & Scientific': '/assets/categories/Industrial.jpg',
-  'Luxury & Designer': '/assets/categories/Luxury.jpg',
-  'Medical & Healthcare': '/assets/categories/Medical.jpg',
-  'Music & Audio': '/assets/categories/Music.jpg',
-  'Office & School Supplies': '/assets/categories/Office.jpg',
-  'Party & Event Supplies': '/assets/categories/Party.jpg',
-  'Pets': '/assets/categories/Pets.jpg',
-  'Printing & Publishing': '/assets/categories/Printing.jpg',
-  'Promotional Products': '/assets/categories/Promotional.jpg',
-  'Property': '/assets/categories/Property.jpg',
-  'Seasonal & Holiday': '/assets/categories/Seasonal.jpg',
-  'Services': '/assets/categories/Services.jpg',
-  'Spiritual & Wellness': '/assets/categories/Spiritual.jpg',
-  'Sports, Arts & outdoors': '/assets/categories/Sports.jpg',
-  'Textiles & Fabrics': '/assets/categories/Textile.jpg',
-  'Toys & Hobbies': '/assets/categories/Toys.jpg',
-  'Travel & Luggage': '/assets/categories/Travel.jpg',
-  'Vehicles': '/assets/categories/Vehicle.jpg',
-  'Vintage & Thrift': '/assets/categories/Vintage.jpg',
-  '': '/assets/categories/default.jpg',
+  'Agriculture & Food': '/assets/G-images/Agriculture.jpg',
+  'Babies & Kiddies': '/assets/G-images/Babies.jpg',
+  'Books & Stationery': '/assets/G-images/Books.jpg',
+  'Commercial Equipments & Tools': '/assets/G-images/Commercial.jpg',
+  'Construction Tools & Materials': '/assets/G-images/Construction.jpg',
+  'Custom & Personalized': '/assets/G-images/Custom.jpg',
+  'Electronics': '/assets/G-images/Electronics.jpg',
+  'Fashion': '/assets/G-images/Fashion.jpg',
+  'Food & Restaurants': '/assets/G-images/Food.jpg',
+  'Fuel & Automotive Retail': '/assets/G-images/Fuel.jpg',
+  'Furniture': '/assets/G-images/Furniture.jpg',
+  'Green & Eco-friendly': '/assets/G-images/Green.jpg',
+  'Grocery & Supermarkets': '/assets/G-images/Grocery.jpg',
+  'Health & Beauty': '/assets/G-images/Health.jpg',
+  'Hospitality & Accommodations': '/assets/G-images/Hospitality.jpg',
+  'Industrial & Scientific': '/assets/G-images/Industrial.jpg',
+  'Luxury & Designer': '/assets/G-images/Luxury.jpg',
+  'Medical & Healthcare': '/assets/G-images/Medical.jpg',
+  'Music & Audio': '/assets/G-images/Music.jpg',
+  'Office & School Supplies': '/assets/G-images/Office.jpg',
+  'Party & Event Supplies': '/assets/G-images/Party.jpg',
+  'Pets': '/assets/G-images/Pets.jpg',
+  'Printing & Publishing': '/assets/G-images/Printing.jpg',
+  'Promotional Products': '/assets/G-images/Promotional.jpg',
+  'Property': '/assets/G-images/Property.jpg',
+  'Seasonal & Holiday': '/assets/G-images/Seasonal.jpg',
+  'Services': '/assets/G-images/Services.jpg',
+  'Spiritual & Wellness': '/assets/G-images/Spiritual.jpg',
+  'Sports, Arts & outdoors': '/assets/G-images/Sports.jpg',
+  'Textiles & Fabrics': '/assets/G-images/Textile.jpg',
+  'Toys & Hobbies': '/assets/G-images/Toys.jpg',
+  'Travel & Luggage': '/assets/G-images/Travel.jpg',
+   Vehicles: '/assets/G-images/Vehicle.jpg',
+  'Vintage & Thrift': '/assets/G-images/Vintage.jpg',
+  '': '/assets/G-images/default.jpg',
 };
 
 interface Category {
@@ -58,27 +59,21 @@ const AllCategories: React.FC = () => {
 
   const fetchCategories = useCallback(async () => {
     try {
-      // Check cache first
       const cached = localStorage.getItem('categories_cache');
       if (cached) {
-        console.log('Using cached categories');
         const parsed = JSON.parse(cached);
         setCategories(parsed);
         setLoading(false);
         return;
       }
 
-      // Fetch fresh data
-      console.log('Fetching all categories from backend');
-      const response = await axios.get('/all-shop-categories/');
+      const response = await axios.get('https://retail-alvinia-goza-f6a0e4f7.koyeb.app/all-shop-categories/');
       const categoryArray = Object.values(response.data) as Category[];
       const sorted = categoryArray.sort((a, b) => a.name.localeCompare(b.name));
       
       setCategories(sorted);
       localStorage.setItem('categories_cache', JSON.stringify(sorted));
-      console.log('Fetched and cached categories:', sorted.map(item => item.name));
     } catch (err: any) {
-      console.error('Error fetching categories:', err);
       setError(err.message || 'Failed to load categories');
     } finally {
       setLoading(false);
@@ -90,123 +85,81 @@ const AllCategories: React.FC = () => {
   }, [fetchCategories]);
 
   const handleCategoryClick = (categoryId: number, categoryName: string) => {
-    navigate(`/shop/ChildCategoryList?categoryId=${categoryId}&categoryName=${encodeURIComponent(categoryName)}&prevRoute=/shop/AllCategories`);
-  };
-
-  const renderCategoryItem = (item: Category, index: number) => {
-    const normalizedName = item.name.trim();
-    const imageSrc = categoryImages[normalizedName] || categoryImages[''];
-    
-    const isLastAndOdd = index === categories.length - 1 && categories.length % 2 !== 0;
-
-    return (
-      <motion.button
-        key={item.id}
-        className={`category-item ${isLastAndOdd ? 'last-category-item' : ''}`}
-        onClick={() => handleCategoryClick(item.id, item.name)}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.98 }}
-      >
-        <div className="icon-container">
-          <img 
-            src={imageSrc} 
-            alt={item.name}
-            className="category-icon"
-            onError={(e) => {
-              console.warn(`No image found for category: ${normalizedName}, using fallback`);
-              (e.target as HTMLImageElement).src = categoryImages['']!;
-            }}
-          />
-        </div>
-        <p className="category-name">{item.name}</p>
-      </motion.button>
+    navigate(
+      `/child-category?categoryId=${categoryId}&categoryName=${encodeURIComponent(categoryName)}&prevRoute=/shop/AllCategories`
     );
   };
 
+  // ── Loading / Error states inside PageShell ────────────────────────
   if (loading) {
     return (
-      <div className="centered-container">
-        <div className="gradient-bg">
-          <header className="header">
-            <motion.button 
-              className="back-button" 
-              onClick={() => navigate('/shop')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <ArrowLeft size={26} />
-            </motion.button>
-            <h1 className="header-title">All Categories</h1>
-            <div className="header-spacer" />
-          </header>
-          
-          <div className="loader-container">
-            <Loader2 className="spinner" size={48} />
-            <p className="loading-text">Loading categories...</p>
-          </div>
+      <PageShell title="All Categories" showBackButton={true}>
+        <div className="alctries-loading-container">
+          <Loader2 className="alctries-spinner" size={48} />
+          <p className="alctries-loading-text">Loading categories...</p>
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   if (error) {
     return (
-      <div className="centered-container">
-        <div className="gradient-bg">
-          <header className="header">
-            <motion.button 
-              className="back-button" 
-              onClick={() => navigate('/shop')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <ArrowLeft size={26} />
-            </motion.button>
-            <h1 className="header-title">All Categories</h1>
-            <div className="header-spacer" />
-          </header>
-          
-          <div className="loader-container">
-            <p className="error-text">Failed to load categories.</p>
-            <motion.button
-              className="retry-button"
-              onClick={() => {
-                setLoading(true);
-                setError(null);
-                fetchCategories();
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Retry
-            </motion.button>
-          </div>
+      <PageShell title="All Categories" showBackButton={true}>
+        <div className="alctries-error-container">
+          <p className="alctries-error-text">{error}</p>
+          <motion.button
+            className="alctries-retry-button"
+            onClick={() => {
+              setLoading(true);
+              setError(null);
+              fetchCategories();
+            }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            Try Again
+          </motion.button>
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   return (
-    <div className="categories-page">
-      <div className="gradient-bg">
-        <header className="header">
-          <motion.button 
-            className="back-button" 
-            onClick={() => navigate('/shop')}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <ArrowLeft size={26} />
-          </motion.button>
-          <h1 className="header-title">All Categories</h1>
-          <div className="header-spacer" />
-        </header>
-        
-        <div className="categories-grid">
-          {categories.map((category, index) => renderCategoryItem(category, index))}
+    <PageShell title="All Categories" showBackButton={true}>
+      <div className="alctries-categories-container">
+        <div className="alctries-grid">
+          {categories.map((category) => {
+            const normalizedName = category.name.trim();
+            const imageSrc = categoryImages[normalizedName] || categoryImages[''];
+
+            return (
+              <motion.div
+                key={category.id}
+                className="alctries-category-card"
+                onClick={() => handleCategoryClick(category.id, category.name)}
+                whileHover={{ y: -6, scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              >
+                <div className="alctries-card-image-wrapper">
+                  <img
+                    src={imageSrc}
+                    alt={category.name}
+                    className="alctries-category-image"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = categoryImages['']!;
+                    }}
+                  />
+                </div>
+                <div className="alctries-card-content">
+                  <h3 className="alctries-category-title">{category.name}</h3>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 };
 

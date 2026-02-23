@@ -83,7 +83,7 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  color: grey; /* slate-400 – neutral default */
+  color: black; /* slate-400 – neutral default */
 
   /* Default hover (subtle) */
   &:hover {

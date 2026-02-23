@@ -1,33 +1,45 @@
-import React, { useCallback, useEffect, useState, useRef, memo } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useCallback, useEffect, useState, memo } from "react";
+import { useNavigate } from "react-router-dom";
 import YouTube from "react-youtube";
-import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
-import type { Variants } from "framer-motion";   // ← add this line
+import { motion, AnimatePresence } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { FaMapMarkerAlt, FaStore, FaSearch, FaShoppingBag, FaStoreAlt, FaPlayCircle, FaTimes } from "react-icons/fa";
 import '../css/shop/Home.css';
 import ThemeToggle from '../components/ThemeToggle';
 
 // ────────────────────────────────────────────────
-// Removed unused SPACING and COLORS
-// Enhanced with better variants for animations
-// Improved structure with more sub-components
-// Added better responsiveness and accessibility
-// Optimized state management and effects
+// Compact glassmorphism header (cloned & adapted from global Header)
 // ────────────────────────────────────────────────
 
-const useMediaQuery = (query: string) => {
-  const [matches, setMatches] = useState(false);
-  useEffect(() => {
-    const media = window.matchMedia(query);
-    setMatches(media.matches);
-    const listener = () => setMatches(media.matches);
-    media.addEventListener('change', listener);
-    return () => media.removeEventListener('change', listener);
-  }, [query]);
-  return matches;
+const HomeHeader = () => {
+  const navigate = useNavigate();
+
+  return (
+    <header className="hml-header">
+  <div className="hml-header-inner">
+    {/* Left: Logo + Title */}
+    <div className="hml-header-left">
+      <div className="hml-header-brand">
+        <img
+          src="/assets/images/icon-512.png"
+          alt="Gogo Logo"
+          className="hml-header-logo"
+          loading="lazy"
+        />
+        <h1 className="hml-header-title">Gogo Digital Market</h1>
+      </div>
+    </div>
+
+    {/* Right: Theme toggle */}
+    <div className="hml-header-right">
+      <ThemeToggle />
+    </div>
+  </div>
+</header>
+  );
 };
 
-// Define animation variants for reuse
+// Animation variants (unchanged)
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 50, scale: 0.95 },
   visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
@@ -39,6 +51,9 @@ const buttonVariants: Variants = {
   hover: { scale: 1.05 },
   tap: { scale: 0.98 },
 };
+
+// FeatureCard, RoleCard, TutorialVideoItem remain unchanged
+// (keeping them as they were in your code)
 
 const FeatureCard = memo(({ icon: Icon, title, description }: { icon: any; title: string; description: string }) => {
   return (
@@ -154,6 +169,10 @@ const TutorialVideoItem = memo(({ title, videoId, onPlay }: { title: string; vid
   </motion.div>
 ));
 
+// ────────────────────────────────────────────────
+// Main Homepage component
+// ────────────────────────────────────────────────
+
 const Homepage: React.FC = () => {
   const navigate = useNavigate();
   const [sessionToken, setSessionToken] = useState<string | null>(null);
@@ -165,7 +184,7 @@ const Homepage: React.FC = () => {
   const [videoVisible, setVideoVisible] = useState(false);
   const [isVideoLoading, setIsVideoLoading] = useState(false);
 
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
   const buyerTutorials = [
     { title: "How to find sellers", videoId: "dQw4w9WgXcQ" },
@@ -243,16 +262,11 @@ const Homepage: React.FC = () => {
 
   return (
     <div className="homepage">
-      <header className="header">
-        <div className="header-brand">
-          <img src="/assets/images/icon1.png" alt="Gogo Logo" className="header-logo" loading="lazy" />
-          <h1 className="">Gogo Digital Market</h1>
-          <ThemeToggle />
-        </div>
-      </header>
+      {/* Updated header – glassmorphism style */}
+      <HomeHeader />
 
       <main className="scroll-content">
-        {/* Hero Section - Enhanced with parallax-like animation */}
+        {/* Hero Section */}
         <section className="hero-section">
           <motion.div
             className="hero-image-container"
@@ -260,7 +274,7 @@ const Homepage: React.FC = () => {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
           >
-            <img src="/assets/images/homestart.jpg" alt="Discover local businesses" className="hero-image" loading="lazy" />
+            <img src="/assets/images/homestart.png" alt="Discover local businesses" className="hero-image" loading="lazy" />
             <div className="hero-gradient-overlay" />
           </motion.div>
           <motion.div
@@ -294,7 +308,7 @@ const Homepage: React.FC = () => {
           </motion.div>
         </section>
 
-        {/* How to Use Section - Improved grid layout */}
+        {/* How to Use Section */}
         <section className="how-to-use-section">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -324,7 +338,7 @@ const Homepage: React.FC = () => {
           </div>
         </section>
 
-        {/* Why Choose Section - Added horizontal scroll for mobile */}
+        {/* Why Choose Section */}
         <section className="why-choose-section">
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
@@ -364,7 +378,7 @@ const Homepage: React.FC = () => {
           )}
         </section>
 
-        {/* Footer - Enhanced animations */}
+        {/* Footer */}
         <footer className="footer-section">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -388,7 +402,7 @@ const Homepage: React.FC = () => {
         </footer>
       </main>
 
-      {/* Tutorial Modal - Improved accessibility and animations */}
+      {/* Tutorial Modal */}
       <AnimatePresence>
         {modalVisible && (
           <motion.div
@@ -432,7 +446,7 @@ const Homepage: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Video Modal - Added loading skeleton and better handling */}
+      {/* Video Modal */}
       <AnimatePresence>
         {videoVisible && currentVideoId && (
           <motion.div

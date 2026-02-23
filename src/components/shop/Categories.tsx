@@ -48,7 +48,7 @@ const Categories: React.FC<CategoriesProps> = ({ categories }) => {
 
   const handleCategoryClick = (categoryId: number, categoryName: string) => {
     navigate(
-      `/shop/ChildCategoryList?categoryId=${categoryId}&categoryName=${encodeURIComponent(categoryName)}&prevRoute=${encodeURIComponent(location.pathname)}`
+      `/child-category?categoryId=${categoryId}&categoryName=${encodeURIComponent(categoryName)}&prevRoute=${encodeURIComponent(location.pathname)}`
     );
   };
 
@@ -58,7 +58,7 @@ const Categories: React.FC<CategoriesProps> = ({ categories }) => {
         <h2 className="categories-title">Categories</h2>
         <motion.button
           className="see-all-btn"
-          onClick={() => navigate(`/shop/AllCategories?prevRoute=${encodeURIComponent(location.pathname)}`)}
+          onClick={() => navigate(`/all-categories?prevRoute=${encodeURIComponent(location.pathname)}`)}
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.96 }}
         >

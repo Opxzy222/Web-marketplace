@@ -1,17 +1,16 @@
-// StatusViewer.jsx
+// StatusViewer.tsx
 import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
-import PageShell from "../../components/PageShell"; // For modal overlay if needed
 import '../../css/component/shop/StatusViewer..css';
 
 const IMAGE_TEXT_DURATION = 6000;
 const VIDEO_MAX_DURATION = 30000;
 const LOAD_TIMEOUT = 10000;
 
-const formatRelativeTime = (createdAt) => {
+const formatRelativeTime = (createdAt: string | undefined): string => {
   if (!createdAt) return "";
   const now = new Date();
   const created = new Date(createdAt);
-  const diffMs = now - created;
+  const diffMs = now.getTime() - created.getTime();
   const diffSeconds = Math.floor(diffMs / 1000);
   const diffMinutes = Math.floor(diffSeconds / 60);
   const diffHours = Math.floor(diffMinutes / 60);
@@ -23,8 +22,19 @@ const formatRelativeTime = (createdAt) => {
   return `${diffDays}d ago`;
 };
 
-const StatusViewer = ({
-  visible,
+interface StatusViewerProps {
+  visible?: boolean;
+  statuses: any[];
+  initialIndex?: number;
+  onClose: () => void;
+  onStatusViewed?: (data: any) => void;
+  onSingleStatusViewed?: (statusId: string | number, shopId: string | number) => void;
+  userId?: string | number;
+  authToken?: string;
+}
+
+const StatusViewer: React.FC<StatusViewerProps> = ({
+  visible = true,
   statuses,
   initialIndex = 0,
   onClose,
@@ -35,20 +45,20 @@ const StatusViewer = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadError, setLoadError] = useState(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const progressRef = useRef(0);
-  const animationRef = useRef(null);
+  const animationRef = useRef<number | null>(null);
   const isPausedRef = useRef(false);
   const pausedTimeRef = useRef(0);
   const isNavigatingRef = useRef(false);
   const currentIndexRef = useRef(initialIndex);
-  const finishedIdsRef = useRef(new Set());
+  const finishedIdsRef = useRef(new Set<string | number>());
   const startedWithUnviewedRef = useRef(false);
 
   const flattened = useMemo(() => statuses ?? [], [statuses]);
 
-  // Smart start index - WhatsApp logic
+  // Determine smart starting point (first unviewed in the same shop)
   const smartStartIndex = useMemo(() => {
     if (!flattened.length) return 0;
 
@@ -56,11 +66,13 @@ const StatusViewer = ({
     const shopId = clicked?.shop?.id;
     if (!shopId) return 0;
 
-    const shopStart = flattened.findIndex(s => s.shop?.id === shopId);
+    const shopStart = flattened.findIndex((s: any) => s.shop?.id === shopId);
     if (shopStart === -1) return 0;
 
-    const shopSlice = flattened.slice(shopStart).filter(s => s.shop?.id === shopId);
-    const firstUnviewed = shopSlice.findIndex(s => !s.viewed && !finishedIdsRef.current.has(s.id));
+    const shopSlice = flattened.slice(shopStart).filter((s: any) => s.shop?.id === shopId);
+    const firstUnviewed = shopSlice.findIndex(
+      (s: any) => !s.viewed && !finishedIdsRef.current.has(s.id)
+    );
 
     startedWithUnviewedRef.current = firstUnviewed >= 0;
     return firstUnviewed >= 0 ? shopStart + firstUnviewed : shopStart;
@@ -72,9 +84,9 @@ const StatusViewer = ({
   }, [smartStartIndex]);
 
   const currentStatus = useMemo(() => {
-    const s = flattened[currentIndex] ?? {};
+    let s = flattened[currentIndex] ?? {};
     if (s.media && /\.(mp4|mov|avi)$/i.test(s.media) && s.media_type !== "video") {
-      return { ...s, media_type: "video" };
+      s = { ...s, media_type: "video" };
     }
     return s;
   }, [flattened, currentIndex]);
@@ -85,11 +97,10 @@ const StatusViewer = ({
   const hasMedia = (isImage || isVideo) && !!currentStatus.media;
   const statusText = currentStatus.text?.trim() ?? "";
 
-  // Shop progress
   const { shopStatuses, effectiveIndex } = useMemo(() => {
     const shopId = currentStatus.shop?.id ?? 0;
-    const list = flattened.filter(s => s.shop?.id === shopId);
-    const start = flattened.findIndex(s => s.shop?.id === shopId);
+    const list = flattened.filter((s: any) => s.shop?.id === shopId);
+    const start = flattened.findIndex((s: any) => s.shop?.id === shopId);
     const effIdx = currentIndex - start;
     return {
       shopStatuses: list,
@@ -97,105 +108,118 @@ const StatusViewer = ({
     };
   }, [currentStatus, flattened, currentIndex]);
 
-  // Video element ref
-  const videoRef = useRef(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const getStatusDuration = useCallback(() => {
-    return IMAGE_TEXT_DURATION; // Simplified for web
+    return IMAGE_TEXT_DURATION; // You can make this dynamic later
   }, []);
 
-  const startProgress = useCallback((overrideDuration) => {
-    if (isPausedRef.current || isNavigatingRef.current) return;
-    
-    const duration = overrideDuration ?? getStatusDuration();
-    const startTime = Date.now();
-    const endTime = startTime + duration;
+  // ── 1. handleNext ──
+  const handleNext = useCallback(
+    (fromTimer = false) => {
+      if (isNavigatingRef.current) return;
+      isNavigatingRef.current = true;
 
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      progressRef.current = progress;
+      if (!fromTimer && isPausedRef.current) {
+        isPausedRef.current = false;
+        isNavigatingRef.current = false;
+        return;
+      }
 
-      if (progress < 1 && !isPausedRef.current && !isNavigatingRef.current) {
-        animationRef.current = requestAnimationFrame(animate);
-      } else if (progress >= 1) {
-        // Mark viewed
-        const statusId = currentStatus.id;
-        const shopId = currentStatus.shop?.id;
-        if (statusId && shopId) {
-          onSingleStatusViewed?.(statusId, shopId);
+      const video = videoRef.current;
+      if (video) video.pause();
+
+      setIsLoading(false);
+      setLoadError(null);
+
+      let nextIdx = currentIndexRef.current + 1;
+
+      // Skip to next shop with unviewed content if possible
+      while (nextIdx < flattened.length) {
+        const nxt = flattened[nextIdx];
+        const shopId = nxt.shop?.id;
+        const shopStart = flattened.findIndex((s: any) => s.shop?.id === shopId);
+        const shopEndIndex = flattened.slice(shopStart).findIndex((s: any) => s.shop?.id !== shopId);
+        const shopEnd = shopEndIndex === -1 ? flattened.length : shopStart + shopEndIndex;
+
+        const shopSlice = flattened.slice(shopStart, shopEnd);
+        const hasUnviewed = shopSlice.some(
+          (s: any) => !s.viewed && !finishedIdsRef.current.has(s.id)
+        );
+
+        if (hasUnviewed) {
+          const firstUnviewed = shopSlice.findIndex(
+            (s: any) => !s.viewed && !finishedIdsRef.current.has(s.id)
+          );
+          nextIdx = shopStart + firstUnviewed;
+          break;
+        } else {
+          nextIdx = shopEnd;
         }
-        finishedIdsRef.current.add(statusId);
+      }
 
-        // Check if shop complete
-        if (shopId) {
-          const shopSlice = flattened.filter(s => s.shop?.id === shopId);
-          const allDone = shopSlice.every(s => s.viewed || finishedIdsRef.current.has(s.id));
-          if (allDone) {
-            onStatusViewed?.({
-              shopId,
-              shop: currentStatus.shop?.name,
-              shopImage: currentStatus.shop?.image,
-              statuses: shopSlice.map(s => ({ ...s, viewed: true })),
-            });
+      if (nextIdx >= flattened.length) {
+        onClose();
+        isNavigatingRef.current = false;
+        return;
+      }
+
+      currentIndexRef.current = nextIdx;
+      setCurrentIndex(nextIdx);
+      isNavigatingRef.current = false;
+    },
+    [flattened, onClose]
+  );
+
+  // ── 2. startProgress (depends on handleNext) ──
+  const startProgress = useCallback(
+    (overrideDuration?: number) => {
+      if (isPausedRef.current || isNavigatingRef.current) return;
+
+      const duration = overrideDuration ?? getStatusDuration();
+      const startTime = Date.now();
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        if (progress < 1 && !isPausedRef.current && !isNavigatingRef.current) {
+          animationRef.current = requestAnimationFrame(animate);
+        } else if (progress >= 1) {
+          const statusId = currentStatus.id;
+          const shopId = currentStatus.shop?.id;
+
+          if (statusId && shopId) {
+            onSingleStatusViewed?.(statusId, shopId);
           }
+          finishedIdsRef.current.add(statusId);
+
+          if (shopId) {
+            const shopSlice = flattened.filter((s: any) => s.shop?.id === shopId);
+            const allDone = shopSlice.every(
+              (s: any) => s.viewed || finishedIdsRef.current.has(s.id)
+            );
+            if (allDone) {
+              onStatusViewed?.({
+                shopId,
+                shop: currentStatus.shop?.name,
+                shopImage: currentStatus.shop?.image,
+                statuses: shopSlice.map((s: any) => ({ ...s, viewed: true })),
+              });
+            }
+          }
+
+          handleNext(true);
         }
-        handleNext(true);
-      }
-    };
-    animationRef.current = requestAnimationFrame(animate);
-  }, [currentStatus, onSingleStatusViewed, onStatusViewed, flattened, handleNext, getStatusDuration]);
+      };
 
-  const handleNext = useCallback((fromTimer = false) => {
-    if (isNavigatingRef.current) return;
-    isNavigatingRef.current = true;
+      animationRef.current = requestAnimationFrame(animate);
+    },
+    [currentStatus, onSingleStatusViewed, onStatusViewed, flattened, handleNext, getStatusDuration]
+  );
 
-    if (!fromTimer && isPausedRef.current) {
-      isPausedRef.current = false;
-      isNavigatingRef.current = false;
-      return;
-    }
-
-    // Pause video
-    const video = videoRef.current;
-    if (video) video.pause();
-
-    setIsLoading(false);
-    setLoadError(null);
-
-    let nextIdx = currentIndexRef.current + 1;
-
-    // WhatsApp smart navigation - next unviewed shop first
-    while (nextIdx < flattened.length) {
-      const nxt = flattened[nextIdx];
-      const shopId = nxt.shop?.id;
-      const shopStart = flattened.findIndex(s => s.shop?.id === shopId);
-      const shopEnd = flattened.slice(shopStart).findIndex(s => s.shop?.id !== shopId);
-      const shopSlice = shopEnd === -1 
-        ? flattened.slice(shopStart) 
-        : flattened.slice(shopStart, shopStart + shopEnd);
-
-      const hasUnviewed = shopSlice.some(s => !s.viewed && !finishedIdsRef.current.has(s.id));
-      if (hasUnviewed) {
-        const first = shopSlice.findIndex(s => !s.viewed && !finishedIdsRef.current.has(s.id));
-        nextIdx = shopStart + first;
-        break;
-      } else {
-        nextIdx = shopStart + shopSlice.length;
-      }
-    }
-
-    if (nextIdx >= flattened.length) {
-      onClose();
-      isNavigatingRef.current = false;
-      return;
-    }
-
-    currentIndexRef.current = nextIdx;
-    setCurrentIndex(nextIdx);
-    isNavigatingRef.current = false;
-  }, [flattened, onClose]);
-
+  // ── 3. handlePrev ──
   const handlePrev = useCallback(() => {
     if (isNavigatingRef.current || currentIndexRef.current <= 0) {
       onClose();
@@ -208,11 +232,14 @@ const StatusViewer = ({
 
     let prevIdx = currentIndexRef.current - 1;
     const curShopId = flattened[currentIndexRef.current]?.shop?.id;
+
     if (curShopId) {
-      const shopStart = flattened.findIndex(s => s.shop?.id === curShopId);
+      const shopStart = flattened.findIndex((s: any) => s.shop?.id === curShopId);
       if (prevIdx < shopStart) {
         const prevShopId = flattened[prevIdx]?.shop?.id;
-        const lastInPrev = flattened.slice(0, shopStart).findLastIndex(s => s.shop?.id === prevShopId);
+        const lastInPrev = flattened
+          .slice(0, shopStart)
+          .findLastIndex((s: any) => s.shop?.id === prevShopId);
         prevIdx = lastInPrev >= 0 ? lastInPrev : prevIdx;
       }
     }
@@ -223,14 +250,15 @@ const StatusViewer = ({
     isNavigatingRef.current = false;
   }, [flattened, onClose]);
 
+  // ── 4. togglePause (depends on startProgress) ──
   const togglePause = useCallback(() => {
     isPausedRef.current = !isPausedRef.current;
     const video = videoRef.current;
-    
+
     if (isPausedRef.current) {
       pausedTimeRef.current = progressRef.current * getStatusDuration();
       if (video) video.pause();
-      if (animationRef.current) {
+      if (animationRef.current !== null) {
         cancelAnimationFrame(animationRef.current);
         animationRef.current = null;
       }
@@ -242,27 +270,29 @@ const StatusViewer = ({
     }
   }, [getStatusDuration, startProgress]);
 
-  // Mark viewed API call
-  const markStatusAsViewed = useCallback(async (status) => {
-    if (!status || status.viewed || !userId) return;
-    try {
-      const formData = new FormData();
-      formData.append("user_id", userId.toString());
-      formData.append("status_ids[]", status.id.toString());
+  const markStatusAsViewed = useCallback(
+    async (status: any) => {
+      if (!status || status.viewed || !userId) return;
+      try {
+        const formData = new FormData();
+        formData.append("user_id", String(userId));
+        formData.append("status_ids[]", String(status.id));
 
-      await fetch('/api/mark_status_viewed/', {
-        method: 'POST',
-        headers: {
-          'Authorization': authToken,
-        },
-        body: formData,
-      });
-    } catch (e) {
-      console.error('Mark viewed error:', e);
-    }
-  }, [userId, authToken]);
+        await fetch('/api/mark_status_viewed/', {
+          method: 'POST',
+          headers: {
+            Authorization: authToken || '',
+          },
+          body: formData,
+        });
+      } catch (e) {
+        console.error('Failed to mark status as viewed:', e);
+      }
+    },
+    [userId, authToken]
+  );
 
-  // Main effect - index change
+  // Main lifecycle effect
   useEffect(() => {
     if (!visible || currentIndex >= flattened.length) {
       onClose();
@@ -275,15 +305,16 @@ const StatusViewer = ({
     isPausedRef.current = false;
     setIsLoading(false);
     setLoadError(null);
-    if (animationRef.current) {
+
+    if (animationRef.current !== null) {
       cancelAnimationFrame(animationRef.current);
       animationRef.current = null;
     }
 
-    // Mark previous as viewed
+    // Mark earlier items in same shop
     const shopId = status.shop?.id;
     if (shopId) {
-      const shopStart = flattened.findIndex(s => s.shop?.id === shopId);
+      const shopStart = flattened.findIndex((s: any) => s.shop?.id === shopId);
       for (let i = shopStart; i < currentIndex; i++) {
         finishedIdsRef.current.add(flattened[i].id);
       }
@@ -291,60 +322,74 @@ const StatusViewer = ({
 
     markStatusAsViewed(status);
 
-    // Start content
     if (isVideo && status.media && videoRef.current) {
       setIsLoading(true);
       const video = videoRef.current;
-      
+
       video.src = status.media;
       video.load();
-      
+
       const timeout = setTimeout(() => {
         setLoadError("Video load timeout");
         handleNext(true);
-      }, 5000);
+      }, LOAD_TIMEOUT);
 
-      video.addEventListener('loadeddata', () => {
+      const onLoaded = () => {
         clearTimeout(timeout);
         setIsLoading(false);
         if (!isPausedRef.current) {
           video.play().catch(() => handleNext(true));
           startProgress();
         }
-      }, { once: true });
+      };
 
-      video.addEventListener('error', () => {
+      const onError = () => {
         clearTimeout(timeout);
         setLoadError("Video failed to load");
         setTimeout(() => handleNext(true), 2000);
-      }, { once: true });
+      };
+
+      video.addEventListener('loadeddata', onLoaded, { once: true });
+      video.addEventListener('error', onError, { once: true });
+
+      return () => {
+        video.removeEventListener('loadeddata', onLoaded);
+        video.removeEventListener('error', onError);
+      };
     } else {
       setIsLoading(false);
       startProgress();
     }
 
     return () => {
-      if (animationRef.current) {
+      if (animationRef.current !== null) {
         cancelAnimationFrame(animationRef.current);
       }
-      const video = videoRef.current;
-      if (video) {
-        video.pause();
-        video.src = '';
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.src = '';
       }
     };
-  }, [currentIndex, visible, flattened, markStatusAsViewed, isVideo, startProgress, handleNext]);
+  }, [
+    currentIndex,
+    visible,
+    flattened,
+    isVideo,
+    markStatusAsViewed,
+    startProgress,
+    handleNext,
+    onClose,
+  ]);
 
-  // Cleanup
+  // Final cleanup
   useEffect(() => {
     return () => {
-      if (animationRef.current) {
+      if (animationRef.current !== null) {
         cancelAnimationFrame(animationRef.current);
       }
-      const video = videoRef.current;
-      if (video) {
-        video.pause();
-        video.src = '';
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.src = '';
       }
     };
   }, []);
@@ -353,12 +398,9 @@ const StatusViewer = ({
 
   return (
     <div className={`status-viewer ${visible ? 'visible' : ''}`}>
-      {/* Backdrop */}
       <div className="stv-backdrop" onClick={onClose} />
-      
-      {/* Container */}
+
       <div className="stv-viewer-container">
-        {/* Header */}
         <div className="stv-header">
           <div className="stv-shop-info">
             <span className="stv-shop-name">{currentStatus.shop?.name ?? "Unknown Shop"}</span>
@@ -367,21 +409,24 @@ const StatusViewer = ({
           <button className="stv-close-btn" onClick={onClose}>×</button>
         </div>
 
-        {/* Progress bars */}
         <div className="stv-progress-container">
-          {shopStatuses.map((status, i) => {
+          {shopStatuses.map((status: any, i: number) => {
             const isCurrent = i === effectiveIndex;
             const isPast = i < effectiveIndex;
             const isViewed = status.viewed || finishedIdsRef.current.has(status.id);
-            const progress = isCurrent ? progressRef.current : (isPast || (isViewed && !isCurrent)) ? 1 : 0;
+            const progress = isCurrent
+              ? progressRef.current
+              : isPast || (isViewed && !isCurrent)
+              ? 1
+              : 0;
 
             return (
               <div key={status.id} className="stv-progress-background">
-                <div 
-                  className="stv-progress-bar" 
-                  style={{ 
+                <div
+                  className="stv-progress-bar"
+                  style={{
                     transform: `scaleX(${progress})`,
-                    background: isCurrent ? 'white' : 'rgba(255,255,255,0.6)'
+                    backgroundColor: isCurrent ? 'white' : 'rgba(255,255,255,0.6)',
                   }}
                 />
               </div>
@@ -389,7 +434,6 @@ const StatusViewer = ({
           })}
         </div>
 
-        {/* Content */}
         <div className="stv-content-wrapper">
           {isText && statusText ? (
             <div className="stv-text-status">
@@ -415,10 +459,10 @@ const StatusViewer = ({
                   disablePictureInPicture
                 />
               ) : isImage ? (
-                <img 
-                  src={currentStatus.media} 
-                  className="stv-media image" 
-                  alt="Status"
+                <img
+                  src={currentStatus.media}
+                  className="stv-media image"
+                  alt="Status content"
                   loading="eager"
                 />
               ) : null}
@@ -426,7 +470,6 @@ const StatusViewer = ({
           ) : null}
         </div>
 
-        {/* Caption */}
         {hasMedia && statusText && (
           <div className="stv-caption-container">
             <div className="stv-caption-bubble">
@@ -435,7 +478,6 @@ const StatusViewer = ({
           </div>
         )}
 
-        {/* Tap zones */}
         <button className="stv-tap-zone left" onClick={handlePrev} />
         <button className="stv-tap-zone center" onClick={togglePause} />
         <button className="stv-tap-zone right" onClick={() => handleNext(false)} />

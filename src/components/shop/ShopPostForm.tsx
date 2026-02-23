@@ -147,7 +147,7 @@ const ShopPostForm = ({ shopId, onPostCreated }) => {
 
     try {
       const response = await axios.post(
-        `/shops/${shopId}/posts/create/`,
+        `https://retail-alvinia-goza-f6a0e4f7.koyeb.app/shops/${shopId}/posts/create/`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

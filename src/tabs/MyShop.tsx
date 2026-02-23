@@ -13,7 +13,7 @@ import {
   LogOut,
 } from "lucide-react";
 import axios from "axios";
-import '../../css/shop/MyShop.css';
+import '../css/tab/MyShop.css';
 
 const CACHE_KEY = "MyShop_Cache";
 const NAVIGATION_THRESHOLD = 3;
@@ -311,7 +311,7 @@ const MyShop = () => {
 
                     <button
                       className="action-btn stories"
-                      onClick={() => navigate("/shop/ShopStatus", { state: { shopId: shop.id } })}
+                      onClick={() => navigate("/status-updates", { state: { shopId: shop.id } })}
                     >
                       <RefreshCw size={24} />
                       <span>Stories</span>

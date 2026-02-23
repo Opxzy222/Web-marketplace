@@ -17,7 +17,7 @@ const Details = () => {
   };
 
   const handleWorkingHours = () => {
-    navigate(`/shop/WorkingHours?shopId=${shopId}&prevRoute=${encodeURIComponent(prevRoute)}`);
+    navigate(`/shop/work-hours?shopId=${shopId}&prevRoute=${encodeURIComponent(prevRoute)}`);
   };
 
   const options = [

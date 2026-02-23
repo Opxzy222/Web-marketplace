@@ -3,15 +3,15 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaStore, FaExclamationTriangle, FaSyncAlt } from "react-icons/fa";
-import SearchBar from "../../components/shop/SearchBar";
-import Categories from "../../components/shop/Categories";
-import Header from "../../components/shop/Header";
-import RecentlyVisitedShops from "../../components/shop/RecentlyVisitedShops";
-import FollowedShops from "../../components/shop/FollowedShops";
+import SearchBar from "../components/shop/SearchBar";
+import Categories from "../components/shop/Categories";
+import Header from "../components/shop/Header";
+import RecentlyVisitedShops from "../components/shop/RecentlyVisitedShops";
+import FollowedShops from "../components/shop/FollowedShops";
 
 //import AdMobManager from "./AdMobManager"; // Adjust path or replace with web ads
 //import useAuthGuard from "../../hooks/useAuthGuard"; // Adjust path
-import '../../css/shop/ShopHomePage.css';
+import '../css/tab/ShopHomePage.css';
 
 const Shop: React.FC = () => {
   // Auth Guard (blocks render if not logged in)
@@ -223,20 +223,50 @@ const Shop: React.FC = () => {
 
   // Early returns
   if (subscriptionLoading || isLoading) {
-    return (
-      <div className="loading-screen">
-        <motion.div 
-          className="loading-container"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+  return (
+    <div className="loading-screen">
+      <motion.div
+        className="loading-spinner-modern"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        <div className="spinner-ring">
+          <div className="spinner-ring-segment" />
+          <div className="spinner-ring-segment" />
+          <div className="spinner-ring-segment" />
+          <div className="spinner-ring-segment" />
+        </div>
+
+        <motion.div
+          className="loading-logo"
+          animate={{ scale: [1, 1.08, 1] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         >
-          <FaStore size={40} className="loading-icon" />
-          <p className="loading-text">Loading your dashboard...</p>
+          <FaStore size={48} />
         </motion.div>
-      </div>
-    );
-  }
+
+        <motion.p
+          className="loading-message"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          Preparing your shop dashboard...
+        </motion.p>
+
+        <motion.p
+          className="loading-subtext"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.7 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+        >
+          Just a moment
+        </motion.p>
+      </motion.div>
+    </div>
+  );
+}
 
   if (networkError) {
     return (

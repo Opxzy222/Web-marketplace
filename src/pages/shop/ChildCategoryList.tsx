@@ -1,132 +1,182 @@
-// ChildCategoryList.jsx
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+// components/shop/ChildCategories.tsx
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import axios from 'axios'; // Configure your API base
-import PageShell from '../../components/PageShell'; // Adjust path
-import "../../css/shop/ChildCategoryList.css";
+import { Loader2, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import PageShell from '../../components/PageShell'; // Adjust path if needed
+import '../../css/shop/ChildCategories.css';
 
-const API_BASE_URL = ''; // Your API base URL
+const API_BASE_URL = 'https://retail-alvinia-goza-f6a0e4f7.koyeb.app';
 
-// In-memory cache for child categories
-const categoryCache = new Map();
-
-const ChildCategoryList = () => {
-  const [searchParams] = useSearchParams();
+const ChildCategories: React.FC = () => {
   const navigate = useNavigate();
-  const [childCategories, setChildCategories] = useState([]);
+  const [searchParams] = useSearchParams();
+
+  // Read parameters safely
+  const parentCategoryId = searchParams.get('categoryId');
+  const parentCategoryName = searchParams.get('categoryName') || 'Categories';
+  const prevRoute = searchParams.get('prevRoute') || '/shop/AllCategories';
+
+  const parsedParentId = parentCategoryId ? parseInt(parentCategoryId, 10) : null;
+
+  const [childCategories, setChildCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-  const lastFetchedDataRef = useRef(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const categoryId = searchParams.get('categoryId');
-  const categoryName = searchParams.get('categoryName');
-  const prevRoute = searchParams.get('prevRoute');
+  const fetchChildCategories = useCallback(async () => {
+    if (!parsedParentId || isNaN(parsedParentId)) {
+      navigate('/shop');
+      return;
+    }
 
-  useEffect(() => {
-    const loadData = async () => {
-      if (!categoryId) {
-        navigate('/shop');
-        return;
-      }
-      
-      try {
-        // Check in-memory cache
-        if (categoryCache.has(categoryId)) {
-          const cachedData = categoryCache.get(categoryId);
-          setChildCategories(cachedData);
-          lastFetchedDataRef.current = cachedData;
-          setLoading(false);
-          return;
-        }
-
-        // Check localStorage cache
-        const cacheKey = `childCategories_${categoryId}`;
-        const cachedData = localStorage.getItem(cacheKey);
-        if (cachedData) {
-          const parsedData = JSON.parse(cachedData);
-          setChildCategories(parsedData);
-          lastFetchedDataRef.current = parsedData;
-          categoryCache.set(categoryId, parsedData);
-          setLoading(false);
-          return;
-        }
-
-        // Fetch from API
-        const sessionToken = localStorage.getItem('sessionToken');
-        const response = await axios.get(`${API_BASE_URL}/shop-childcategories/${categoryId}/`, {
-          headers: sessionToken ? { Authorization: sessionToken } : {},
-        });
-        const data = response.data;
-        setChildCategories(data);
-        lastFetchedDataRef.current = data;
-        categoryCache.set(categoryId, data);
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-      } catch (error) {
-        console.error('Error fetching child categories:', error);
-        // Fallback to last fetched data if available
-        if (lastFetchedDataRef.current) {
-          setChildCategories(lastFetchedDataRef.current);
-        }
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, [categoryId, navigate]);
-
-  const handleCategoryClick = useCallback((childCategoryId, childCategoryName) => {
-    setSelectedCategoryId(childCategoryId);
-    navigate({
-      pathname: '/shop/SubcategoryList',
-      search: `?categoryId=${childCategoryId}&categoryName=${encodeURIComponent(childCategoryName)}&prevRoute=/shop/ChildCategoryList&parentCategoryId=${categoryId}&parentCategoryName=${encodeURIComponent(categoryName)}`
-    });
-  }, [navigate, categoryId, categoryName]);
-
-  const renderChildCategory = (item) => (
-    <div 
-      className={`subcategory-card ${selectedCategoryId === item.id ? 'selected' : ''}`}
-      onClick={() => handleCategoryClick(item.id, item.name)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && handleCategoryClick(item.id, item.name)}
-    >
-      <div className="subcategory-card-inner">
-        <div className="card-gradient">
-          <span className="subcategory-title">{item.name}</span>
-          <svg className="chevron-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-          </svg>
-        </div>
-      </div>
-    </div>
-  );
-
-  const retryFetch = () => {
     setLoading(true);
     setError(null);
-    // Trigger re-fetch by resetting deps
+
+    const cacheKey = `chcat_childcategories_${parsedParentId}`;
+
+    try {
+      // 1. Check localStorage cache
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        setChildCategories(parsed);
+        setLoading(false);
+        return;
+      }
+
+      // 2. Fetch from API
+      const sessionToken = localStorage.getItem('sessionToken');
+
+      const response = await fetch(
+        `${API_BASE_URL}/shop-childcategories/${parsedParentId}/`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(sessionToken && { Authorization: sessionToken }),
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Store in cache
+      localStorage.setItem(cacheKey, JSON.stringify(data));
+      setChildCategories(data);
+
+    } catch (err: any) {
+      console.error('Failed to load child categories:', err);
+      setError(err.message || 'Failed to load subcategories');
+
+      // Optional: show cached data even on error
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        setChildCategories(JSON.parse(cached));
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [parsedParentId, navigate]);
+
+  useEffect(() => {
+    fetchChildCategories();
+  }, [fetchChildCategories]);
+
+  const handleCategoryClick = useCallback(
+  (childId: number, childName: string) => {
+    const nextParams = new URLSearchParams({
+      categoryId: childId.toString(),
+      categoryName: encodeURIComponent(childName),               // ← new name, safe to encode
+      prevRoute: '/shop/ChildCategories',
+      parentCategoryId: parentCategoryId || '',
+      parentCategoryName: parentCategoryName || '',              // ← already decoded, DO NOT encode
+    });
+
+      navigate(`/sub-categories?${nextParams.toString()}`);
+      
+  },
+  [navigate, parentCategoryId, parentCategoryName]
+);
+
+  const handleBack = () => {
+    if (prevRoute && prevRoute !== window.location.pathname) {
+      navigate(prevRoute);
+    } else {
+      navigate(-1);
+    }
   };
 
+  // ── Loading state ────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <PageShell title={parentCategoryName} showBackButton={true} onBack={handleBack}>
+        <div className="chcat-loading-container">
+          <Loader2 className="chcat-spinner" size={48} />
+          <p className="chcat-loading-text">Loading subcategories...</p>
+        </div>
+      </PageShell>
+    );
+  }
+
+  // ── Error state ──────────────────────────────────────────────────────────
+  if (error) {
+    return (
+      <PageShell title={parentCategoryName} showBackButton={true} onBack={handleBack}>
+        <div className="chcat-error-container">
+          <p className="chcat-error-text">{error}</p>
+          <motion.button
+            className="chcat-retry-button"
+            onClick={() => {
+              setError(null);
+              setLoading(true);
+              fetchChildCategories();
+            }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            Try Again
+          </motion.button>
+        </div>
+      </PageShell>
+    );
+  }
+
+  // ── Main content ─────────────────────────────────────────────────────────
   return (
-    <PageShell 
-      title={categoryName || 'Categories'} 
-      isLoading={loading} 
-      error={error} 
-      onRetry={retryFetch}
-      showBackButton={true}
-    >
-      <div className="child-category-list">
-        <div className="content-wrapper">
-          <div className="list-content">
-            {childCategories.map(renderChildCategory)}
-          </div>
+    <PageShell title={parentCategoryName} showBackButton={true} onBack={handleBack}>
+      <div className="chcat-categories-container">
+        <div className="chcat-grid">
+          {childCategories.length === 0 ? (
+            <div className="chcat-empty-state">
+              <div className="chcat-empty-icon">📂</div>
+              <h2>No subcategories found</h2>
+              <p>This category doesn't have any subcategories yet.</p>
+            </div>
+          ) : (
+            childCategories.map((category) => (
+              <motion.div
+                key={category.id}
+                className="chcat-category-card"
+                onClick={() => handleCategoryClick(category.id, category.name)}
+                whileHover={{ y: -4, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+              >
+                <div className="chcat-card-content">
+                  <h3 className="chcat-category-title">{category.name}</h3>
+                  <ChevronRight className="chcat-chevron" size={24} />
+                </div>
+              </motion.div>
+            ))
+          )}
         </div>
       </div>
     </PageShell>
   );
 };
 
-export default ChildCategoryList;
+export default ChildCategories;

@@ -1,0 +1,252 @@
+/* =====================================================================
+   ChildCategories.css
+   Modern glass + depth style — single column — light & dark mode
+   ===================================================================== */
+
+:root {
+  /* Light theme variables */
+  --chcat-bg-page:           #f8f9fc;
+  --chcat-bg-surface:        rgba(255, 255, 255, 0.78);
+  --chcat-bg-card:           rgba(255, 255, 255, 0.92);
+  --chcat-bg-card-hover:     rgba(255, 255, 255, 0.98);
+  --chcat-border-card:       rgba(226, 232, 240, 0.9);
+  --chcat-text-primary:      #111827;
+  --chcat-text-secondary:    #4b5563;
+  --chcat-text-tertiary:     #6b7280;
+  --chcat-accent:            #6366f1;       /* indigo-500 */
+  --chcat-accent-dark:       #4f46e5;
+  --chcat-accent-glow:       rgba(99, 102, 241, 0.22);
+  --chcat-shadow-sm:         0 4px 16px -4px rgba(0,0,0,0.07);
+  --chcat-shadow-md:         0 10px 28px -8px rgba(0,0,0,0.12);
+  --chcat-shadow-hover:      0 16px 40px -12px rgba(0,0,0,0.18);
+}
+
+[data-theme="dark"],
+.dark {
+  /* Dark theme variables */
+  --chcat-bg-page:           #0f172a;
+  --chcat-bg-surface:        rgba(15, 23, 42, 0.82);
+  --chcat-bg-card:           rgba(30, 41, 59, 0.94);
+  --chcat-bg-card-hover:     rgba(51, 65, 85, 0.98);
+  --chcat-border-card:       rgba(59, 69, 90, 0.62);
+  --chcat-text-primary:      #f1f5f9;
+  --chcat-text-secondary:    #94a3b8;
+  --chcat-text-tertiary:     #64748b;
+  --chcat-accent:            #a5b4fc;       /* indigo-300 */
+  --chcat-accent-dark:       #818cf8;
+  --chcat-accent-glow:       rgba(165, 180, 252, 0.26);
+  --chcat-shadow-sm:         0 6px 20px -6px rgba(0,0,0,0.55);
+  --chcat-shadow-md:         0 12px 36px -10px rgba(0,0,0,0.7);
+  --chcat-shadow-hover:      0 20px 52px -14px rgba(0,0,0,0.85);
+}
+
+/* ==================================================== */
+
+.chcat-categories-container {
+  min-height: calc(100vh - var(--header-height, 80px));
+  padding: 24px 16px 80px;
+  background: var(--chcat-bg-page);
+  background: linear-gradient(to bottom, var(--chcat-bg-page), color-mix(in srgb, var(--chcat-bg-page) 75%, var(--chcat-accent) 100%));
+}
+
+.chcat-grid {
+  display: grid;
+  grid-template-columns: 1fr;           /* always 1 column */
+  gap: 20px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Slightly more breathing room on larger screens */
+@media (min-width: 640px) {
+  .chcat-grid {
+    gap: 24px;
+    padding: 0 12px;
+  }
+  
+  .chcat-category-card {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+}
+
+/* ==================================================== */
+/*                  CARD STYLING                      */
+/* ==================================================== */
+
+.chcat-category-card {
+  position: relative;
+  background: var(--chcat-bg-card);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--chcat-border-card);
+  box-shadow: var(--chcat-shadow-md);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition:
+    transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.38s ease,
+    border-color 0.28s ease;
+  cursor: pointer;
+  isolation: isolate;
+}
+
+.chcat-category-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--chcat-shadow-hover), 0 0 0 1.5px var(--chcat-accent-glow);
+  border-color: color-mix(in srgb, var(--chcat-accent) 55%, transparent);
+}
+
+.chcat-category-card:active {
+  transform: translateY(-2px) scale(0.985);
+}
+
+/* Subtle shine / gradient overlay on hover */
+.chcat-category-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(139,92,246,0.04) 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.chcat-category-card:hover::before {
+  opacity: 1;
+}
+
+/* Card inner content */
+.chcat-card-content {
+  position: relative;
+  z-index: 2;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 80px;
+}
+
+.chcat-category-title {
+  font-size: 1.18rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--chcat-text-primary);
+  margin: 0;
+  flex: 1;
+  transition: color 0.3s ease;
+}
+
+.chcat-category-card:hover .chcat-category-title {
+  color: var(--chcat-accent);
+}
+
+.chcat-chevron {
+  color: var(--chcat-text-secondary);
+  flex-shrink: 0;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.chcat-category-card:hover .chcat-chevron {
+  color: var(--chcat-accent);
+  transform: translateX(4px);
+}
+
+/* ==================================================== */
+/*                  LOADING / ERROR / EMPTY           */
+/* ==================================================== */
+
+.chcat-loading-container,
+.chcat-error-container,
+.chcat-empty-state {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+  color: var(--chcat-text-secondary);
+}
+
+.chcat-spinner {
+  color: var(--chcat-accent);
+  animation: spin 1.2s linear infinite;
+  margin-bottom: 20px;
+}
+
+.chcat-loading-text {
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.chcat-error-text {
+  font-size: 1.15rem;
+  margin-bottom: 24px;
+}
+
+.chcat-retry-button {
+  background: linear-gradient(135deg, var(--chcat-accent) 0%, var(--chcat-accent-dark) 100%);
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 999px;
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--chcat-accent) 40%, transparent);
+  cursor: pointer;
+  transition: all 0.36s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.chcat-retry-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--chcat-accent) 55%, transparent);
+  scale: 1.03;
+}
+
+.chcat-empty-icon {
+  font-size: 4.5rem;
+  margin-bottom: 16px;
+  opacity: 0.7;
+}
+
+.chcat-empty-state h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--chcat-text-primary);
+  margin-bottom: 8px;
+}
+
+.chcat-empty-state p {
+  font-size: 1.05rem;
+  max-width: 360px;
+}
+
+/* ==================================================== */
+/*                      ANIMATIONS                    */
+/* ==================================================== */
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Extra polish on very large screens */
+@media (min-width: 1024px) {
+  .chcat-categories-container {
+    padding: 32px 24px 100px;
+  }
+  
+  .chcat-grid {
+    gap: 28px;
+  }
+  
+  .chcat-card-content {
+    padding: 24px 32px;
+  }
+  
+  .chcat-category-title {
+    font-size: 1.28rem;
+  }
+}

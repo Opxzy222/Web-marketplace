@@ -10,12 +10,12 @@ import { useEffect } from 'react';
 import Home from './pages/Home';                    // ← Landing page – first screen users see
 import SignIn from './pages/Login';
 import SignUp from './pages/Signup';
-import Shop from './pages/shop/ShopHomePage';
-import MyShop from './pages/shop/MyShop';
+import Shop from './tabs/ShopHomePage';
+import MyShop from './tabs/MyShop';
 import RequestTokenScreen from './pages/RequestTokenScreen';
 import VerifyEmailScreen from './pages/VerifyEmailScreen';
 import CreateShopScreen from './pages/shop/CreateShopScreen';
-//import WelcomeWorkingHours from './pages/shop/WelcomeWorkingHours';
+import WelcomeWorkingHours from './pages/shop/WelcomeWorkingHours';
 import UpdateShopProducts from './pages/shop/UpdateProducts';
 import ShopProduct from './pages/shop/ShopProduct';
 import SearchResults from './pages/shop/SearchResults';
@@ -46,6 +46,11 @@ import StartConversation from './pages/shop/StartConversation';
 import MessageList from './tabs/MessageList';
 import FollowedShopStatus from './tabs/FollowedShopStatus';
 import FullShopPosts from './pages/shop/FullShopPosts';
+import AllCategories from './pages/shop/AllCategories';
+import ChildCategories from './pages/shop/ChildCategoryList';
+import SubcategoryList from './pages/shop/SubcategoryList';
+import ShopStatus from './pages/shop/ShopStatus';
+import WorkingHours from './pages/shop/WorkingHours';
 // import { AdProvider } from './contexts/AdContext';
 // import { AppResetProvider } from './contexts/AppResetContext';
 
@@ -102,7 +107,6 @@ useEffect(() => {
           <Route path="/Verify-email" element={<VerifyEmailScreen />} />
           <Route path="/my-space" element={<MyShop />} />
           <Route path="/create-space" element={<CreateShopScreen />} />
-          {/* <Route path="/shop/welcome-work-hours" element={<WelcomeWorkingHours />} /> */}
           <Route path="/update-products" element={<UpdateShopProducts />} />
           <Route path="/shop-products" element={<ShopProduct />} />
           <Route path="/search-result" element={<SearchResults />} />
@@ -125,6 +129,13 @@ useEffect(() => {
           <Route path="/start-conversation" element={<StartConversation />} />
           <Route path="/latest-updates" element={<FollowedShopStatus />} />
           <Route path="/more-posts" element={<FullShopPosts />} />
+          <Route path="/all-categories" element={<AllCategories />} />
+          <Route path="/child-category" element={<ChildCategories />} />
+          <Route path="/sub-categories" element={<SubcategoryList />} />
+          <Route path="/status-updates" element={<ShopStatus />} />
+          <Route path="/status-updates" element={<WorkingHours />} />
+          <Route path="/shop/welcome-work-hours" element={<WelcomeWorkingHours />} />
+          <Route path="/work-hours" element={<ShopStatus />} />
           
         </Routes>
       </main>
