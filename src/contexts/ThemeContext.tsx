@@ -1,3 +1,4 @@
+// src/contexts/ThemeContext.tsx  (or wherever your ThemeProvider lives)
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 type Theme = 'light' | 'dark' | 'system';
@@ -11,7 +12,7 @@ interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => {
+  const [theme, setThemeState] = useState<Theme>(() => {
     const saved = localStorage.getItem('theme') as Theme | null;
     return saved || 'system';
   });
@@ -20,24 +21,55 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     theme === 'dark' ||
     (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
+  const setTheme = (newTheme: Theme) => {
+    setThemeState(newTheme);
+
+    // Persist immediately (helps with reload consistency)
+    if (newTheme === 'system') {
+      localStorage.removeItem('theme');
+    } else {
+      localStorage.setItem('theme', newTheme);
+    }
+  };
+
   useEffect(() => {
     const root = document.documentElement;
 
-    // Apply/remove dark class on <html>
-    root.classList.toggle('dark', isDark);
+    // Apply dark class
+    const shouldBeDark = isDark;
+    root.classList.toggle('dark', shouldBeDark);
 
-    // Manage theme-color meta (Android + general browsers)
+    // ────────────────────────────────────────────────
+    // Force Safari/iOS full repaint & style recalculation
+    // This is the key fix for your issue
+    // ────────────────────────────────────────────────
+    // Method: Temporarily hide → force reflow → restore
+    const originalDisplay = root.style.display;
+    root.style.display = 'none';
+
+    // Reading offsetHeight (or scrollTop, clientHeight etc.) forces layout
+    void root.offsetHeight; // eslint-disable-line no-unused-expressions
+
+    root.style.display = originalDisplay || '';
+
+    // Alternative lighter version (uncomment if the above feels too aggressive):
+    // root.style.zoom = '1.00001';
+    // setTimeout(() => { root.style.zoom = '1'; }, 0);
+
+    // ────────────────────────────────────────────────
+    // Your existing dynamic meta theme-color logic
+    // ────────────────────────────────────────────────
     document
       .querySelectorAll('meta[name="theme-color"][data-dynamic="true"]')
       .forEach((el) => el.remove());
 
     const meta = document.createElement('meta');
     meta.name = 'theme-color';
-    meta.content = isDark ? '#0f172a' : '#f8fafc';
+    meta.content = shouldBeDark ? '#0f172a' : '#f8fafc';
     meta.setAttribute('data-dynamic', 'true');
     document.head.appendChild(meta);
 
-    // iOS Safari / PWA status bar handling
+    // iOS status bar style
     let appleMeta = document.querySelector(
       'meta[name="apple-mobile-web-app-status-bar-style"]'
     ) as HTMLMetaElement | null;
@@ -48,10 +80,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       document.head.appendChild(appleMeta);
     }
 
-    // black-translucent = transparent bar → overlay controls color
-    // default = tries to use theme-color (but often ignored on iOS)
-    appleMeta.content = isDark ? 'black-translucent' : 'default';
+    appleMeta.content = shouldBeDark ? 'black-translucent' : 'default';
 
+    // Ensure capable meta exists
     let capableMeta = document.querySelector(
       'meta[name="apple-mobile-web-app-capable"]'
     ) as HTMLMetaElement | null;
@@ -63,25 +94,20 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
     capableMeta.content = 'yes';
 
-    // Persist user choice
-    if (theme === 'system') {
-      localStorage.removeItem('theme');
-    } else {
-      localStorage.setItem('theme', theme);
-    }
-  }, [isDark, theme]);
+  }, [isDark, theme]); // Depend on both — runs when either changes
 
+  // System preference listener (only when theme = 'system')
   useEffect(() => {
     if (theme !== 'system') return;
 
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
 
-    const listener = () => {
-      // isDark changes → main effect runs
+    const handleChange = () => {
+      // isDark will update → main effect will run + force repaint
     };
 
-    mq.addEventListener('change', listener);
-    return () => mq.removeEventListener('change', listener);
+    mq.addEventListener('change', handleChange);
+    return () => mq.removeEventListener('change', handleChange);
   }, [theme]);
 
   return (

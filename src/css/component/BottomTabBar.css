@@ -1,33 +1,37 @@
 /* ==========================================================================
-   Bottom Tab Navigation – Modern 2025/2026 Style
-   Glassmorphism + subtle glow + compact feel
+   Bottom Tab Navigation – Modern 2025/2026 Style – Sharper on iOS Safari
+   Glassmorphism + subtle glow + crisp icons/labels
    Prefix: btmt-
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  --btmt-bg: rgba(255, 255, 255, 0.92);
-  --btmt-border: rgba(226, 232, 240, 0.65);
-  --btmt-shadow: 0 -8px 32px -12px rgba(0, 0, 0, 0.12);
+  --btmt-bg: rgba(255, 255, 255, 0.96);          /* ↑ increased opacity = less milky blur */
+  --btmt-border: rgba(226, 232, 240, 0.70);
+  --btmt-shadow: 0 -8px 32px -12px rgba(0, 0, 0, 0.14);
   --btmt-text-primary: #0f172a;
   --btmt-text-secondary: #64748b;
   --btmt-accent: #3b82f6;
-  --btmt-accent-glow: rgba(59, 130, 246, 0.45);
-  --btmt-active-bg: rgba(59, 130, 246, 0.08);
+  --btmt-accent-glow: rgba(59, 130, 246, 0.40);
+  --btmt-active-bg: rgba(59, 130, 246, 0.10);
   --btmt-radius: 20px;
   --btmt-transition: 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  --btmt-blur: blur(20px);                       /* ↓ reduced from 24px = sharper */
+  --btmt-saturate: saturate(140%);               /* less aggressive */
 }
 
 .dark {
-  --btmt-bg: rgba(15, 23, 42, 0.88);
-  --btmt-border: rgba(51, 65, 85, 0.72);
-  --btmt-shadow: 0 -12px 40px -16px rgba(0, 0, 0, 0.65);
+  --btmt-bg: rgba(15, 23, 42, 0.92);             /* dark mode already sharper due to contrast */
+  --btmt-border: rgba(51, 65, 85, 0.78);
+  --btmt-shadow: 0 -12px 40px -16px rgba(0, 0, 0, 0.70);
   --btmt-text-primary: #e2e8f0;
   --btmt-text-secondary: #94a3b8;
   --btmt-accent: #60a5fa;
-  --btmt-accent-glow: rgba(96, 165, 250, 0.55);
-  --btmt-active-bg: rgba(96, 165, 250, 0.18);
+  --btmt-accent-glow: rgba(96, 165, 250, 0.50);
+  --btmt-active-bg: rgba(96, 165, 250, 0.20);
+  --btmt-blur: blur(22px);
+  --btmt-saturate: saturate(150%);
 }
 
 /* Main container */
@@ -41,21 +45,23 @@
   border-top: 1px solid var(--btmt-border);
   border-top-left-radius: var(--btmt-radius);
   border-top-right-radius: var(--btmt-radius);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: var(--btmt-blur) var(--btmt-saturate);  /* explicit -webkit- */
+  backdrop-filter: var(--btmt-blur) var(--btmt-saturate);
   box-shadow: var(--btmt-shadow);
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  height: 74px;                    /* modern comfortable height */
+  height: 74px;
   overflow: hidden;
+  transform: translateZ(0);               /* force GPU layer – helps sharpness */
+  will-change: transform, backdrop-filter; /* hint Safari to prepare better */
 }
 
-/* Inner content wrapper – centers on wide screens */
+/* Inner content wrapper */
 .btmt-bottom-tab-container {
   display: flex;
   align-items: center;
   justify-content: space-around;
   height: 100%;
-  max-width: 520px;                /* comfortable max width on tablets */
+  max-width: 520px;
   margin: 0 auto;
   padding: 0 12px;
 }
@@ -75,13 +81,15 @@
   cursor: pointer;
   transition: all var(--btmt-transition);
   -webkit-tap-highlight-color: transparent;
+  transform: translateZ(0);               /* crisp subpixel rendering */
+  backface-visibility: hidden;            /* anti-flicker / blur fix */
 }
 
 .btmt-tab-item:active {
-  transform: scale(0.96);
+  transform: scale(0.96) translateZ(0);
 }
 
-/* Icon wrapper – main animation target */
+/* Icon wrapper */
 .btmt-icon-wrapper {
   position: relative;
   width: 36px;
@@ -91,12 +99,16 @@
   justify-content: center;
   margin-bottom: 4px;
   transition: all var(--btmt-transition);
+  will-change: transform, filter;         /* force better rendering of animated icons */
+  transform: translateZ(0);
 }
 
-/* Icon itself */
+/* Icon itself – force crisp rendering */
 .btmt-tab-icon {
   color: var(--btmt-text-secondary);
   transition: all var(--btmt-transition);
+  image-rendering: -webkit-optimize-contrast;  /* sharper SVG strokes on iOS */
+  shape-rendering: geometricPrecision;         /* better stroke quality */
 }
 
 /* Active / hover states */
@@ -106,11 +118,11 @@
 }
 
 .btmt-tab-item.btmt-active .btmt-icon-wrapper {
-  transform: translateY(-4px);
+  transform: translateY(-4px) translateZ(0);
   filter: drop-shadow(0 6px 16px var(--btmt-accent-glow));
 }
 
-/* Badge (notification dot) */
+/* Badge */
 .btmt-badge {
   position: absolute;
   top: 2px;
@@ -128,7 +140,7 @@
   padding: 0 5px;
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
   border: 1.5px solid var(--btmt-bg);
-  transform: scale(0.92);
+  transform: scale(0.92) translateZ(0);
 }
 
 /* Label text */
@@ -140,6 +152,8 @@
   line-height: 1.1;
   letter-spacing: -0.01em;
   transition: all var(--btmt-transition);
+  transform: translateZ(0);
+  -webkit-font-smoothing: antialiased;
 }
 
 .btmt-tab-item.btmt-active .btmt-tab-label,
@@ -153,7 +167,7 @@
   position: absolute;
   bottom: 6px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateZ(0);
   width: 32px;
   height: 3px;
   background: linear-gradient(90deg, transparent 10%, var(--btmt-accent) 50%, transparent 90%);
@@ -168,7 +182,7 @@
   box-shadow: 0 2px 10px rgba(248, 113, 113, 0.5);
 }
 
-/* Respect reduced motion preference */
+/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .btmt-tab-item,
   .btmt-icon-wrapper,
