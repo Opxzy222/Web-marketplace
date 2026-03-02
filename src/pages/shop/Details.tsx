@@ -8,16 +8,14 @@ const Details = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
-  
-  const shopId = searchParams.get('shopId');
-  const prevRoute = searchParams.get('prevRoute') || location.pathname;
+  const shopId = location.state?.shopId;
 
   const handleEditProfile = () => {
-    navigate(`/shop/ShopProfile?shopId=${shopId}&prevRoute=${encodeURIComponent(prevRoute)}`);
+    navigate("/space-profile", { state: { shopId: shopId } })
   };
 
   const handleWorkingHours = () => {
-    navigate(`/shop/work-hours?shopId=${shopId}&prevRoute=${encodeURIComponent(prevRoute)}`);
+    navigate("/work-hours", { state: { shopId: shopId } })
   };
 
   const options = [

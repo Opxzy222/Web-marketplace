@@ -51,6 +51,12 @@ import ChildCategories from './pages/shop/ChildCategoryList';
 import SubcategoryList from './pages/shop/SubcategoryList';
 import ShopStatus from './pages/shop/ShopStatus';
 import WorkingHours from './pages/shop/WorkingHours';
+import ShopProfile from './pages/shop/ShopProfile';
+import ShopReceipts from './pages/shop/ShopReceipts';
+import SalesActions from './pages/shop/SalesActions';
+import GenerateReceipt from './pages/shop/GenerateReceipt';
+import AllRecentlyVisited from './pages/shop/AllRecentlyVisited';
+import FavoriteShops from './pages/shop/FavoriteShops';
 // import { AdProvider } from './contexts/AdContext';
 // import { AppResetProvider } from './contexts/AppResetContext';
 
@@ -115,7 +121,10 @@ useEffect(() => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/account" element={<Account />} />
           <Route path="/profile-edit" element={<EditProfileScreen />} />
+          <Route path="/sales-action" element={<SalesActions />} />
           <Route path="/customer-receipts" element={<CustomerReceipts />} />
+          <Route path="/shop-receipts" element={<ShopReceipts />} />
+          <Route path="/generate-receipts" element={<GenerateReceipt />} />
           <Route path="/subscription" element={<Subscription />} />
           <Route path="/verification-status" element={<VerificationStatus />} />
           <Route path="/ID-verification" element={<IDVerification />} />
@@ -133,9 +142,11 @@ useEffect(() => {
           <Route path="/child-category" element={<ChildCategories />} />
           <Route path="/sub-categories" element={<SubcategoryList />} />
           <Route path="/status-updates" element={<ShopStatus />} />
-          <Route path="/status-updates" element={<WorkingHours />} />
           <Route path="/shop/welcome-work-hours" element={<WelcomeWorkingHours />} />
-          <Route path="/work-hours" element={<ShopStatus />} />
+          <Route path="/work-hours" element={<WorkingHours />} />
+          <Route path="/space-profile" element={<ShopProfile />} />
+          <Route path="/recently-visited" element={<AllRecentlyVisited/>} />
+          <Route path="/favorite-space" element={<FavoriteShops/>} />
           
         </Routes>
       </main>

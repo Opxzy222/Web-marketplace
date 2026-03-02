@@ -450,7 +450,7 @@ const ShopPage = () => {
 
             {activeTab === 'reviews' && (
               <div className="reviews-wrapper">
-                <ReviewForm shopId={shopId} onReviewSubmitted={handleReviewSubmitted} />
+                <ReviewForm shopId={shop_id} onReviewSubmitted={handleReviewSubmitted} />
                 <ShopReview reviews={reviews} count={reviewCount} />
               </div>
             )}

@@ -1,17 +1,16 @@
 // GenerateReceipt.jsx
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import PageShell from "../../components/PageShell";
 import SubscriptionRequiredModal from "../../components/RequiredSubscription";
-import "./GenerateReceipt.css";
+import "../../css/shop/GenerateReceipt.css";
 
 const GenerateReceipt = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
-  const shopId = searchParams.get('shopId');
-  const senderId = searchParams.get('senderId');
+  const location = useLocation();
+  const shopId = location.state?.shopId;
+  const senderId = location.state?.senderId;
   
   const [customerName, setCustomerName] = useState("");
   const [items, setItems] = useState([]);
@@ -74,7 +73,7 @@ const GenerateReceipt = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`/shop/${shopId}/products/`);
+        const response = await axios.get(`https://retail-alvinia-goza-f6a0e4f7.koyeb.app/shop/${shopId}/products/`);
         setShopProducts(response.data.shop_products || []);
       } catch (error) {
         console.error("Error fetching shop products:", error);
@@ -96,7 +95,7 @@ const GenerateReceipt = () => {
   const fetchCustomerName = useCallback(async (id) => {
     setNameLoading(true);
     try {
-      const response = await axios.get("/customer-fullname/", {
+      const response = await axios.get("https://retail-alvinia-goza-f6a0e4f7.koyeb.app/customer-fullname/", {
         params: { customer_id: id },
       });
       setCustomerName(response.data.full_name || "");
@@ -193,7 +192,7 @@ const GenerateReceipt = () => {
       formData.append("total_amount", totalAmount.toString());
       formData.append("customer_id", customerId);
 
-      const response = await axios.post("/generate-receipt/", formData, {
+      const response = await axios.post("https://retail-alvinia-goza-f6a0e4f7.koyeb.app/generate-receipt/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

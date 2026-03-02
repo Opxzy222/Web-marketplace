@@ -21,7 +21,7 @@ const RecentlyVisitedShops: React.FC<RecentlyVisitedShopsProps> = ({ shops }) =>
   const [showAll, setShowAll] = useState(false);
 
   const handleSeeAll = () => {
-    navigate('/shop/AllRecentShops', {
+    navigate('/recently-visited', {
       state: { prevRoute: location.pathname },
     });
   };

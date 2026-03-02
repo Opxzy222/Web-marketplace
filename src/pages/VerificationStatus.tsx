@@ -1,11 +1,18 @@
 // components/VerificationStatus.tsx
 import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, Phone, CheckCircle, BadgeCheck, Clock, XCircle, Loader2, Check 
+import {
+  Phone,
+  CheckCircle2,
+  BadgeCheck,
+  Clock,
+  XCircle,
+  Loader2,
+  Check,
+  Lock,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import PageShell from '../components/PageShell'; // adjust path if needed
+import PageShell from '../components/PageShell';
 import '../css/VerificationStatus.css';
 
 type VerificationStatusType = 'not_started' | 'pending' | 'verified' | 'failed';
@@ -59,7 +66,7 @@ const VerificationStatus: React.FC = () => {
   };
 
   const handleIDVerification = () => {
-    if (!status.phoneVerified) return alert('Please verify your phone first');
+    if (!status.phoneVerified) return;
     if (status.idVerificationStatus === 'verified' || status.idVerificationStatus === 'pending') return;
     navigate('/IDVerification');
   };
@@ -67,80 +74,152 @@ const VerificationStatus: React.FC = () => {
   const getIDConfig = () => {
     switch (status.idVerificationStatus) {
       case 'verified':
-        return { icon: CheckCircle, color: '#10B981', subtitle: 'Verified ✓', gradient: ['#D1FAE5', '#A7F3D0'] };
+        return {
+          icon: CheckCircle2,
+          color: 'var(--success)',
+          subtitle: 'Verified',
+          bg: 'var(--success-bg)',
+          hoverBg: 'var(--success-hover)',
+          iconClass: 'success-icon',
+        };
       case 'pending':
-        return { icon: Clock, color: '#F59E0B', subtitle: 'Processing with NIMC...', gradient: ['#FFFBEB', '#FEF3C7'], showSpinner: true };
+        return {
+          icon: Loader2,
+          color: 'var(--warning)',
+          subtitle: 'Processing...',
+          bg: 'var(--warning-bg)',
+          hoverBg: 'var(--warning-hover)',
+          iconClass: 'spinner',
+          isSpinner: true,
+        };
       case 'failed':
-        return { icon: XCircle, color: '#EF4444', subtitle: 'Tap to retry', gradient: ['#FEE2E2', '#FECACA'] };
+        return {
+          icon: XCircle,
+          color: 'var(--danger)',
+          subtitle: 'Failed – Tap to retry',
+          bg: 'var(--danger-bg)',
+          hoverBg: 'var(--danger-hover)',
+          iconClass: 'danger-icon',
+        };
       default:
-        return { icon: BadgeCheck, color: '#6B7280', subtitle: 'Verify with NIN/ID', gradient: ['#F3F4F6', '#E5E7EB'] };
+        return {
+          icon: BadgeCheck,
+          color: 'var(--muted)',
+          subtitle: 'Verify your ID',
+          bg: 'var(--neutral-bg)',
+          hoverBg: 'var(--neutral-hover)',
+          iconClass: 'default-icon',
+          locked: !status.phoneVerified,
+        };
     }
   };
 
   const idConfig = getIDConfig();
 
   return (
-    <PageShell
-      title="Verification Status"
-      showBackButton={true}
-      isLoading={false}
-    >
-      <div className="verification-status-page">
-        <motion.div 
-          className="content-container"
-          initial={{ opacity: 0, y: 30 }}
+    <PageShell title="Verification Status" showBackButton isLoading={false}>
+      <div className="verification-page">
+        <motion.div
+          className="content-wrapper"
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
         >
-          <motion.p 
-            className="subtitle"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <motion.p
+            className="page-subtitle"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15 }}
           >
-            Complete these steps to fully activate your account
+            Complete these steps to unlock full access to your shop
           </motion.p>
 
-          <div className="status-card">
+          <div className="verification-card glass-card">
             {/* Phone Verification */}
             <motion.button
-              className={`status-item ${status.phoneVerified ? 'verified' : ''}`}
+              className={`verification-step ${status.phoneVerified ? 'completed' : ''}`}
               onClick={handlePhoneVerification}
               disabled={status.phoneVerified}
-              whileHover={!status.phoneVerified ? { scale: 1.02 } : {}}
-              whileTap={!status.phoneVerified ? { scale: 0.98 } : {}}
+              aria-label={status.phoneVerified ? 'Phone already verified' : 'Verify phone number'}
+              whileHover={!status.phoneVerified ? { y: -4, scale: 1.015 } : {}}
+              whileTap={!status.phoneVerified ? { y: 0, scale: 0.99 } : {}}
             >
-              <div className="status-gradient" style={{ background: status.phoneVerified ? 'linear-gradient(135deg, #D1FAE5, #A7F3D0)' : 'linear-gradient(135deg, #F3F4F6, #E5E7EB)' }} />
-              <div className="status-content">
-                <div className="icon-wrapper">
-                  {status.phoneVerified ? <CheckCircle size={36} className="icon-success" /> : <Phone size={36} className="icon-default" />}
+              <div className="step-gradient" />
+              <div className="step-content">
+                <div className="step-icon-container">
+                  {status.phoneVerified ? (
+                    <CheckCircle2 className="step-icon success" size={40} />
+                  ) : (
+                    <Phone className="step-icon" size={40} />
+                  )}
                 </div>
-                <div className="text-block">
-                  <h3>Phone Verification</h3>
-                  <p>{status.phoneVerified ? 'Verified ✓' : 'Verify your phone number'}</p>
+
+                <div className="step-text">
+                  <h3>Phone Number</h3>
+                  <p>{status.phoneVerified ? 'Verified' : 'Required for security'}</p>
                 </div>
-                {status.phoneVerified && <Check size={28} className="checkmark" />}
+
+                {status.phoneVerified && (
+                  <CheckCircle2 className="status-check" size={28} />
+                )}
               </div>
             </motion.button>
 
             {/* ID Verification */}
             <motion.button
-              className={`status-item ${status.idVerificationStatus === 'verified' ? 'verified' : status.idVerificationStatus === 'pending' ? 'pending' : status.idVerificationStatus === 'failed' ? 'failed' : ''}`}
+              className={`verification-step ${status.idVerificationStatus} ${
+                !status.phoneVerified ? 'locked' : ''
+              }`}
               onClick={handleIDVerification}
-              disabled={status.idVerificationStatus === 'verified' || status.idVerificationStatus === 'pending' || !status.phoneVerified}
-              whileHover={(status.idVerificationStatus === 'not_started' || status.idVerificationStatus === 'failed') && status.phoneVerified ? { scale: 1.02 } : {}}
-              whileTap={(status.idVerificationStatus === 'not_started' || status.idVerificationStatus === 'failed') && status.phoneVerified ? { scale: 0.98 } : {}}
+              disabled={
+                status.idVerificationStatus === 'verified' ||
+                status.idVerificationStatus === 'pending' ||
+                !status.phoneVerified
+              }
+              aria-label={
+                !status.phoneVerified
+                  ? 'Phone verification required first'
+                  : status.idVerificationStatus === 'verified'
+                  ? 'ID already verified'
+                  : status.idVerificationStatus === 'pending'
+                  ? 'ID verification in progress'
+                  : 'Verify your ID'
+              }
+              whileHover={
+                status.phoneVerified &&
+                (status.idVerificationStatus === 'not_started' ||
+                  status.idVerificationStatus === 'failed')
+                  ? { y: -4, scale: 1.015 }
+                  : {}
+              }
+              whileTap={
+                status.phoneVerified &&
+                (status.idVerificationStatus === 'not_started' ||
+                  status.idVerificationStatus === 'failed')
+                  ? { y: 0, scale: 0.99 }
+                  : {}
+              }
             >
-              <div className="status-gradient" style={{ background: `linear-gradient(135deg, ${idConfig.gradient.join(', ')})` }} />
-              <div className="status-content">
-                <div className="icon-wrapper">
-                  {idConfig.showSpinner ? <Loader2 className="spinner" size={36} /> : <idConfig.icon size={36} className="icon-default" />}
+              <div className="step-gradient" />
+              <div className="step-content">
+                <div className="step-icon-container">
+                  {idConfig.isSpinner ? (
+                    <Loader2 className="step-icon spinner" size={40} />
+                  ) : idConfig.locked ? (
+                    <Lock className="step-icon locked" size={40} />
+                  ) : (
+                    <idConfig.icon className="step-icon" size={40} />
+                  )}
                 </div>
-                <div className="text-block">
-                  <h3>ID Verification</h3>
+
+                <div className="step-text">
+                  <h3>Government ID</h3>
                   <p>{idConfig.subtitle}</p>
                 </div>
-                {status.idVerificationStatus === 'verified' && <Check size={28} className="checkmark" />}
+
+                {status.idVerificationStatus === 'verified' && (
+                  <CheckCircle2 className="status-check success" size={28} />
+                )}
               </div>
             </motion.button>
           </div>

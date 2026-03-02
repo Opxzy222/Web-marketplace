@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Store,
   ShoppingCart,
-  Wrench,           // ← replacement for HomeRepairService (services)
+  Wrench,
   RefreshCw,
   PlusCircle,
   BarChart3,
@@ -13,6 +13,7 @@ import {
   LogOut,
 } from "lucide-react";
 import axios from "axios";
+import PageShell from "../components/PageShell"; // adjust path if needed
 import '../css/tab/MyShop.css';
 
 const CACHE_KEY = "MyShop_Cache";
@@ -28,7 +29,7 @@ const MyShop = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [hasFetched, setHasFetched] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
   const [subscriptionLoading, setSubscriptionLoading] = useState(true);
 
@@ -128,10 +129,10 @@ const MyShop = () => {
         setShops(res.data);
         setHasFetched(true);
         saveToCache(res.data);
-        setError(false);
+        setError(null);
       } catch (err) {
         console.error("Fetch error:", err);
-        setError(true);
+        setError("Failed to load shops. Please check your connection.");
       } finally {
         setLoading(false);
       }
@@ -230,124 +231,128 @@ const MyShop = () => {
 
   if (loading && shops.length === 0 && !hasFetched) {
     return (
-      <div className="myshop-loading">
-        <div className="spinner" />
+      <div className="myshp-loading">
+        <div className="myshp-spinner" />
         <p>Loading your spaces...</p>
       </div>
     );
   }
 
   return (
-    <div className="myshop-page">
-      <div className="myshop-content">
-        {error && shops.length === 0 && (
-          <div className="myshop-error">
-            <p>Failed to load your spaces. Please check your connection.</p>
+    <PageShell
+      title="My Shop"
+      isLoading={loading}
+      error={error}
+      onRetry={handleReload}
+      backPath={-1}
+    >
+      <div className="myshp-page">
+        <div className="myshp-content">
+          {error && shops.length === 0 && (
+            <div className="myshp-error">
+              <p>Failed to load your spaces. Please check your connection.</p>
+              <motion.button
+                className="myshp-reload-btn"
+                onClick={handleReload}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <RefreshCw size={20} />
+                Retry
+              </motion.button>
+            </div>
+          )}
+
+          {!error && hasFetched && shops.length === 0 && (
             <motion.button
-              className="reload-btn"
-              onClick={handleReload}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="myshp-create-space-btn"
+              onClick={handleCreateShop}
+              whileHover={{ scale: 1.05, y: -3 }}
+              whileTap={{ scale: 0.96 }}
             >
-              <RefreshCw size={20} />
-              Retry
+              <PlusCircle size={24} />
+              Create Your Business Space
             </motion.button>
-          </div>
-        )}
+          )}
 
-        {!error && hasFetched && shops.length === 0 && (
-          <motion.button
-            className="create-space-btn"
-            onClick={handleCreateShop}
-            whileHover={{ scale: 1.05, y: -3 }}
-            whileTap={{ scale: 0.96 }}
-          >
-            <PlusCircle size={24} />
-            Create Your Business Space
-          </motion.button>
-        )}
+          {shops.length > 0 && (
+            <div className="myshp-grid">
+              {shops.map((shop) => {
+                const isService = shop.category?.toLowerCase() === "services";
 
-        {shops.length > 0 && (
-          <div className="myshop-grid">
-            {shops.map((shop) => {
-              const isService = shop.category?.toLowerCase() === "services";
+                return (
+                  <motion.div
+                    key={shop.id}
+                    className="myshp-card"
+                    whileHover={{ scale: 1.03, y: -4 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <h3 className="myshp-shop-name">{shop.name}</h3>
+                    <p className="myshp-shop-info">
+                      {isService ? "Services" : "Products"}: {shop.product_count}
+                    </p>
 
-              return (
-                <motion.div
-                  key={shop.id}
-                  className="myshop-card"
-                  whileHover={{ scale: 1.03, y: -4 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <h3 className="shop-name">{shop.name}</h3>
-                  <p className="shop-info">
-                    {isService ? "Services" : "Products"}: {shop.product_count}
-                  </p>
+                    <div className="myshp-actions">
+                      <button
+                        className="myshp-action-btn myshp-admin"
+                        onClick={() => navigate("/admin-shop-page", { state: { shopId: shop.id } })}
+                      >
+                        <Store size={24} />
+                        <span>Admin</span>
+                      </button>
 
-                  <div className="myshop-actions">
-                    <button
-                      className="action-btn admin"
-                      onClick={() => navigate("/admin-shop-page", { state: { shopId: shop.id } })}
-                    >
-                      <Store size={24} />
-                      <span>Admin</span>
-                    </button>
+                      <button
+                        className="myshp-action-btn myshp-services"
+                        onClick={() =>
+                          navigate("/shop-products", {
+                            state: { shopId: shop.id, category: shop.category },
+                          })
+                        }
+                      >
+                        {isService ? <Wrench size={24} /> : <ShoppingCart size={24} />}
+                        <span>{isService ? "Services" : "Products"}</span>
+                      </button>
 
-                    <button
-                      className="action-btn services"
-                      onClick={() =>
-                        navigate("/shop-products", {
-                          state: { shopId: shop.id, category: shop.category },
-                        })
-                      }
-                    >
-                      {isService ? (
-                        <Wrench size={24} />          // ← Fixed: valid replacement
-                      ) : (
-                        <ShoppingCart size={24} />
-                      )}
-                      <span>{isService ? "Services" : "Products"}</span>
-                    </button>
+                      <button
+                        className="myshp-action-btn myshp-stories"
+                        onClick={() => navigate("/status-updates", { state: { shopId: shop.id } })}
+                      >
+                        <RefreshCw size={24} />
+                        <span>Stories</span>
+                      </button>
 
-                    <button
-                      className="action-btn stories"
-                      onClick={() => navigate("/status-updates", { state: { shopId: shop.id } })}
-                    >
-                      <RefreshCw size={24} />
-                      <span>Stories</span>
-                    </button>
+                      <button
+                        className="myshp-action-btn myshp-sales"
+                        onClick={() => navigate("/sales-action", { state: { shopId: shop.id } })}
+                      >
+                        <BarChart3 size={24} />
+                        <span>Sales</span>
+                      </button>
 
-                    <button
-                      className="action-btn sales"
-                      onClick={() => navigate("/shop/ReceiptActions", { state: { shopId: shop.id } })}
-                    >
-                      <BarChart3 size={24} />
-                      <span>Sales</span>
-                    </button>
+                      <button
+                        className="myshp-action-btn myshp-details"
+                        onClick={() => navigate("/details", { state: { shopId: shop.id } })}
+                      >
+                        <Info size={24} />
+                        <span>Details</span>
+                      </button>
 
-                    <button
-                      className="action-btn details"
-                      onClick={() => navigate("/details", { state: { shopId: shop.id } })}
-                    >
-                      <Info size={24} />
-                      <span>Details</span>
-                    </button>
-
-                    <button
-                      className="action-btn quit"
-                      onClick={() => handleCloseShop(shop.id)}
-                    >
-                      <LogOut size={24} />
-                      <span>Quit Space</span>
-                    </button>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        )}
+                      <button
+                        className="myshp-action-btn myshp-quit"
+                        onClick={() => handleCloseShop(shop.id)}
+                      >
+                        <LogOut size={24} />
+                        <span>Quit Space</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </PageShell>
   );
 };
 

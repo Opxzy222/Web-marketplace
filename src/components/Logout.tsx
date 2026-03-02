@@ -42,7 +42,7 @@ const Logout: React.FC<LogoutProps> = ({
       }
 
       const response = await axios.post(
-        '/logout/',
+        'https://retail-alvinia-goza-f6a0e4f7.koyeb.app/logout/',
         {},
         {
           headers: { Authorization: sessionId },

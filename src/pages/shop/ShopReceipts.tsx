@@ -1,15 +1,15 @@
-// CustomerReceipts.tsx
+// ShopReceipts.tsx
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   FaArrowLeft, FaArrowRotateRight, FaFilter, FaReceipt, 
-  FaCalendarDays, FaCheck, FaXmark, FaCalendar, FaSpinner 
+  FaCalendarDays, FaBan, FaCalendar, FaSpinner 
 } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ViewReceipt from "../../components/shop/ViewReceipt";
 import PageShell from "../../components/PageShell";
-import "../../css/shop/CustomerReceipts.css";
+import "../../css/shop/ShopReceipts.css";
 
 const API_BASE_URL = "https://retail-alvinia-goza-f6a0e4f7.koyeb.app";
 const FALLBACK_IMAGE = "https://f003.backblazeb2.com/file/gogo-digital-media/profile_picture/default/user_default.png";
@@ -29,67 +29,53 @@ const ReceiptCard = React.memo(({ item, handleAction }) => {
 
   return (
     <motion.div
-      className="crcp-receipt-card"
+      className="srcp-receipt-card"
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -12 }}
       transition={{ duration: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
     >
-      <div className="crcp-card-touchable">
-        <div className="crcp-card-background">
-          <div className="crcp-card-header">
+      <div className="srcp-card-touchable">
+        <div className="srcp-card-background">
+          <div className="srcp-card-header">
             <div
-              className="crcp-shop-image"
+              className="srcp-shop-image"
               style={{ backgroundImage: `url(${receipt.shop_image || FALLBACK_IMAGE})` }}
             />
 
-             <div className="crcp-card-main">
-              <div className="crcp-top-row">
-                <h3 className="crcp-receipt-id">{receipt.shop || "Unknown Shop"}</h3>
-                <div className="crcp-status-chip" style={{ backgroundColor: status.color }}>
-                  <span className="crcp-status-icon">{status.icon}</span>
-                  <span className="crcp-status-text">{status.label || "Unknown"}</span>
+            <div className="srcp-card-main">
+              <div className="srcp-top-row">
+                <h3 className="srcp-receipt-id">{receipt.shop || "Unknown Shop"}</h3>
+                <div className="srcp-status-chip" style={{ backgroundColor: status.color }}>
+                  <span className="srcp-status-icon">{status.icon}</span>
+                  <span className="srcp-status-text">{status.label || "Unknown"}</span>
                 </div>
               </div>
 
-              <div className="crcp-bottom-row">
-                <span className="crcp-receipt-amount">₦{receipt.total_amount || "0.00"}</span>
-                <span className="crcp-receipt-date">{formatDate(receipt.created_at)}</span>
+              <div className="srcp-bottom-row">
+                <span className="srcp-receipt-amount">₦{receipt.total_amount || "0.00"}</span>
+                <span className="srcp-receipt-date">{formatDate(receipt.created_at)}</span>
               </div>
             </div>
           </div>
 
-          <div className="crcp-card-divider" />
+          <div className="srcp-card-divider" />
 
-          <div className="crcp-button-container">
+          <div className="srcp-button-container">
             <ViewReceipt receipt={receipt} />
 
             {receipt.status?.toLowerCase() === "pending" && (
-              <div className="crcp-pending-actions">
-                <motion.button
-                  className="crcp-action-button crcp-accept"
-                  onClick={() => handleAction(receipt.id, "accept")}
-                  whileHover={{ scale: 1.06, y: -2 }}
-                  whileTap={{ scale: 0.94 }}
-                >
-                  <div className="crcp-button-inner crcp-accept-inner">
-                    <FaCheck size={16} />
-                    <span className="crcp-button-text">Accept</span>
-                  </div>
-                </motion.button>
-
-                <motion.button
-                  className="crcp-action-button crcp-reject"
-                  onClick={() => handleAction(receipt.id, "reject")}
-                  whileHover={{ scale: 1.06, y: -2 }}
-                  whileTap={{ scale: 0.94 }}
-                >
-                  <div className="crcp-button-inner crcp-reject-inner">
-                    <FaXmark size={16} />
-                    <span className="crcp-button-text">Reject</span>
-                  </div>
-                </motion.button>
-              </div>
+              <motion.button
+                className="srcp-action-button srcp-void"
+                onClick={() => handleAction(receipt.id, "void")}
+                whileHover={{ scale: 1.06, y: -2 }}
+                whileTap={{ scale: 0.94 }}
+              >
+                <div className="srcp-button-inner srcp-void-inner">
+                  <FaBan size={16} />
+                  <span className="srcp-button-text">Void</span>
+                </div>
+              </motion.button>
             )}
           </div>
         </div>
@@ -118,8 +104,11 @@ const formatDate = (dateStr) => {
   });
 };
 
-const CustomerReceipts = () => {
+const ShopReceipts = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const shopId = location.state?.shopId;
+
   const [receipts, setReceipts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sessionId, setSessionId] = useState(null);
@@ -132,8 +121,8 @@ const CustomerReceipts = () => {
   const [pickerVisible, setPickerVisible] = useState(false);
   const [pickerType, setPickerType] = useState(null);
   const [tempDate, setTempDate] = useState(new Date());
-  const [spendingMonth, setSpendingMonth] = useState(new Date().getMonth());
-  const [spendingYear, setSpendingYear] = useState(new Date().getFullYear());
+  const [salesMonth, setSalesMonth] = useState(new Date().getMonth());
+  const [salesYear, setSalesYear] = useState(new Date().getFullYear());
   const [monthPickerVisible, setMonthPickerVisible] = useState(false);
 
   // Fetch session ID
@@ -158,13 +147,13 @@ const CustomerReceipts = () => {
 
   // Fetch receipts
   const fetchReceipts = useCallback(async () => {
-    if (!sessionId) {
+    if (!sessionId || !shopId) {
       setLoading(false);
       return;
     }
     setLoading(true);
     try {
-      const response = await axios.get(`${API_BASE_URL}/receipts/customer/`, {
+      const response = await axios.get(`${API_BASE_URL}/shop/${shopId}/receipts/`, {
         headers: { Authorization: sessionId },
       });
       const fetchedReceipts = Array.isArray(response.data.receipts)
@@ -180,7 +169,7 @@ const CustomerReceipts = () => {
     } finally {
       setLoading(false);
     }
-  }, [sessionId]);
+  }, [sessionId, shopId]);
 
   useEffect(() => {
     fetchReceipts();
@@ -197,26 +186,27 @@ const CustomerReceipts = () => {
     setPickerType(null);
   }, [activeTab]);
 
-  // Handle accept/reject actions
+  // Handle void action (only action available for shop-side pending receipts)
   const handleAction = useCallback(async (receiptId, action) => {
-    const actionTitle = action === "accept" ? "Accept" : "Reject";
-    if (!window.confirm(`Are you sure you want to ${actionTitle} this receipt?`)) return;
+    if (action !== "void") return;
+
+    if (!window.confirm("Are you sure you want to void this receipt? This cannot be undone.")) return;
 
     try {
       await axios.post(
-        `${API_BASE_URL}/receipts/${receiptId}/${action}/`,
+        `${API_BASE_URL}/receipts/${receiptId}/void/`,
         {},
         { headers: { Authorization: sessionId } }
       );
-      alert(`Receipt ${actionTitle.toLowerCase()}ed successfully.`);
+      alert("Receipt voided successfully.");
       setReceipts((prev) =>
         prev.map((receipt) =>
-          receipt.id === receiptId ? { ...receipt, status: action + "ed" } : receipt
+          receipt.id === receiptId ? { ...receipt, status: "voided" } : receipt
         )
       );
     } catch (error) {
-      console.error(`Error ${action}ing receipt:`, error.response?.data || error.message);
-      alert(`Failed to ${actionTitle.toLowerCase()} receipt. Please try again.`);
+      console.error("Error voiding receipt:", error.response?.data || error.message);
+      alert("Failed to void receipt. Please try again.");
     }
   }, [sessionId]);
 
@@ -286,10 +276,10 @@ const CustomerReceipts = () => {
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }, [receipts, activeTab, startDate, endDate]);
 
-  // Monthly spending
+  // Monthly spending (accepted only for shop sales view)
   const calculateMonthlySpending = useMemo(() => {
-    const startOfMonth = new Date(spendingYear, spendingMonth, 1);
-    const endOfMonth = new Date(spendingYear, spendingMonth + 1, 0, 23, 59, 59, 999);
+    const startOfMonth = new Date(salesYear, salesMonth, 1);
+    const endOfMonth = new Date(salesYear, salesMonth + 1, 0, 23, 59, 59, 999);
 
     const acceptedReceipts = receipts.filter((receipt) => {
       if (!receipt?.id || !receipt?.created_at) return false;
@@ -306,9 +296,9 @@ const CustomerReceipts = () => {
       return sum + amount;
     }, 0);
     return total.toFixed(2);
-  }, [receipts, spendingMonth, spendingYear]);
+  }, [receipts, salesMonth, salesYear]);
 
-  const monthName = new Date(spendingYear, spendingMonth).toLocaleString("en-US", { month: "short" });
+  const monthName = new Date(salesYear, salesMonth).toLocaleString("en-US", { month: "short" });
 
   // FlatList data
   const flatData = useMemo(() => {
@@ -327,10 +317,10 @@ const CustomerReceipts = () => {
 
   if (loading) {
     return (
-      <PageShell title="Customer Receipts" isLoading={true} backPath={-1}>
-        <div className="crcp-centered">
-          <FaSpinner className="crcp-loading-spinner" />
-          <p className="crcp-loading-text">Loading...</p>
+      <PageShell title="Shop Receipts" isLoading={true} backPath={-1}>
+        <div className="srcp-centered">
+          <FaSpinner className="srcp-loading-spinner" />
+          <p className="srcp-loading-text">Loading...</p>
         </div>
       </PageShell>
     );
@@ -338,56 +328,56 @@ const CustomerReceipts = () => {
 
   return (
     <PageShell
-      title="Customer Receipts"
+      title="Shop Receipts"
       backPath={-1}
       isLoading={loading}
       onRetry={fetchReceipts}
     >
-      <div className="crcp-content">
+      <div className="srcp-content">
         {/* Spending Summary */}
         <motion.div 
-          className="crcp-spending-card"
+          className="srcp-spending-card"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <div className="crcp-spending-header">
-            <h3 className="crcp-spending-title">
-              {monthName} {spendingYear} Spending
+          <div className="srcp-spending-header">
+            <h3 className="srcp-spending-title">
+              {monthName} {salesYear} Sales
             </h3>
             <motion.button 
-              className="crcp-month-button"
+              className="srcp-month-button"
               onClick={() => setMonthPickerVisible(true)}
               whileHover={{ scale: 1.05 }}
             >
               <FaCalendarDays />
             </motion.button>
           </div>
-          <div className="crcp-spending-amount">₦{calculateMonthlySpending}</div>
+          <div className="srcp-spending-amount">₦{calculateMonthlySpending}</div>
         </motion.div>
 
         {/* Navigation Tabs */}
-        <div className="crcp-nav-bar">
-          <div className="crcp-nav-bar-inner">
+        <div className="srcp-nav-bar">
+          <div className="srcp-nav-bar-inner">
             {TABS.map((tab) => (
               <motion.button
                 key={tab}
-                className={`crcp-nav-button ${activeTab === tab ? 'crcp-active' : ''}`}
+                className={`srcp-nav-button ${activeTab === tab ? 'srcp-active' : ''}`}
                 onClick={() => setActiveTab(tab)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <span>{tab}</span>
-                {activeTab === tab && <div className="crcp-underline-gradient" />}
+                {activeTab === tab && <div className="srcp-underline-gradient" />}
               </motion.button>
             ))}
           </div>
         </div>
 
         {/* Filter */}
-        <div className="crcp-filter-container">
+        <div className="srcp-filter-container">
           <motion.button
-            className="crcp-filter-button"
+            className="srcp-filter-button"
             onClick={() => {
               setTempStartDate(startDate);
               setTempEndDate(endDate);
@@ -398,7 +388,7 @@ const CustomerReceipts = () => {
             <FaFilter />
           </motion.button>
           {(startDate || endDate) && (
-            <span className="crcp-filter-info-text">
+            <span className="srcp-filter-info-text">
               {startDate ? formatDate(startDate.toISOString()) : "Start"} - {endDate ? formatDate(endDate.toISOString()) : "End"}
             </span>
           )}
@@ -406,17 +396,17 @@ const CustomerReceipts = () => {
 
         {/* Receipts List */}
         {flatData.length === 0 ? (
-          <div className="crcp-empty-container">
+          <div className="srcp-empty-container">
             <FaReceipt size={48} />
-            <p className="crcp-empty-text">No Receipts Found</p>
+            <p className="srcp-empty-text">No Receipts Found</p>
           </div>
         ) : (
-          <div className="crcp-receipts-list">
+          <div className="srcp-receipts-list">
             {flatData.map((item, index) =>
               item.type === "separator" ? (
-                <div key={`sep-${item.date}-${index}`} className="crcp-date-header">
+                <div key={`sep-${item.date}-${index}`} className="srcp-date-header">
                   <span>{item.date}</span>
-                  <div className="crcp-date-header-underline" />
+                  <div className="srcp-date-header-underline" />
                 </div>
               ) : (
                 <ReceiptCard key={`rec-${item.data.id}`} item={item} handleAction={handleAction} />
@@ -455,14 +445,14 @@ const CustomerReceipts = () => {
       {/* Month Picker Modal */}
       <MonthPickerModal
         isVisible={monthPickerVisible}
-        spendingMonth={spendingMonth}
-        spendingYear={spendingYear}
-        onMonthChange={setSpendingMonth}
-        onYearChange={setSpendingYear}
+        salesMonth={salesMonth}
+        salesYear={salesYear}
+        onMonthChange={setSalesMonth}
+        onYearChange={setSalesYear}
         onClose={() => setMonthPickerVisible(false)}
         onReset={() => {
-          setSpendingMonth(new Date().getMonth());
-          setSpendingYear(new Date().getFullYear());
+          setSalesMonth(new Date().getMonth());
+          setSalesYear(new Date().getFullYear());
           setMonthPickerVisible(false);
         }}
       />
@@ -487,39 +477,39 @@ const FilterModal = ({
   <AnimatePresence>
     {isVisible && (
       <motion.div 
-        className="crcp-modal-overlay"
+        className="srcp-modal-overlay"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
       >
         <motion.div 
-          className="crcp-modal-content"
+          className="srcp-modal-content"
           initial={{ scale: 0.9, y: 50 }}
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.9, y: 50 }}
           onClick={(e) => e.stopPropagation()}
         >
-          <h3 className="crcp-modal-title">Filter by Date</h3>
+          <h3 className="srcp-modal-title">Filter by Date</h3>
           <motion.button
-            className="crcp-date-input"
+            className="srcp-date-input"
             onClick={() => onDatePickerToggle("start")}
             whileHover={{ scale: 1.02 }}
           >
             {tempStartDate ? formatDate(tempStartDate.toISOString()) : "Start Date"}
           </motion.button>
           <motion.button
-            className="crcp-date-input"
+            className="srcp-date-input"
             onClick={() => onDatePickerToggle("end")}
             whileHover={{ scale: 1.02 }}
           >
             {tempEndDate ? formatDate(tempEndDate.toISOString()) : "End Date"}
           </motion.button>
-          <div className="crcp-modal-buttons">
-            <motion.button className="crcp-apply-button" onClick={onApplyFilters} whileHover={{ scale: 1.05 }}>
-              <div className="crcp-button-gradient">Apply</div>
+          <div className="srcp-modal-buttons">
+            <motion.button className="srcp-apply-button" onClick={onApplyFilters} whileHover={{ scale: 1.05 }}>
+              <div className="srcp-button-gradient">Apply</div>
             </motion.button>
-            <motion.button className="crcp-clear-button" onClick={onClearFilters} whileHover={{ scale: 1.05 }}>
+            <motion.button className="srcp-clear-button" onClick={onClearFilters} whileHover={{ scale: 1.05 }}>
               Clear
             </motion.button>
           </div>
@@ -530,7 +520,7 @@ const FilterModal = ({
             value={tempDate.toISOString().split('T')[0]}
             max={new Date().toISOString().split('T')[0]}
             onChange={(e) => onDateChange(new Date(e.target.value))}
-            className="crcp-date-picker"
+            className="srcp-date-picker"
             autoFocus
           />
         )}
@@ -540,28 +530,28 @@ const FilterModal = ({
 );
 
 // Month Picker Modal (unchanged)
-const MonthPickerModal = ({ isVisible, spendingMonth, spendingYear, onMonthChange, onYearChange, onClose, onReset }) => (
+const MonthPickerModal = ({ isVisible, salesMonth, salesYear, onMonthChange, onYearChange, onClose, onReset }) => (
   <AnimatePresence>
     {isVisible && (
       <motion.div 
-        className="crcp-modal-overlay"
+        className="srcp-modal-overlay"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
       >
         <motion.div 
-          className="crcp-modal-content"
+          className="srcp-modal-content"
           initial={{ scale: 0.9, y: 50 }}
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.9, y: 50 }}
           onClick={(e) => e.stopPropagation()}
         >
-          <h3 className="crcp-modal-title">Select Month and Year</h3>
+          <h3 className="srcp-modal-title">Select Month and Year</h3>
           <select 
-            value={spendingMonth} 
+            value={salesMonth} 
             onChange={(e) => onMonthChange(parseInt(e.target.value))}
-            className="crcp-picker"
+            className="srcp-picker"
           >
             {Array.from({ length: 12 }, (_, i) => (
               <option key={i} value={i}>
@@ -570,20 +560,20 @@ const MonthPickerModal = ({ isVisible, spendingMonth, spendingYear, onMonthChang
             ))}
           </select>
           <select 
-            value={spendingYear} 
+            value={salesYear} 
             onChange={(e) => onYearChange(parseInt(e.target.value))}
-            className="crcp-picker"
+            className="srcp-picker"
           >
             {Array.from({ length: 5 }, (_, i) => {
               const year = new Date().getFullYear() - 2 + i;
               return <option key={year} value={year}>{year}</option>;
             })}
           </select>
-          <div className="crcp-modal-buttons">
-            <motion.button className="crcp-apply-button" onClick={onClose} whileHover={{ scale: 1.05 }}>
-              <div className="crcp-button-gradient">Apply</div>
+          <div className="srcp-modal-buttons">
+            <motion.button className="srcp-apply-button" onClick={onClose} whileHover={{ scale: 1.05 }}>
+              <div className="srcp-button-gradient">Apply</div>
             </motion.button>
-            <motion.button className="crcp-clear-button" onClick={onReset} whileHover={{ scale: 1.05 }}>
+            <motion.button className="srcp-clear-button" onClick={onReset} whileHover={{ scale: 1.05 }}>
               Reset
             </motion.button>
           </div>
@@ -593,4 +583,4 @@ const MonthPickerModal = ({ isVisible, spendingMonth, spendingYear, onMonthChang
   </AnimatePresence>
 );
 
-export default CustomerReceipts;
+export default ShopReceipts;

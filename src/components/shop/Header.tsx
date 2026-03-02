@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import NotificationBell from '../NotificationBell';
 
 import '../../css/component/Header.css';   // ← we'll use a new or merged file
 
@@ -32,8 +33,9 @@ const Header: React.FC = () => {
             {greeting}, <span className="user-name">{firstName}</span>
           </h1>
         </div>
+        <NotificationBell />
 
-        <motion.button
+        {/*<motion.button
           className="avatar-btn"
           onClick={() => navigate('/profile')}
           whileHover={{ scale: 1.06 }}
@@ -43,7 +45,7 @@ const Header: React.FC = () => {
           <div className="avatar">
             {firstName.charAt(0).toUpperCase()}
           </div>
-        </motion.button>
+        </motion.button> */}
       </div>
     </header>
   );

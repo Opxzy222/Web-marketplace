@@ -154,7 +154,7 @@
   flex: 1;
   font-size: 1.08rem;
   font-weight: 600;
-  color: #f1f5f9 !important;
+  color: var(--text-primary) !important;
   margin: 0;
   letter-spacing: -0.01em;
 }

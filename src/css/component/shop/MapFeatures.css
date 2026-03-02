@@ -1,85 +1,235 @@
-/* ShopLocation.css */
+/* MapFeatures.css – Premium Shop Location Button 2025/2026
+   Glassmorphism + subtle depth + smooth states
+   Perfect dark/light mode consistency
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ────────────────────────────────────────────────
+   Root variables (aligned with your app-wide theme)
+   ──────────────────────────────────────────────── */
+:root {
+  --bg-page:           #f9fafb;
+  --bg-card:           rgba(255, 255, 255, 0.80);
+  --bg-card-hover:     rgba(255, 255, 255, 0.94);
+  --bg-card-active:    rgba(248, 250, 252, 0.70);
+  --border-subtle:     rgba(226, 232, 240, 0.55);
+  --border-strong:     rgba(203, 213, 225, 0.85);
+
+  --text-primary:      #0f172a;
+  --text-secondary:    #475569;
+  --text-tertiary:     #64748b;
+  --text-on-accent:    #ffffff;
+
+  --accent:            #3b82f6;
+  --accent-hover:      #2563eb;
+  --accent-active:     #1d4ed8;
+  --accent-glow:       rgba(59, 130, 246, 0.24);
+
+  --success:           #10b981;
+  --warning:           #f59e0b;
+
+  --shadow-sm:         0 4px 16px rgba(0,0,0,0.07);
+  --shadow-md:         0 10px 32px rgba(0,0,0,0.11);
+  --shadow-hover:      0 18px 48px rgba(0,0,0,0.18);
+
+  --radius-md:         16px;
+  --radius-lg:         20px;
+  --radius-pill:       9999px;
+
+  --transition:        0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-bounce: 0.36s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-page:           #0f172a;
+    --bg-card:           rgba(30, 41, 59, 0.84);
+    --bg-card-hover:     rgba(51, 65, 85, 0.92);
+    --bg-card-active:    rgba(30, 41, 59, 0.74);
+    --border-subtle:     rgba(51, 65, 85, 0.62);
+    --border-strong:     rgba(71, 85, 105, 0.88);
+
+    --text-primary:      #f1f5f9;
+    --text-secondary:    #cbd5e1;
+    --text-tertiary:     #94a3b8;
+
+    --accent-glow:       rgba(96, 165, 250, 0.34);
+
+    --shadow-sm:         0 6px 24px rgba(0,0,0,0.50);
+    --shadow-md:         0 12px 40px rgba(0,0,0,0.58);
+    --shadow-hover:      0 22px 64px rgba(0,0,0,0.68);
+  }
+}
+
+.dark {
+  --bg-page:           #0f172a;
+  --bg-card:           rgba(30, 41, 59, 0.84);
+  --bg-card-hover:     rgba(51, 65, 85, 0.92);
+  --bg-card-active:    rgba(30, 41, 59, 0.74);
+  --border-subtle:     rgba(51, 65, 85, 0.62);
+  --border-strong:     rgba(71, 85, 105, 0.88);
+
+  --text-primary:      #f1f5f9;
+  --text-secondary:    #cbd5e1;
+  --text-tertiary:     #94a3b8;
+
+  --accent-glow:       rgba(96, 165, 250, 0.34);
+
+  --shadow-sm:         0 6px 24px rgba(0,0,0,0.50);
+  --shadow-md:         0 12px 40px rgba(0,0,0,0.58);
+  --shadow-hover:      0 22px 64px rgba(0,0,0,0.68);
+}
+
+/* ────────────────────────────────────────────────
+   Main location button – glass pill style
+   ──────────────────────────────────────────────── */
 .location-button {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
   width: 100%;
-  padding: 16px 24px;
-  border: 2px solid #3B82F6;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
-  color: #1E40AF;
-  font-size: 16px;
-  font-weight: 700;
+  max-width: 420px;
+  margin: 1rem auto;
+  padding: 1.1rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  color: var(--text-primary);
+  font-size: 1.02rem;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 
-    0 8px 20px rgba(59, 130, 246, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  text-decoration: none;
-  margin-top: 8px;
+  transition: all var(--transition);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
 }
 
-.location-button:hover:not(.disabled) {
-  background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
-  transform: translateY(-2px);
-  box-shadow: 
-    0 12px 28px rgba(59, 130, 246, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 1);
+.location-button:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border-subtle));
 }
 
-.location-button:active:not(.disabled) {
+.location-button:active {
   transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
-.location-button.disabled {
-  opacity: 0.6;
+.location-button.disabled,
+.location-button:disabled {
+  opacity: 0.65;
   cursor: not-allowed;
-  transform: none !important;
+  pointer-events: none;
 }
 
+/* Inner content layout */
 .button-content {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.9rem;
+  z-index: 2;
+}
+
+.button-content svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.2;
+  transition: transform var(--transition-bounce);
+}
+
+.location-button:hover .button-content svg {
+  transform: scale(1.12);
 }
 
 .loading-icon {
   animation: spin 1s linear infinite;
 }
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Subtle shine/glow layer on hover */
+.location-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 40%,
+    rgba(255,255,255,0.15) 50%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+  transform: translateX(-100%);
+}
+
+.location-button:hover::before {
+  opacity: 1;
+  transform: translateX(100%);
+}
+
+/* ────────────────────────────────────────────────
+   Optional direct map link button (uncomment if needed)
+   ──────────────────────────────────────────────── */
 .direct-map-button {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  padding: 14px 20px;
-  border: 2px solid #10B981;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
-  color: #166534;
-  font-size: 15px;
-  font-weight: 600;
+  gap: 0.75rem;
+  padding: 0.9rem 1.4rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.96rem;
+  font-weight: 500;
   cursor: pointer;
-  box-shadow: 
-    0 6px 16px rgba(16, 185, 129, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  text-decoration: none;
-  margin-top: 12px;
+  transition: all var(--transition);
+  backdrop-filter: blur(12px);
+  margin: 0.75rem auto 0;
+  max-width: 320px;
 }
 
 .direct-map-button:hover {
-  background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%);
-  transform: translateY(-1px);
-  box-shadow: 
-    0 10px 24px rgba(16, 185, 129, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 1);
+  background: var(--bg-card-hover);
+  color: var(--accent);
+  transform: translateY(-2px);
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.direct-map-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ────────────────────────────────────────────────
+   Responsive & reduced motion
+   ──────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .location-button {
+    padding: 1rem 1.25rem;
+    font-size: 0.98rem;
+  }
+
+  .button-content svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .location-button,
+  .location-button:hover,
+  .location-button:active,
+  .location-button::before,
+  .direct-map-button,
+  .direct-map-button:hover {
+    transition: none !important;
+    transform: none !important;
+  }
 }

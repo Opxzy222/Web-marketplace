@@ -128,7 +128,7 @@
 .srt-shop-card {
   padding: 5px;
   border-radius: 18px;
-  background: linear-gradient(145deg, #0f172a, #111c35);
+  background: var(--srt-bg-card);;
   display: flex;
   flex-direction: column;
   gap: 10px;

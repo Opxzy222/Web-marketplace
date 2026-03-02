@@ -13,8 +13,8 @@ import {
   CreditCard,
 } from 'lucide-react';
 import axios from 'axios';
-import PageShell from '../components/PageShell'; // Adjust path to match your structure
-import '../css/tab/Account.css'; // We'll update this CSS below
+import PageShell from '../components/PageShell'; 
+import '../css/tab/Account.css'; 
 
 const Account = () => {
   const navigate = useNavigate();

@@ -36,8 +36,8 @@
   z-index: 1000;
   padding-top: env(safe-area-inset-top);
   margin-top: calc(-1 * env(safe-area-inset-top));
-  background: transparent;
-  overflow: hidden;
+  background: var(--gl-bg);
+  overflow: visible !important;
   box-shadow: var(--gl-shadow);
   border-bottom: 1px solid var(--gl-border);
   color: var(--gl-text);

@@ -1,0 +1,422 @@
+/* NotificationBell.css — Advanced WhatsApp-style Notification Center 2025/2026
+   Glassmorphism + depth + micro-animations + perfect dark/light mode
+   Designed to feel premium and match modern dashboard / header aesthetics
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ────────────────────────────────────────────────
+   Core glassmorphism theme variables
+   (keep aligned with your PageShell / header system)
+   ──────────────────────────────────────────────── */
+:root {
+  --gl-bg:                #ffffff;
+  --gl-surface:           rgba(255, 255, 255, 0.82);
+  --gl-surface-hover:     rgba(255, 255, 255, 0.94);
+  --gl-surface-active:    rgba(248, 250, 252, 0.75);
+  --gl-border:            rgba(226, 232, 240, 0.48);
+  --gl-border-strong:     rgba(203, 213, 225, 0.85);
+  --gl-blur:              blur(22px) saturate(180%);
+  --gl-shadow-sm:         0 6px 24px rgba(0, 0, 0, 0.08);
+  --gl-shadow-md:         0 12px 40px rgba(0, 0, 0, 0.14);
+  --gl-shadow-lg:         0 20px 60px rgba(0, 0, 0, 0.22);
+  --gl-radius:            22px;
+  --gl-radius-inner:      16px;
+  --transition:           0.26s cubic-bezier(0.26, 0.86, 0.44, 0.985);
+  --transition-bounce:    0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  --text-primary:         #0f172a;
+  --text-secondary:       #475569;
+  --text-tertiary:        #64748b;
+  --text-on-glass:        #ffffff;
+
+  --accent:               #3b82f6;
+  --accent-hover:         #2563eb;
+  --accent-active:        #1d4ed8;
+  --accent-glow:          rgba(59, 130, 246, 0.28);
+
+  --unread-dot:           #ef4444;
+  --unread-bg:            rgba(239, 68, 68, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --gl-bg:                #0f172a;
+    --gl-surface:           rgba(30, 41, 59, 0.84);
+    --gl-surface-hover:     rgba(51, 65, 85, 0.92);
+    --gl-surface-active:    rgba(30, 41, 59, 0.72);
+    --gl-border:            rgba(51, 65, 85, 0.62);
+    --gl-border-strong:     rgba(71, 85, 105, 0.88);
+    --gl-blur:              blur(20px) saturate(140%);
+    --gl-shadow-sm:         0 8px 32px rgba(0, 0, 0, 0.50);
+    --gl-shadow-md:         0 16px 48px rgba(0, 0, 0, 0.58);
+    --gl-shadow-lg:         0 24px 72px rgba(0, 0, 0, 0.68);
+
+    --text-primary:         #f1f5f9;
+    --text-secondary:       #cbd5e1;
+    --text-tertiary:        #94a3b8;
+
+    --accent:               #60a5fa;
+    --accent-hover:         #3b82f6;
+    --accent-active:        #2563eb;
+    --accent-glow:          rgba(96, 165, 250, 0.38);
+
+    --unread-bg:            rgba(248, 113, 113, 0.14);
+  }
+}
+
+.dark {
+  /* same as prefers-color-scheme: dark */
+  --gl-bg:                #0f172a;
+  --gl-surface:           rgba(30, 41, 59, 0.84);
+  --gl-surface-hover:     rgba(51, 65, 85, 0.92);
+  --gl-surface-active:    rgba(30, 41, 59, 0.72);
+  --gl-border:            rgba(51, 65, 85, 0.62);
+  --gl-border-strong:     rgba(71, 85, 105, 0.88);
+  --gl-blur:              blur(20px) saturate(140%);
+  --gl-shadow-sm:         0 8px 32px rgba(0, 0, 0, 0.50);
+  --gl-shadow-md:         0 16px 48px rgba(0, 0, 0, 0.58);
+  --gl-shadow-lg:         0 24px 72px rgba(0, 0, 0, 0.68);
+
+  --text-primary:         #f1f5f9;
+  --text-secondary:       #cbd5e1;
+  --text-tertiary:        #94a3b8;
+
+  --accent:               #60a5fa;
+  --accent-hover:         #3b82f6;
+  --accent-active:        #2563eb;
+  --accent-glow:          rgba(96, 165, 250, 0.38);
+
+  --unread-bg:            rgba(248, 113, 113, 0.14);
+}
+
+/* ────────────────────────────────────────────────
+   Bell button
+   ──────────────────────────────────────────────── */
+.notification-bell {
+  position: relative;
+}
+
+.bell-btn {
+  background: none;
+  border: none;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+
+.bell-btn:hover,
+.bell-btn:focus-visible {
+  background: var(--gl-surface-hover);
+  color: var(--accent);
+  transform: scale(1.12);
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.bell-icon {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+  stroke-width: 2;
+  transition: transform var(--transition-bounce);
+}
+
+.bell-btn:hover .bell-icon {
+  transform: scale(1.15) rotate(12deg);
+}
+
+.unread-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-width: 18px;
+  height: 18px;
+  background: var(--unread-dot);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px var(--gl-bg);
+  transform-origin: center;
+  transition: transform 0.18s ease;
+}
+
+.bell-btn:hover .unread-badge {
+  transform: scale(1.15);
+}
+
+/* ────────────────────────────────────────────────
+   Dropdown (glass modal-like)
+   ──────────────────────────────────────────────── */
+.notification-dropdown {
+  position: fixed;
+  z-index: 1200;
+  width: min(380px, 92vw);
+  max-height: 82vh;
+  background: var(--gl-surface);
+  backdrop-filter: var(--gl-blur);
+  -webkit-backdrop-filter: var(--gl-blur);
+  border: 1px solid var(--gl-border);
+  border-radius: var(--gl-radius);
+  box-shadow: var(--gl-shadow-md);
+  overflow: hidden;
+  color: var(--text-primary);
+  opacity: 0;
+  transform: translateY(16px) scale(0.96);
+  transition:
+    opacity 0.24s ease,
+    transform 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+}
+
+.notification-dropdown.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Arrow / caret */
+.notification-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  right: 24px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid var(--gl-surface);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
+}
+
+/* Header */
+.dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--gl-border);
+  background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
+}
+
+.dropdown-header h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.mark-read-btn {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  color: var(--accent);
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.mark-read-btn:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* List */
+.notifications-list {
+  max-height: calc(82vh - 60px);
+  overflow-y: auto;
+  padding: 6px 0;
+  scrollbar-width: thin;
+}
+
+.notifications-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.notifications-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notifications-list::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--text-tertiary) 60%, transparent);
+  border-radius: 10px;
+}
+
+/* Notification item */
+.notification-item {
+  display: flex;
+  gap: 14px;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+}
+
+.notification-item:hover {
+  background: var(--gl-surface-hover);
+}
+
+.notification-item:active {
+  background: var(--gl-surface-active);
+  transform: scale(0.995);
+}
+
+.notification-item.unread {
+  background: var(--unread-bg);
+}
+
+.notification-item.unread::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--unread-dot);
+  border-radius: 50%;
+}
+
+/* Avatar */
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Content */
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.message {
+  font-size: 15px;
+  line-height: 1.42;
+  margin: 0 0 5px;
+  font-weight: 400;
+}
+
+.unread .message {
+  font-weight: 500;
+}
+
+.timestamp {
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.pickup-code {
+  margin-top: 8px;
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.code {
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* Empty state */
+.empty-state {
+  padding: 80px 32px 100px;
+  text-align: center;
+  color: var(--text-tertiary);
+}
+
+.empty-icon {
+  font-size: 72px;
+  margin-bottom: 20px;
+  opacity: 0.65;
+}
+
+/* Toast — floating glass card */
+.notification-toast {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 1300;
+  max-width: 420px;
+  background: var(--gl-surface);
+  backdrop-filter: var(--gl-blur);
+  border: 1px solid var(--gl-border);
+  border-radius: var(--gl-radius);
+  padding: 16px 20px;
+  box-shadow: var(--gl-shadow-lg);
+  color: var(--text-primary);
+  animation: toast-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.94); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ────────────────────────────────────────────────
+   Responsive
+   ──────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .notification-dropdown {
+    width: 94vw;
+    max-width: 94vw;
+    left: 3vw !important;
+    right: auto !important;
+    border-radius: 20px;
+  }
+
+  .notification-dropdown::before {
+    right: auto;
+    left: 40px;
+  }
+
+  .notifications-list {
+    max-height: 66vh;
+  }
+
+  .notification-item {
+    padding: 14px 16px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .notification-dropdown,
+  .notification-dropdown.open,
+  .notification-item,
+  .bell-btn,
+  .notification-toast {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  @keyframes toast-in { from, to { transform: none; } }
+}

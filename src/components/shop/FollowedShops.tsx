@@ -32,7 +32,7 @@ const FollowedShops: React.FC<FollowedShopsProps> = ({ shops }) => {
   );
 
   const handleSeeAll = () => {
-    navigate('/shop/AllFollowedShops', {
+    navigate('/favorite-space', {
       state: { prevRoute: location.pathname },
     });
   };

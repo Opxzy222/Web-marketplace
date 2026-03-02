@@ -580,7 +580,7 @@
 }
 
 /* ── Price Edit Modal – Fully styled now ─────────────────────────── */
-.modal-overlay {
+.updp-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -594,7 +594,7 @@
   animation: fadeIn 0.2s ease;
 }
 
-.modal-content {
+.updp-modal-content {
   background: var(--bg-card);
   border-radius: 16px;
   padding: 24px;
@@ -605,7 +605,7 @@
   color: var(--text-primary);
 }
 
-.modal-title {
+.updp-modal-title {
   font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
@@ -659,7 +659,7 @@
   border-left: 4px solid var(--accent-blue);
 }
 
-.modal-cancel-button {
+.updp-modal-cancel-button {
   width: 100%;
   padding: 12px;
   background: transparent;
@@ -671,12 +671,12 @@
   transition: var(--transition);
 }
 
-.modal-cancel-button:hover {
+.updp-modal-cancel-button:hover {
   background: var(--hover-bg-medium);
   border-color: var(--border-subtle);
 }
 
-.modal-text {
+.updp-modal-text {
   color: var(--text-secondary);
   font-size: 15px;
   margin: 8px 0 20px 0;
@@ -700,14 +700,14 @@
   box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
-.modal-button-row {
+.updp-modal-button-row {
   display: flex;
   gap: 12px;
   margin-top: 16px;
 }
 
-.modal-confirm-button,
-.modal-cancel-button {
+.updp-modal-confirm-button,
+.updp-modal-cancel-button {
   flex: 1;
   padding: 14px;
   border-radius: 10px;
@@ -717,34 +717,34 @@
   transition: all 0.2s ease;
 }
 
-.modal-confirm-button {
+.updp-modal-confirm-button {
   background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-green-dark) 100%);
   color: var(--text-light);
   border: none;
 }
 
-.modal-confirm-button:hover {
+.updp-modal-confirm-button:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
 }
 
-.modal-cancel-button {
+.updp-modal-cancel-button {
   background: transparent;
   border: 2px solid var(--border-input);
   color: var(--text-secondary);
 }
 
-.modal-cancel-button:hover {
+.updp-modal-cancel-button:hover {
   background: var(--hover-bg-medium);
   border-color: var(--accent-blue);
 }
 
 /* ── Delete Confirmation Modal ───────────────────────────────────── */
-.modal-title { /* shared */
+.updp-modal-title { /* shared */
   /* already defined above */
 }
 
-.modal-text { /* shared */
+.updp-modal-text { /* shared */
   /* already defined above */
 }
 
@@ -790,12 +790,12 @@
 }
 
 @media (max-width: 480px) {
-  .modal-content {
+  .updp-modal-content {
     padding: 20px;
     width: 94vw;
   }
   
-  .modal-button-row {
+  .updp-modal-button-row {
     flex-direction: column;
     gap: 10px;
   }

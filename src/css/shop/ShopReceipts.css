@@ -2,7 +2,7 @@
 
 /* ────────────────────────────────────────────────
    Customer Receipts — Modern + Dark/Light Mode
-   crcp- prefix + full variable-based switching
+   srcp- prefix + full variable-based switching
    ──────────────────────────────────────────────── */
 
 :root {
@@ -43,8 +43,8 @@
 }
 
 /* Force dark mode */
-html.dark .crcp-receipts-container,
-.dark .crcp-receipts-container {
+html.dark .srcp-receipts-container,
+.dark .srcp-receipts-container {
   --bg-page:          #0f172a;
   --bg-card:          rgba(30, 41, 59, 0.92);
   --bg-overlay:       rgba(30, 41, 59, 0.95);
@@ -62,8 +62,8 @@ html.dark .crcp-receipts-container,
 }
 
 /* ── Loading & Empty States ──────────────────────────────────────────── */
-.crcp-centered,
-.crcp-empty-container {
+.srcp-centered,
+.srcp-empty-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -73,7 +73,7 @@ html.dark .crcp-receipts-container,
   color: var(--text-muted);
 }
 
-.crcp-loading-spinner {
+.srcp-loading-spinner {
   font-size: 32px;
   color: var(--accent);
   animation: spin 1s linear infinite;
@@ -85,19 +85,19 @@ html.dark .crcp-receipts-container,
   to { transform: rotate(360deg); }
 }
 
-.crcp-loading-text {
+.srcp-loading-text {
   font-size: 16px;
   font-weight: 600;
   color: var(--text-secondary);
   margin: 0;
 }
 
-.crcp-content {
+.srcp-content {
   padding: 10px;
 }
 
 /* ── Spending Card ───────────────────────────────────────────────────── */
-.crcp-spending-card {
+.srcp-spending-card {
   background: var(--bg-card);
   border-radius: var(--radius-md);
   padding: 16px;
@@ -106,21 +106,21 @@ html.dark .crcp-receipts-container,
   border: 1px solid var(--border);
 }
 
-.crcp-spending-header {
+.srcp-spending-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
 }
 
-.crcp-spending-title {
+.srcp-spending-title {
   font-size: 16px;
   font-weight: 600;
   color: var(--text-primary);
   margin: 0;
 }
 
-.crcp-month-button {
+.srcp-month-button {
   padding: 8px;
   border-radius: 8px;
   background: var(--accent);
@@ -130,12 +130,12 @@ html.dark .crcp-receipts-container,
   transition: var(--transition);
 }
 
-.crcp-month-button:hover {
+.srcp-month-button:hover {
   opacity: 0.9;
   transform: scale(1.05);
 }
 
-.crcp-spending-amount {
+.srcp-spending-amount {
   font-size: 24px;
   font-weight: 700;
   color: var(--accent);
@@ -143,7 +143,7 @@ html.dark .crcp-receipts-container,
 }
 
 /* ── Navigation Tabs ─────────────────────────────────────────────────── */
-.crcp-nav-bar {
+.srcp-nav-bar {
   background: var(--bg-card);
   border-radius: var(--radius-md);
   padding: 4px;
@@ -153,12 +153,12 @@ html.dark .crcp-receipts-container,
   border: 1px solid var(--border);
 }
 
-.crcp-nav-bar-inner {
+.srcp-nav-bar-inner {
   display: flex;
   flex: 1;
 }
 
-.crcp-nav-button {
+.srcp-nav-button {
   flex: 1;
   padding: 10px;
   border: none;
@@ -174,20 +174,20 @@ html.dark .crcp-receipts-container,
   transition: var(--transition);
 }
 
-.crcp-nav-button:hover {
+.srcp-nav-button:hover {
   background: color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
-.crcp-nav-button.crcp-active {
+.srcp-nav-button.srcp-active {
   background: color-mix(in srgb, var(--accent) 15%, transparent);
   color: var(--accent);
 }
 
-.crcp-nav-button span {
+.srcp-nav-button span {
   font-size: 14px;
 }
 
-.crcp-underline-gradient {
+.srcp-underline-gradient {
   height: 3px;
   width: 80%;
   margin-top: 4px;
@@ -196,14 +196,14 @@ html.dark .crcp-receipts-container,
 }
 
 /* ── Filter ──────────────────────────────────────────────────────────── */
-.crcp-filter-container {
+.srcp-filter-container {
   display: flex;
   align-items: center;
   margin-bottom: 16px;
   gap: 12px;
 }
 
-.crcp-filter-button {
+.srcp-filter-button {
   padding: 8px;
   border-radius: 8px;
   background: var(--accent);
@@ -216,12 +216,12 @@ html.dark .crcp-receipts-container,
   transition: var(--transition);
 }
 
-.crcp-filter-button:hover {
+.srcp-filter-button:hover {
   opacity: 0.9;
   transform: scale(1.05);
 }
 
-.crcp-filter-info-text {
+.srcp-filter-info-text {
   font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
@@ -230,19 +230,19 @@ html.dark .crcp-receipts-container,
 }
 
 /* ── Date Header ─────────────────────────────────────────────────────── */
-.crcp-date-header {
+.srcp-date-header {
   padding: 8px 12px;
   margin: 16px 0 8px 0;
 }
 
-.crcp-date-header span {
+.srcp-date-header span {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
   margin-right: 8px;
 }
 
-.crcp-date-header-underline {
+.srcp-date-header-underline {
   height: 2px;
   flex: 1;
   background: linear-gradient(90deg, var(--accent), var(--success));
@@ -250,7 +250,7 @@ html.dark .crcp-receipts-container,
 }
 
 /* ── Receipt Card ────────────────────────────────────────────────────── */
-.crcp-receipt-card {
+.srcp-receipt-card {
   margin-bottom: 24px;                    /* ← Increased slightly for breathing room */
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -258,7 +258,7 @@ html.dark .crcp-receipts-container,
 }
 
 /* Glass card base — now with stronger border in dark mode */
-.crcp-card-touchable {
+.srcp-card-touchable {
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--bg-card);
@@ -269,25 +269,25 @@ html.dark .crcp-receipts-container,
 }
 
 /* Hover — makes each card clearly stand out */
-.crcp-card-touchable:hover {
+.srcp-card-touchable:hover {
   transform: translateY(-8px);
   box-shadow: var(--shadow-hover);
   border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
 }
 
 /* Dark mode: brighter border & deeper shadow for better separation */
-.dark .crcp-card-touchable {
+.dark .srcp-card-touchable {
   border-color: color-mix(in srgb, var(--text-muted) 60%, var(--border));
   box-shadow: 0 14px 40px rgba(0,0,0,0.5);
 }
 
-.dark .crcp-card-touchable:hover {
+.dark .srcp-card-touchable:hover {
   border-color: var(--accent);
   box-shadow: 0 24px 72px rgba(0,0,0,0.65);
 }
 
 /* Subtle background tint difference (helps cards feel separate) */
-.crcp-card-background {
+.srcp-card-background {
   padding: 16px;
   border-radius: var(--radius-lg);
   background: color-mix(in srgb, var(--card-overlay) 98%, var(--bg-page));
@@ -295,12 +295,12 @@ html.dark .crcp-receipts-container,
 }
 
 /* Dark mode tint adjustment */
-.dark .crcp-card-background {
+.dark .srcp-card-background {
   background: color-mix(in srgb, var(--card-overlay) 96%, #000);
 }
 
 /* Optional: very subtle separator line between cards (clean look) */
-.crcp-receipt-card:not(:last-child)::after {
+.srcp-receipt-card:not(:last-child)::after {
   content: '';
   display: block;
   height: 1px;
@@ -310,32 +310,32 @@ html.dark .crcp-receipts-container,
   opacity: 0.4;
 }
 
-.dark .crcp-receipt-card:not(:last-child)::after {
+.dark .srcp-receipt-card:not(:last-child)::after {
   background: color-mix(in srgb, var(--border) 80%, var(--text-muted));
   opacity: 0.6;
 }
 
 /* Mobile: keep spacing but tighten padding */
 @media (max-width: 480px) {
-  .crcp-receipt-card {
+  .srcp-receipt-card {
     margin-bottom: 20px;
   }
   
-  .crcp-card-background {
+  .srcp-card-background {
     padding: 14px;
   }
 }
 
 /* Reduced motion — rely on spacing & border only */
 @media (prefers-reduced-motion: reduce) {
-  .crcp-card-touchable,
-  .crcp-receipt-card {
+  .srcp-card-touchable,
+  .srcp-receipt-card {
     transition: none;
     transform: none !important;
   }
 }
 
-.crcp-shop-image {
+.srcp-shop-image {
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -347,19 +347,19 @@ html.dark .crcp-receipts-container,
 }
 
 /* Main Info Block */
-.crcp-card-main {
+.srcp-card-main {
   flex: 1;
   min-width: 0;
 }
 
-.crcp-top-row {
+.srcp-top-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 4px;
 }
 
-.crcp-receipt-id {
+.srcp-receipt-id {
   font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
@@ -371,7 +371,7 @@ html.dark .crcp-receipts-container,
   padding-right: 8px;
 }
 
-.crcp-status-chip {
+.srcp-status-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -384,7 +384,7 @@ html.dark .crcp-receipts-container,
   flex-shrink: 0;
 }
 
-.crcp-bottom-row {
+.srcp-bottom-row {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -392,31 +392,31 @@ html.dark .crcp-receipts-container,
   color: var(--text-secondary);
 }
 
-.crcp-receipt-amount {
+.srcp-receipt-amount {
   font-weight: 700;
   color: var(--text-primary);
 }
 
-.crcp-receipt-date {
+.srcp-receipt-date {
   color: var(--text-muted);
 }
 
 /* Divider */
-.crcp-card-divider {
+.srcp-card-divider {
   height: 1px;
   background: var(--border);
   margin: 12px 0;
 }
 
 /* Button Container */
-.crcp-button-container {
+.srcp-button-container {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.crcp-shop-image {
+.srcp-shop-image {
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -427,20 +427,20 @@ html.dark .crcp-receipts-container,
   flex-shrink: 0;
 }
 
-.crcp-card-divider {
+.srcp-card-divider {
   height: 1px;
   background: var(--border);
   margin: 12px 0;
 }
 
-.crcp-pending-actions {
+.srcp-pending-actions {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
   margin-top: 10px;
 }
 
-.crcp-action-button {
+.srcp-action-button {
   min-width: 100px;
   height: 38px;
   border: none;
@@ -454,12 +454,12 @@ html.dark .crcp-receipts-container,
   transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.crcp-action-button:hover {
+.srcp-action-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0,0,0,0.18);
 }
 
-.crcp-button-inner {
+.srcp-button-inner {
   height: 100%;
   width: 100%;
   display: flex;
@@ -470,58 +470,96 @@ html.dark .crcp-receipts-container,
   transition: all 0.28s;
 }
 
-.crcp-accept-inner {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+.srcp-pending-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
 }
 
-.crcp-accept-inner:hover {
-  background: linear-gradient(135deg, #16a34a, #15803d);
+.srcp-action-button.srcp-void {
+  min-width: 110px;
+  height: 38px;
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.crcp-reject-inner {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+.srcp-action-button.srcp-void:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(107, 114, 128, 0.3);
 }
 
-.crcp-reject-inner:hover {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
+.srcp-void-inner {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  transition: all 0.28s;
 }
 
-.crcp-button-text {
-  /* exists in JSX → keep even if empty in CSS */
+.srcp-void-inner:hover {
+  background: linear-gradient(135deg, #4b5563, #374151);
 }
 
 /* Mobile: icon-only */
 @media (max-width: 480px) {
-  .crcp-action-button {
+  .srcp-action-button.srcp-void {
     min-width: 44px;
     width: 44px;
     height: 38px;
   }
 
-  .crcp-button-inner span {
+  .srcp-void-inner span {
     display: none;
   }
 
-  .crcp-button-inner {
+  .srcp-void-inner {
+    padding: 0;
+  }
+}
+
+/* Mobile: icon-only */
+@media (max-width: 480px) {
+  .srcp-action-button {
+    min-width: 44px;
+    width: 44px;
+    height: 38px;
+  }
+
+  .srcp-button-inner span {
+    display: none;
+  }
+
+  .srcp-button-inner {
     padding: 0;
   }
 
-  .crcp-pending-actions {
+  .srcp-pending-actions {
     gap: 8px;
   }
 
-  .crcp-card-background {
+  .srcp-card-background {
     padding: 14px;
   }
 
-  .crcp-shop-image {
+  .srcp-shop-image {
     width: 42px;
     height: 42px;
   }
 }
 
 /* ── Modals ──────────────────────────────────────────────────────────── */
-.crcp-modal-overlay {
+.srcp-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -535,7 +573,7 @@ html.dark .crcp-receipts-container,
   z-index: 1000;
 }
 
-.crcp-modal-content {
+.srcp-modal-content {
   background: var(--bg-card);
   border-radius: 12px;
   padding: 24px;
@@ -546,7 +584,7 @@ html.dark .crcp-receipts-container,
   color: var(--text-primary);
 }
 
-.crcp-modal-title {
+.srcp-modal-title {
   font-size: 18px;
   font-weight: 600;
   color: var(--text-primary);
@@ -554,8 +592,8 @@ html.dark .crcp-receipts-container,
   margin-bottom: 20px;
 }
 
-.crcp-date-input,
-.crcp-picker {
+.srcp-date-input,
+.srcp-picker {
   width: 100%;
   padding: 14px;
   border-radius: 8px;
@@ -569,13 +607,13 @@ html.dark .crcp-receipts-container,
   transition: all 0.2s;
 }
 
-.crcp-date-input:hover,
-.crcp-picker:hover {
+.srcp-date-input:hover,
+.srcp-picker:hover {
   background: color-mix(in srgb, var(--accent) 5%, var(--bg-card));
   border-color: var(--accent);
 }
 
-.crcp-date-picker {
+.srcp-date-picker {
   position: fixed;
   bottom: 20px;
   left: 50%;
@@ -588,14 +626,14 @@ html.dark .crcp-receipts-container,
   border: 1px solid var(--border);
 }
 
-.crcp-modal-buttons {
+.srcp-modal-buttons {
   display: flex;
   gap: 12px;
   margin-top: 20px;
 }
 
-.crcp-apply-button,
-.crcp-clear-button {
+.srcp-apply-button,
+.srcp-clear-button {
   flex: 1;
   border-radius: 10px;
   overflow: hidden;
@@ -603,7 +641,7 @@ html.dark .crcp-receipts-container,
   cursor: pointer;
 }
 
-.crcp-apply-button .crcp-button-gradient {
+.srcp-apply-button .srcp-button-gradient {
   background: linear-gradient(135deg, var(--accent), #10B981);
   padding: 14px;
   display: flex;
@@ -614,7 +652,7 @@ html.dark .crcp-receipts-container,
   font-weight: 600;
 }
 
-.crcp-clear-button {
+.srcp-clear-button {
   background: color-mix(in srgb, var(--bg-card) 90%, var(--bg-page));
   padding: 14px;
   display: flex;
@@ -627,19 +665,19 @@ html.dark .crcp-receipts-container,
 }
 
 /* ── Empty State ─────────────────────────────────────────────────────── */
-.crcp-empty-container svg {
+.srcp-empty-container svg {
   color: var(--text-muted);
   margin-bottom: 12px;
 }
 
-.crcp-empty-text {
+.srcp-empty-text {
   font-size: 18px;
   font-weight: 600;
   color: var(--text-muted);
   margin: 0;
 }
 
-.crcp-receipts-list {
+.srcp-receipts-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -647,21 +685,21 @@ html.dark .crcp-receipts-container,
 
 /* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .crcp-nav-bar-inner {
+  .srcp-nav-bar-inner {
     gap: 4px;
   }
   
-  .crcp-nav-button span {
+  .srcp-nav-button span {
     font-size: 13px;
   }
 }
 
 @media (max-width: 480px) {
-  .crcp-receipt-card {
+  .srcp-receipt-card {
     margin-bottom: 12px;
   }
   
-  .crcp-card-background {
+  .srcp-card-background {
     padding: 12px;
   }
 }

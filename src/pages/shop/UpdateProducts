@@ -17,7 +17,7 @@ const UpdateShopProducts = () => {
   const [customProductName, setCustomProductName] = useState('');
   const [customProductCategory, setCustomProductCategory] = useState('');
   const [customProductSubcategory, setCustomProductSubcategory] = useState('');
-  const [editingCustomId, setEditingCustomId] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(null);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [categorySearchQuery, setCategorySearchQuery] = useState('');
   const [isSubcategoryDropdownOpen, setIsSubcategoryDropdownOpen] = useState(false);
@@ -39,14 +39,16 @@ const UpdateShopProducts = () => {
   const [expandedCategories, setExpandedCategories] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pendingImages, setPendingImages] = useState({});
-  const nextCustomId = useRef(0);
 
   // ────────────────────────────────────────────────
   // Your existing helper functions & logic (unchanged)
   // ────────────────────────────────────────────────
 
   const getDropdownKey = (category, subcategory) => `${category}-${subcategory}`;
-  const getImageKey = (type, identifier) => `${type}_${identifier}`;
+  const getImageKey = (type, id, item) =>
+    type === 'suggestion'
+      ? `suggestion_${id}`
+      : `custom_${item?.serverIndex !== undefined ? item.serverIndex : id}`;
 
   // Fetch product suggestions
   useEffect(() => {
@@ -113,7 +115,6 @@ const UpdateShopProducts = () => {
         setSelectedProducts(preselected);
 
         // Custom products
-        nextCustomId.current = 0;
         const customs = selected
           .filter(p => p.custom_name)
           .map((p, i) => ({
@@ -128,7 +129,6 @@ const UpdateShopProducts = () => {
             subcategory_name: p.subcategory_name || '',
             image: p.image || null,
             serverIndex: i,
-            customId: nextCustomId.current++,
           }));
 
         setCustomProducts(customs);
@@ -170,7 +170,6 @@ const UpdateShopProducts = () => {
       price: '',
       category_name: customProductCategory || '',
       subcategory_name: customProductSubcategory || '',
-      customId: nextCustomId.current++,
     };
 
     setCustomProducts([...customProducts, newCustomProduct]);
@@ -179,13 +178,8 @@ const UpdateShopProducts = () => {
     setCustomProductSubcategory('');
   };
 
-  const handleRemoveCustomProduct = customId => {
-    setCustomProducts(customProducts.filter(p => p.customId !== customId));
-    const imgKey = getImageKey('custom', customId);
-    setPendingImages(prev => {
-      const { [imgKey]: _, ...rest } = prev;
-      return rest;
-    });
+  const handleRemoveCustomProduct = index => {
+    setCustomProducts(customProducts.filter((_, i) => i !== index));
   };
 
   const handleProductChange = (category, subcategory, selectedOptions) => {
@@ -196,8 +190,6 @@ const UpdateShopProducts = () => {
         [subcategory]: selectedOptions.map(option => ({
           ...option,
           is_available: prevState[category]?.[subcategory]?.find(p => p.value === option.value)?.is_available ?? true,
-          price: prevState[category]?.[subcategory]?.find(p => p.value === option.value)?.price ?? '',
-          image: prevState[category]?.[subcategory]?.find(p => p.value === option.value)?.image ?? null,
           category_id: groupedProductSuggestions[category]?.[subcategory]?.find(p => p.id === option.value)?.category_id,
           subcategory_id: groupedProductSuggestions[category]?.[subcategory]?.find(p => p.id === option.value)?.subcategory_id,
           category_name: category,
@@ -241,7 +233,6 @@ const UpdateShopProducts = () => {
           label: product.name,
           is_available: existingProduct ? existingProduct.is_available : true,
           price: existingProduct?.price ?? null,
-          image: existingProduct?.image ?? null,
         };
       })
       .filter((option) => option !== null);
@@ -274,28 +265,29 @@ const UpdateShopProducts = () => {
     }));
   };
 
-  const handleCustomProductCheckboxChange = (customId) => {
-    setCustomProducts(prevState => prevState.map(product =>
-      product.customId === customId
-        ? { ...product, is_available: !product.is_available }
-        : product
-    ));
+  const handleCustomProductCheckboxChange = (index) => {
+    setCustomProducts(prevState => {
+      const newProducts = [...prevState];
+      newProducts[index] = {
+        ...newProducts[index],
+        is_available: !newProducts[index].is_available
+      };
+      return newProducts;
+    });
   };
 
-  const handleCustomProductPriceChange = (customId, value) => {
-    setCustomProducts(prevState => prevState.map(product =>
-      product.customId === customId
-        ? { ...product, price: value }
-        : product
-    ));
+  const handleCustomProductPriceChange = (index, value) => {
+    setCustomProducts(prevState => {
+      const newProducts = [...prevState];
+      newProducts[index].price = value;
+      return newProducts;
+    });
   };
 
-  const handleCustomProductNameChange = (customId, value) => {
-    setCustomProducts(prevState => prevState.map(product =>
-      product.customId === customId
-        ? { ...product, name: value.trim() }
-        : product
-    ));
+  const handleCustomProductNameChange = (index, value) => {
+    const updatedProducts = [...customProducts];
+    updatedProducts[index].name = value.trim();
+    setCustomProducts(updatedProducts);
   };
 
   const handleRemoveProduct = (category, subcategory, productId) => {
@@ -349,7 +341,7 @@ const UpdateShopProducts = () => {
         formData.append(`category_custom_${index}`, customProduct.category_id || '');
         formData.append(`subcategory_custom_${index}`, customProduct.subcategory_id || '');
 
-        const imgKey = getImageKey('custom', customProduct.customId);
+        const imgKey = getImageKey('custom', index);
         if (pendingImages[imgKey]) {
           formData.append(`image_custom_${index}`, pendingImages[imgKey]);
         } else if (customProduct.image) {
@@ -413,26 +405,6 @@ const UpdateShopProducts = () => {
     return map;
   }, [selectedProducts]);
 
-  const categorizedCustoms = useMemo(() => {
-    const map = {};
-    customProducts.forEach(product => {
-      if (product.category_name && product.subcategory_name) {
-        if (!map[product.category_name]) {
-          map[product.category_name] = {};
-        }
-        if (!map[product.category_name][product.subcategory_name]) {
-          map[product.category_name][product.subcategory_name] = [];
-        }
-        map[product.category_name][product.subcategory_name].push(product);
-      }
-    });
-    return map;
-  }, [customProducts]);
-
-  const uncategorizedCustoms = useMemo(() => {
-    return customProducts.filter(product => !product.category_name || !product.subcategory_name);
-  }, [customProducts]);
-
   // Initialize expanded categories
   useEffect(() => {
     const initialExpanded = Object.keys(groupedProductSuggestions).reduce((acc, category) => {
@@ -480,7 +452,7 @@ const UpdateShopProducts = () => {
           <div className="shop-manager-content">
             {/* Custom Product Section */}
             <div className="custom-product-container">
-              {uncategorizedCustoms.length > 0 && (
+              {customProducts.length > 0 && (
                 <div className="table-wrapper">
                   <h3 className="custom-table-title">Create Your Own Listing</h3>
                   <div className="table-scroll-container">
@@ -488,7 +460,7 @@ const UpdateShopProducts = () => {
                       <thead>
                         <tr>
                           <th>Item Name</th>
-                          {/*<th>Type</th> */}
+                          <th>Type</th>
                           <th>Available</th>
                           <th>Price</th>
                           <th>Img</th>
@@ -496,29 +468,29 @@ const UpdateShopProducts = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {uncategorizedCustoms.map((product) => (
-                          <tr key={product.customId}>
+                        {customProducts.map((product, index) => (
+                          <tr key={index}>
                             <td>
-                              {editingCustomId === product.customId ? (
+                              {editingIndex === index ? (
                                 <input
                                   className="custom-name-input"
                                   value={product.name}
-                                  onChange={(e) => handleCustomProductNameChange(product.customId, e.target.value)}
-                                  onBlur={() => setEditingCustomId(null)}
-                                  onKeyDown={(e) => e.key === 'Enter' && setEditingCustomId(null)}
+                                  onChange={(e) => handleCustomProductNameChange(index, e.target.value)}
+                                  onBlur={() => setEditingIndex(null)}
+                                  onKeyDown={(e) => e.key === 'Enter' && setEditingIndex(null)}
                                   autoFocus
                                   placeholder="Enter listing name"
                                 />
                               ) : (
                                 <button 
                                   className="editable-text"
-                                  onClick={() => setEditingCustomId(product.customId)}
+                                  onClick={() => setEditingIndex(index)}
                                 >
                                   {product.name}
                                 </button>
                               )}
                             </td>
-                            {/*<td className="category-cell">
+                            <td className="category-cell">
                               <div className="category-display">
                                 <div className="category-name">{product.category_name || '—'}</div>
                                 {product.subcategory_name ? (
@@ -527,13 +499,13 @@ const UpdateShopProducts = () => {
                                   <div className="no-subcategory">No subcategory</div>
                                 )}
                               </div>
-                            </td> */}
+                            </td>
                             <td>
                               <label className="checkbox-container">
                                 <input
                                   type="checkbox"
                                   checked={product.is_available}
-                                  onChange={() => handleCustomProductCheckboxChange(product.customId)}
+                                  onChange={() => handleCustomProductCheckboxChange(index)}
                                   className="checkbox-input"
                                 />
                                 <span className="checkbox-checkmark"></span>
@@ -543,7 +515,7 @@ const UpdateShopProducts = () => {
                               <button
                                 className="price-button"
                                 onClick={() => {
-                                  setModalTargetInfo({ type: "custom", customId: product.customId });
+                                  setModalTargetInfo({ type: "custom", index });
                                   setModalValue(product.price || "");
                                   setShowModal(true);
                                 }}
@@ -553,7 +525,7 @@ const UpdateShopProducts = () => {
                             </td>
                             <td>
                               <ProductImageManager
-                                productKey={getImageKey('custom', product.customId)}
+                                productKey={getImageKey('custom', index, product)}
                                 currentImageUrl={product.image ?? null}
                                 onImageSelect={(key, file) => setPendingImages(p => ({ ...p, [key]: file }))}
                                 onImageRemove={(key) => setPendingImages(p => {
@@ -564,10 +536,7 @@ const UpdateShopProducts = () => {
                             </td>
                             <td>
                               <button
-                                onClick={() => {
-                                  setPendingDeleteInfo({ type: "custom", customId: product.customId });
-                                  setShowDeleteModal(true);
-                                }}
+                                onClick={() => handleRemoveCustomProduct(index)}
                                 className="remove-button"
                               >
                                 X
@@ -736,8 +705,6 @@ const UpdateShopProducts = () => {
                           })),
                         };
                         const selectedValues = selectedProducts[category]?.[subcategory]?.map((p) => p.value).filter((id) => id !== undefined) || [];
-                        const selected = selectedProducts[category]?.[subcategory] || [];
-                        const customsHere = categorizedCustoms[category]?.[subcategory] || [];
 
                         return (
                           <div key={subcategory} className="subcategory-container">
@@ -779,6 +746,8 @@ const UpdateShopProducts = () => {
                                     placeholder="Search Products..."
                                     value={dropdownData.searchQuery}
                                     onChange={(e) => {
+                                      // You need to define handleDropdownSearch if missing
+                                      // For now assuming it's defined elsewhere or add it
                                       const query = e.target.value.toLowerCase();
                                       const filtered = products
                                         .filter(p => p.name.toLowerCase().includes(query))
@@ -836,8 +805,8 @@ const UpdateShopProducts = () => {
                               </div>
                             )}
 
-                            {/* Combined Products Table */}
-                            {(selected.length > 0 || customsHere.length > 0) && (
+                            {/* Selected Products Table */}
+                            {selectedProducts[category]?.[subcategory]?.length > 0 && (
                               <div className="table-wrapper">
                                 <table className="product-table">
                                   <thead>
@@ -850,8 +819,8 @@ const UpdateShopProducts = () => {
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {selected.map((product) => (
-                                      <tr key={`sug_${product.value}`}>
+                                    {selectedProducts[category][subcategory].map((product) => (
+                                      <tr key={product.value}>
                                         <td>{product.label}</td>
                                         <td>
                                           <label className="checkbox-container">
@@ -868,8 +837,8 @@ const UpdateShopProducts = () => {
                                           <button
                                             className="price-button"
                                             onClick={() => {
-                                              setModalTargetInfo({ type: "suggested", category, subcategory, productId: product.value });
                                               setModalValue(product.price || "");
+                                              setModalTargetInfo({ category, subcategory, productId: product.value });
                                               setShowModal(true);
                                             }}
                                           >
@@ -891,76 +860,7 @@ const UpdateShopProducts = () => {
                                           <button
                                             className="remove-button"
                                             onClick={() => {
-                                              setPendingDeleteInfo({ type: "suggested", category, subcategory, productId: product.value });
-                                              setShowDeleteModal(true);
-                                            }}
-                                          >
-                                            X
-                                          </button>
-                                        </td>
-                                      </tr>
-                                    ))}
-                                    {customsHere.map((product) => (
-                                      <tr key={`cus_${product.customId}`}>
-                                        <td>
-                                          {editingCustomId === product.customId ? (
-                                            <input
-                                              className="custom-name-input"
-                                              value={product.name}
-                                              onChange={(e) => handleCustomProductNameChange(product.customId, e.target.value)}
-                                              onBlur={() => setEditingCustomId(null)}
-                                              onKeyDown={(e) => e.key === 'Enter' && setEditingCustomId(null)}
-                                              autoFocus
-                                              placeholder="Enter listing name"
-                                            />
-                                          ) : (
-                                            <button 
-                                              className="editable-text"
-                                              onClick={() => setEditingCustomId(product.customId)}
-                                            >
-                                              {product.name}
-                                            </button>
-                                          )}
-                                        </td>
-                                        <td>
-                                          <label className="checkbox-container">
-                                            <input
-                                              type="checkbox"
-                                              checked={product.is_available}
-                                              onChange={() => handleCustomProductCheckboxChange(product.customId)}
-                                              className="checkbox-input"
-                                            />
-                                            <span className="checkbox-checkmark"></span>
-                                          </label>
-                                        </td>
-                                        <td>
-                                          <button
-                                            className="price-button"
-                                            onClick={() => {
-                                              setModalTargetInfo({ type: "custom", customId: product.customId });
-                                              setModalValue(product.price || "");
-                                              setShowModal(true);
-                                            }}
-                                          >
-                                            {product.price ? `₦${Number(product.price).toLocaleString()}` : "Set Price"}
-                                          </button>
-                                        </td>
-                                        <td>
-                                          <ProductImageManager
-                                            productKey={getImageKey('custom', product.customId)}
-                                            currentImageUrl={product.image ?? null}
-                                            onImageSelect={(key, file) => setPendingImages(p => ({ ...p, [key]: file }))}
-                                            onImageRemove={(key) => setPendingImages(p => {
-                                              const { [key]: _, ...rest } = p;
-                                              return rest;
-                                            })}
-                                          />
-                                        </td>
-                                        <td>
-                                          <button
-                                            className="remove-button"
-                                            onClick={() => {
-                                              setPendingDeleteInfo({ type: "custom", customId: product.customId });
+                                              setPendingDeleteInfo({ category, subcategory, productId: product.value });
                                               setShowDeleteModal(true);
                                             }}
                                           >
@@ -1018,8 +918,8 @@ const UpdateShopProducts = () => {
                       onClick={() => {
                         if (modalTargetInfo) {
                           if (modalTargetInfo.type === "custom") {
-                            handleCustomProductPriceChange(modalTargetInfo.customId, modalValue);
-                          } else if (modalTargetInfo.type === "suggested") {
+                            handleCustomProductPriceChange(modalTargetInfo.index, modalValue);
+                          } else {
                             const { category, subcategory, productId } = modalTargetInfo;
                             handleProductPriceChange(category, subcategory, productId, modalValue);
                           }
@@ -1060,21 +960,15 @@ const UpdateShopProducts = () => {
                       className="updp-modal-confirm-button"
                       onClick={() => {
                         if (pendingDeleteInfo) {
-                          if (pendingDeleteInfo.type === "suggested") {
-                            const { category, subcategory, productId } = pendingDeleteInfo;
-                            handleRemoveProduct(category, subcategory, productId);
-                            const imgKey = getImageKey('suggestion', productId);
-                            setPendingImages((prev) => {
-                              const { [imgKey]: _, ...rest } = prev;
-                              return rest;
-                            });
-                          } else if (pendingDeleteInfo.type === "custom") {
-                            const { customId } = pendingDeleteInfo;
-                            handleRemoveCustomProduct(customId);
-                          }
+                          const { category, subcategory, productId } = pendingDeleteInfo;
+                          setSelectedProducts((prev) => {
+                            const updatedCategory = { ...prev[category] };
+                            updatedCategory[subcategory] = updatedCategory[subcategory].filter((p) => p.value !== productId);
+                            return { ...prev, [category]: updatedCategory };
+                          });
+                          setShowDeleteModal(false);
+                          setPendingDeleteInfo(null);
                         }
-                        setShowDeleteModal(false);
-                        setPendingDeleteInfo(null);
                       }}
                     >
                       Delete

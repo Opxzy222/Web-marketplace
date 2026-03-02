@@ -1,9 +1,10 @@
+// Profile.tsx
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaCopy, FaCheck, FaUser, FaBell, FaLock, FaShieldHalved, FaCommentDots, FaTrash, FaArrowRight } from "react-icons/fa6";
 import Logout from "../components/Logout";
-import PageShell from "../components/PageShell";   // ← adjust path if needed
+import PageShell from "../components/PageShell";
 import '../css/tab/Profile.css';
 
 const Profile = () => {
@@ -44,16 +45,16 @@ const Profile = () => {
       showBackButton={true}
       isLoading={false}
     >
-      <div className="profile-wrapper">
-        <div className="scroll-container">
+      <div className="ppl-profile-wrapper">
+        <div className="ppl-scroll-container">
 
           {userId && (
-            <div className="profile-card customer-id-card">
-              <h2 className="profile-title">Customer ID</h2>
-              <div className="profile-row">
-                <div className="profile-id-text">{userId}</div>
+            <div className="ppl-profile-card ppl-customer-id-card">
+              <h2 className="ppl-profile-title">Customer ID</h2>
+              <div className="ppl-profile-row">
+                <div className="ppl-profile-id-text">{userId}</div>
                 <motion.button
-                  className={`copy-button ${copied ? 'copied' : ''}`}
+                  className={`ppl-copy-button ${copied ? 'ppl-copied' : ''}`}
                   onClick={copyToClipboard}
                   disabled={isCopying}
                   whileHover={!isCopying ? { scale: 1.05 } : {}}
@@ -65,34 +66,42 @@ const Profile = () => {
             </div>
           )}
 
-          <div className="menu-container">
+          <div className="ppl-menu-container">
             <MenuItem icon={<FaUser />}        title="Edit Profile"              onClick={() => handleMenuItemClick("/profile-edit")} />
             <MenuItem icon={<FaBell />}       title="Notification settings"     onClick={() => handleMenuItemClick("/notification-settings")} />
             <MenuItem icon={<FaLock />}       title="Change Password"           onClick={() => handleMenuItemClick("/change-password")} />
             <MenuItem icon={<FaShieldHalved />} title="Account Verification"   onClick={() => handleMenuItemClick("/verification-status")} />
             <MenuItem icon={<FaCommentDots />}  title="Give Feedback"           onClick={() => handleMenuItemClick("/feed-back")} />
-            <MenuItem icon={<FaTrash />}      title="Delete Account"            onClick={() => handleMenuItemClick("/delete-user")} color="#ef4444" />
+            <MenuItem icon={<FaTrash />}      title="Delete Account"            onClick={() => handleMenuItemClick("/delete-user")} color="var(--danger)" />
 
-            {/* ── Logout Button ──────────────────────────────────────── */}
+            {/* ── Logout Button – now styled like other menu items ── */}
             <Logout
-  buttonStyle={{
-    width: "100%",
-    marginBottom: "12px",
-    backgroundColor: "white",
-    border: "1px solid #fee2e2",
-    color: "#dc2626",
-    fontWeight: 500,
-  }}
-  textStyle={{
-    color: "#dc2626",
-    fontWeight: 500,
-  }}
-  iconColor="#D32F2F"
-  onLogoutSuccess={() => {
-    console.log('Logout successful from Profile');
-    navigate("/login");
-  }}
-/>
+              buttonStyle={{
+                width: "100%",
+                background: "transparent",
+                border: "none",
+                padding: "18px 24px",
+                margin: 0,
+                display: "flex",
+                alignItems: "center",
+                gap: "16px",
+                cursor: "pointer",
+                transition: "all 0.25s ease",
+                color: "var(--danger)",           // uses CSS var → adapts to dark mode
+                fontWeight: 500,
+              }}
+              textStyle={{
+                color: "var(--danger)",
+                fontWeight: 500,
+                fontSize: "17px",
+                flex: 1,
+              }}
+              iconColor="var(--danger)"
+              onLogoutSuccess={() => {
+                console.log('Logout successful from Profile');
+                navigate("/login");
+              }}
+            />
           </div>
         </div>
       </div>
@@ -100,7 +109,7 @@ const Profile = () => {
   );
 };
 
-// MenuItem remains unchanged (assuming it's already styled in your Profile.css)
+// MenuItem component (unchanged – already uses ppl- prefix and variables)
 interface MenuItemProps {
   icon: React.ReactNode;
   title: string;
@@ -108,9 +117,9 @@ interface MenuItemProps {
   color?: string;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({ icon, title, onClick, color = "#333" }) => (
+const MenuItem: React.FC<MenuItemProps> = ({ icon, title, onClick, color = "var(--text-primary)" }) => (
   <motion.button 
-    className="menu-item"
+    className="ppl-menu-item"
     style={{ "--icon-color": color, "--text-color": color } as React.CSSProperties}
     onClick={onClick}
     whileHover={{ 
@@ -120,9 +129,9 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, title, onClick, color = "#333
     }}
     whileTap={{ scale: 0.98 }}
   >
-    <span className="menu-icon">{icon}</span>
-    <span className="menu-text">{title}</span>
-    <FaArrowRight className="menu-arrow" />
+    <span className="ppl-menu-icon">{icon}</span>
+    <span className="ppl-menu-text">{title}</span>
+    <FaArrowRight className="ppl-menu-arrow" />
   </motion.button>
 );
 
