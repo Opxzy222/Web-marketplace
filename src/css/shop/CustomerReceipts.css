@@ -1,0 +1,667 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ────────────────────────────────────────────────
+   Customer Receipts — Modern + Dark/Light Mode
+   crcp- prefix + full variable-based switching
+   ──────────────────────────────────────────────── */
+
+:root {
+  --bg-page:          #F9FAFB;
+  --bg-card:          #FFFFFF;
+  --bg-overlay:       rgba(255, 255, 255, 0.95);
+  --text-primary:     #1F2A44;
+  --text-secondary:   #374151;
+  --text-muted:       #6B7280;
+  --border:           rgba(203, 213, 225, 0.3);
+  --accent:           #2563EB;
+  --accent-glow:      rgba(37, 99, 235, 0.25);
+  --success:          #22C55E;
+  --danger:           #EF4444;
+  --shadow-sm:        0 2px 8px rgba(0,0,0,0.1);
+  --shadow-md:        0 4px 12px rgba(0,0,0,0.1);
+  --shadow-glass:     0 10px 30px rgba(0,0,0,0.15);
+  --radius-md:        12px;
+  --radius-lg:        16px;
+  --transition:       0.2s ease;
+}
+
+.dark {
+  --bg-page:          #0f172a;
+  --bg-card:          rgba(30, 41, 59, 0.92);
+  --bg-overlay:       rgba(30, 41, 59, 0.95);
+  --text-primary:     #f1f5f9;
+  --text-secondary:   #cbd5e1;
+  --text-muted:       #94a3b8;
+  --border:           rgba(51, 65, 85, 0.5);
+  --accent:           #60a5fa;
+  --accent-glow:      rgba(96, 165, 250, 0.35);
+  --success:          #34d399;
+  --danger:           #f87171;
+  --shadow-sm:        0 4px 16px rgba(0,0,0,0.4);
+  --shadow-md:        0 8px 24px rgba(0,0,0,0.45);
+  --shadow-glass:     0 12px 40px rgba(0,0,0,0.5);
+}
+
+/* Force dark mode */
+html.dark .crcp-receipts-container,
+.dark .crcp-receipts-container {
+  --bg-page:          #0f172a;
+  --bg-card:          rgba(30, 41, 59, 0.92);
+  --bg-overlay:       rgba(30, 41, 59, 0.95);
+  --text-primary:     #f1f5f9;
+  --text-secondary:   #cbd5e1;
+  --text-muted:       #94a3b8;
+  --border:           rgba(51, 65, 85, 0.5);
+  --accent:           #60a5fa;
+  --accent-glow:      rgba(96, 165, 250, 0.35);
+  --success:          #34d399;
+  --danger:           #f87171;
+  --shadow-sm:        0 4px 16px rgba(0,0,0,0.4);
+  --shadow-md:        0 8px 24px rgba(0,0,0,0.45);
+  --shadow-glass:     0 12px 40px rgba(0,0,0,0.5);
+}
+
+/* ── Loading & Empty States ──────────────────────────────────────────── */
+.crcp-centered,
+.crcp-empty-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  min-height: 400px;
+  color: var(--text-muted);
+}
+
+.crcp-loading-spinner {
+  font-size: 32px;
+  color: var(--accent);
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.crcp-loading-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.crcp-content {
+  padding: 10px;
+}
+
+/* ── Spending Card ───────────────────────────────────────────────────── */
+.crcp-spending-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+
+.crcp-spending-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.crcp-spending-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.crcp-month-button {
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--accent);
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.crcp-month-button:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.crcp-spending-amount {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0;
+}
+
+/* ── Navigation Tabs ─────────────────────────────────────────────────── */
+.crcp-nav-bar {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  border: 1px solid var(--border);
+}
+
+.crcp-nav-bar-inner {
+  display: flex;
+  flex: 1;
+}
+
+.crcp-nav-button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  color: var(--text-secondary);
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.crcp-nav-button:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.crcp-nav-button.crcp-active {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+}
+
+.crcp-nav-button span {
+  font-size: 14px;
+}
+
+.crcp-underline-gradient {
+  height: 3px;
+  width: 80%;
+  margin-top: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+}
+
+/* ── Filter ──────────────────────────────────────────────────────────── */
+.crcp-filter-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.crcp-filter-button {
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--accent);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition);
+}
+
+.crcp-filter-button:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.crcp-filter-info-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  flex: 1;
+  text-align: right;
+}
+
+/* ── Date Header ─────────────────────────────────────────────────────── */
+.crcp-date-header {
+  padding: 8px 12px;
+  margin: 16px 0 8px 0;
+}
+
+.crcp-date-header span {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-right: 8px;
+}
+
+.crcp-date-header-underline {
+  height: 2px;
+  flex: 1;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+  border-radius: 1px;
+}
+
+/* ── Receipt Card ────────────────────────────────────────────────────── */
+.crcp-receipt-card {
+  margin-bottom: 24px;                    /* ← Increased slightly for breathing room */
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: transparent;                /* Let glass show through */
+}
+
+/* Glass card base — now with stronger border in dark mode */
+.crcp-card-touchable {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-glass);
+  transition: all var(--transition);
+}
+
+/* Hover — makes each card clearly stand out */
+.crcp-card-touchable:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+}
+
+/* Dark mode: brighter border & deeper shadow for better separation */
+.dark .crcp-card-touchable {
+  border-color: color-mix(in srgb, var(--text-muted) 60%, var(--border));
+  box-shadow: 0 14px 40px rgba(0,0,0,0.5);
+}
+
+.dark .crcp-card-touchable:hover {
+  border-color: var(--accent);
+  box-shadow: 0 24px 72px rgba(0,0,0,0.65);
+}
+
+/* Subtle background tint difference (helps cards feel separate) */
+.crcp-card-background {
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--card-overlay) 98%, var(--bg-page));
+  transition: background var(--transition);
+}
+
+/* Dark mode tint adjustment */
+.dark .crcp-card-background {
+  background: color-mix(in srgb, var(--card-overlay) 96%, #000);
+}
+
+/* Optional: very subtle separator line between cards (clean look) */
+.crcp-receipt-card:not(:last-child)::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: var(--border);
+  margin: 20px auto 0;
+  width: 85%;
+  opacity: 0.4;
+}
+
+.dark .crcp-receipt-card:not(:last-child)::after {
+  background: color-mix(in srgb, var(--border) 80%, var(--text-muted));
+  opacity: 0.6;
+}
+
+/* Mobile: keep spacing but tighten padding */
+@media (max-width: 480px) {
+  .crcp-receipt-card {
+    margin-bottom: 20px;
+  }
+  
+  .crcp-card-background {
+    padding: 14px;
+  }
+}
+
+/* Reduced motion — rely on spacing & border only */
+@media (prefers-reduced-motion: reduce) {
+  .crcp-card-touchable,
+  .crcp-receipt-card {
+    transition: none;
+    transform: none !important;
+  }
+}
+
+.crcp-shop-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2.5px solid var(--accent);
+  box-shadow: 0 4px 12px var(--accent-glow);
+  flex-shrink: 0;
+}
+
+/* Main Info Block */
+.crcp-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.crcp-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.crcp-receipt-id {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 8px;
+}
+
+.crcp-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  flex-shrink: 0;
+}
+
+.crcp-bottom-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.crcp-receipt-amount {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.crcp-receipt-date {
+  color: var(--text-muted);
+}
+
+/* Divider */
+.crcp-card-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 12px 0;
+}
+
+/* Button Container */
+.crcp-button-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.crcp-shop-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2.5px solid var(--accent);
+  box-shadow: 0 4px 12px var(--accent-glow);
+  flex-shrink: 0;
+}
+
+.crcp-card-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 12px 0;
+}
+
+.crcp-pending-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.crcp-action-button {
+  min-width: 100px;
+  height: 38px;
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.crcp-action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+
+.crcp-button-inner {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  transition: all 0.28s;
+}
+
+.crcp-accept-inner {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.crcp-accept-inner:hover {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+}
+
+.crcp-reject-inner {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.crcp-reject-inner:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+.crcp-button-text {
+  /* exists in JSX → keep even if empty in CSS */
+}
+
+/* Mobile: icon-only */
+@media (max-width: 480px) {
+  .crcp-action-button {
+    min-width: 44px;
+    width: 44px;
+    height: 38px;
+  }
+
+  .crcp-button-inner span {
+    display: none;
+  }
+
+  .crcp-button-inner {
+    padding: 0;
+  }
+
+  .crcp-pending-actions {
+    gap: 8px;
+  }
+
+  .crcp-card-background {
+    padding: 14px;
+  }
+
+  .crcp-shop-image {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* ── Modals ──────────────────────────────────────────────────────────── */
+.crcp-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  z-index: 1000;
+}
+
+.crcp-modal-content {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-glass);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+.crcp-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.crcp-date-input,
+.crcp-picker {
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bg-card) 95%, var(--bg-page));
+  border: 2px solid transparent;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+}
+
+.crcp-date-input:hover,
+.crcp-picker:hover {
+  background: color-mix(in srgb, var(--accent) 5%, var(--bg-card));
+  border-color: var(--accent);
+}
+
+.crcp-date-picker {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-glass);
+  z-index: 1001;
+  border: 1px solid var(--border);
+}
+
+.crcp-modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.crcp-apply-button,
+.crcp-clear-button {
+  flex: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: none;
+  cursor: pointer;
+}
+
+.crcp-apply-button .crcp-button-gradient {
+  background: linear-gradient(135deg, var(--accent), #10B981);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.crcp-clear-button {
+  background: color-mix(in srgb, var(--bg-card) 90%, var(--bg-page));
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+}
+
+/* ── Empty State ─────────────────────────────────────────────────────── */
+.crcp-empty-container svg {
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.crcp-empty-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.crcp-receipts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .crcp-nav-bar-inner {
+    gap: 4px;
+  }
+  
+  .crcp-nav-button span {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .crcp-receipt-card {
+    margin-bottom: 12px;
+  }
+  
+  .crcp-card-background {
+    padding: 12px;
+  }
+}

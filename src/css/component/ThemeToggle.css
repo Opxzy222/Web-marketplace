@@ -1,0 +1,97 @@
+/* ThemeToggle – modern glass segmented control */
+
+.theme-toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 6px;
+  border-radius: 999px;
+
+  /* Glassmorphism – matches header style */
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+  /* Dark mode adjustment */
+}
+
+.theme-btn {
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  color: white; /* slate-400 – neutral default */
+
+  /* Default hover (subtle) */
+  &:hover {
+    background: rgba(255, 255, 255, 0.09);
+    transform: scale(1.12);
+  }
+
+  /* Active / pressed state */
+  &.active {
+    background: rgba(255, 255, 255, 0.85);
+    color: #1e40af; /* deep blue – visible & premium */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transform: scale(1.08);
+  }
+
+  /* Focus ring for accessibility */
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+  }
+}
+
+.theme-btn-dark {
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  color: black; /* slate-400 – neutral default */
+
+  /* Default hover (subtle) */
+  &:hover {
+    background: rgba(255, 255, 255, 0.09);
+    transform: scale(1.12);
+  }
+
+  /* Active / pressed state */
+  &.active {
+    background: rgba(255, 255, 255, 0.85);
+    color: #1e40af; /* deep blue – visible & premium */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transform: scale(1.08);
+  }
+
+  /* Focus ring for accessibility */
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .theme-btn,
+  .theme-btn:hover,
+  .theme-btn.active {
+    transition: none;
+    transform: none;
+  }
+}

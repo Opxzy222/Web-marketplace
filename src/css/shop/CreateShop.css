@@ -1,0 +1,555 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ────────────────────────────────────────────────
+   Refined 2026 Premium Form – Mature Glassmorphism
+   Better dark mode contrast • Clearer hierarchy • Professional feel
+   ──────────────────────────────────────────────── */
+
+:root {
+  --bg-page:          linear-gradient(145deg, #f9fafb 0%, #f1f5f9 100%);
+  --card-bg:          rgba(255, 255, 255, 0.92);
+  --field-bg:         rgba(255, 255, 255, 0.70);
+  --text-primary:     #0f172a;
+  --text-secondary:   #475569;
+  --accent:           #2563eb;
+  --accent-glow:      rgba(37, 99, 235, 0.22);
+  --border-base:      rgba(226, 232, 240, 0.9);
+  --border-dark:      rgba(148, 163, 184, 0.55);
+  --radius-lg:        16px;
+  --radius-md:        12px;
+  --shadow-soft:      0 6px 20px -4px rgba(0,0,0,0.08);
+  --shadow-hover:     0 12px 32px -8px rgba(37,99,235,0.18);
+  --transition:       0.28s cubic-bezier(0.26, 0.53, 0.44, 0.98);
+}
+
+.dark {
+  --bg-page:          linear-gradient(145deg, #0f172a 0%, #0f172a 50%, #1e293b 100%);
+  --card-bg:          rgba(15, 23, 42, 0.88);
+  --field-bg:         rgba(30, 41, 59, 0.70);
+  --text-primary:     #e2e8f0;
+  --text-secondary:   #94a3b8;
+  --accent:           #60a5fa;
+  --accent-glow:      rgba(96, 165, 250, 0.28);
+  --border-base:      rgba(148, 163, 184, 0.48);
+  --border-dark:      rgba(203, 213, 225, 0.38);
+  --shadow-soft:      0 8px 24px -6px rgba(0,0,0,0.45);
+  --shadow-hover:     0 14px 36px -10px rgba(96,165,250,0.22);
+}
+
+/* ── Root ─────────────────────────────────────── */
+.create-shop-screen {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* ── Header – cleaner, more premium ──────────── */
+.header-container {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-base);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.header-inner {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 1.125rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.back-btn:hover {
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* ── Main content ────────────────────────────── */
+.form-main {
+  max-width: 1024px;
+  margin: 2.5rem auto 4rem;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ── Card / Section – refined glass ──────────── */
+.form-section {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 1.875rem;
+  border: 1px solid var(--border-base);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 0.4s ease, transform 0.28s ease;
+}
+
+.form-section:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* ── Floating inputs – better visibility ─────── */
+.input-group {
+  position: relative;
+  width: 100%;
+}
+
+.form-input,
+.textarea {
+  width: 100%;
+  padding: 1.5rem 1.25rem 0.625rem;
+  background: var(--field-bg);
+  border: 1.5px solid var(--border-base);
+  border-radius: var(--radius-md);
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  transition: all var(--transition);
+}
+
+.dark .form-input,
+.dark .textarea {
+  border-color: var(--border-dark);     /* ← stronger in dark mode */
+}
+
+.form-input:focus,
+.textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3.5px var(--accent-glow);
+  background: color-mix(in srgb, var(--field-bg) 60%, white 40%);
+  outline: none;
+}
+
+.floating-label {
+  position: absolute;
+  left: 1.25rem;
+  top: 1.125rem;
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  pointer-events: none;
+  transition: all 0.28s ease;
+  transform-origin: left;
+}
+
+.input-group.filled .floating-label,
+.form-input:focus ~ .floating-label,
+.textarea:focus ~ .floating-label {
+  top: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* ── Category trigger ────────────────────────── */
+.dropdown-trigger {
+  width: 100%;
+  padding: 1.5rem 1.25rem 0.625rem;
+  background: var(--field-bg);
+  border: 1.5px solid var(--border-base);
+  border-radius: var(--radius-md);
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all var(--transition);
+}
+
+.dark .dropdown-trigger {
+  border-color: var(--border-dark);
+}
+
+.dropdown-trigger:hover,
+.dropdown-trigger:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3.5px var(--accent-glow);
+}
+
+.dropdown-icon {
+  width: 18px;
+  height: 18px;
+  fill: var(--text-secondary);
+  transition: fill var(--transition), transform var(--transition);
+}
+
+.dropdown-trigger:hover .dropdown-icon,
+.dropdown-trigger:focus .dropdown-icon {
+  fill: var(--accent);
+  transform: translateY(1px);
+}
+
+/* ── react-select refined ────────────────────── */
+.premium-select .react-select__control {
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-base);
+  background: var(--field-bg);
+  min-height: 54px;
+  box-shadow: none;
+  transition: all var(--transition);
+}
+
+.dark .premium-select .react-select__control {
+  border-color: var(--border-dark);
+}
+
+.premium-select .react-select__control--is-focused {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3.5px var(--accent-glow);
+  background: color-mix(in srgb, var(--field-bg) 60%, white 40%);
+}
+
+.premium-select .react-select__placeholder {
+  color: var(--text-secondary);
+}
+
+/* ── Submit vs Detect buttons – clear difference ─ */
+.submit-btn {
+  width: 100%;
+  height: 58px;
+  background: linear-gradient(135deg, var(--accent) 0%, #1d4ed8 100%);
+  color: white;
+  font-size: 1.08rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  box-shadow: 0 8px 24px var(--accent-glow);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition);
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px var(--accent-glow);
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -120%;
+  width: 120%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  transition: left 0.8s;
+}
+
+.submit-btn:hover::before {
+  left: 120%;
+}
+
+/* Detect button – secondary style */
+.detect-btn {
+  width: 100%;
+  padding: 1.1rem;
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius-md);
+  font-size: 1.04rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.detect-btn:hover:not(:disabled) {
+  background: var(--accent-glow);
+  color: white;
+  border-color: transparent;
+}
+
+.detect-btn.loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* ── Modal – cleaner glass ───────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.5rem;
+}
+
+.modal-container {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-base);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-soft);
+  width: 100%;
+  max-width: 540px;
+  max-height: 88vh;
+  overflow-y: auto;
+  animation: modalEnter 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalEnter {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Rest of modal styles remain mostly the same – just ensure .category-option:hover uses var(--accent-glow) */
+
+/* ── Helpers ─────────────────────────────────── */
+.error-text {
+  color: #dc2626;
+  font-size: 0.92rem;
+  margin-top: 0.6rem;
+  font-weight: 500;
+}
+
+.helper-text {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 1.125rem;
+  line-height: 1.45;
+}
+
+.geo-readonly {
+  padding: 0.9rem 1.125rem;
+  background: var(--field-bg);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-md);
+  font-family: ui-monospace, monospace;
+  color: var(--text-primary);
+  font-size: 0.96rem;
+}
+
+.dark .geo-readonly {
+  border-color: var(--border-dark);
+}
+
+/* Responsive tweaks */
+@media (max-width: 640px) {
+  .form-section { padding: 1.5rem; }
+  .header-inner { padding: 1rem; }
+  .form-main { margin: 1.75rem auto 3rem; padding: 0 1rem; }
+}
+
+/* ────────────────────────────────────────────────
+   Category Modal & Subcategories Menu Content Only
+   Glassmorphism + Modern Hover/Focus Effects
+   ──────────────────────────────────────────────── */
+
+:root {
+  --card-bg:          rgba(255, 255, 255, 0.94);
+  --accent:           #2563eb;
+  --accent-glow:      rgba(37, 99, 235, 0.18);
+  --accent-soft:      #3b82f6;
+  --border-base:      rgba(226, 232, 240, 0.92);
+  --text-primary:     #0f172a;
+  --text-secondary:   #475569;
+  --radius-md:        12px;
+  --radius-lg:        16px;
+  --shadow-hover:     0 14px 40px -10px rgba(37,99,235,0.20);
+  --blur-lg:          blur(24px);
+  --transition:       0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.dark {
+  --card-bg:          rgba(15, 23, 42, 0.90);
+  --accent:           #60a5fa;
+  --accent-glow:      rgba(96, 165, 250, 0.26);
+  --accent-soft:      #93c5fd;
+  --border-base:      rgba(148, 163, 184, 0.55);
+  --text-primary:     #f1f5f9;
+  --text-secondary:   #94a3b8;
+  --shadow-hover:     0 16px 44px -12px rgba(96,165,250,0.24);
+}
+
+/* ── Category Modal (popup menu) ──────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.5rem;
+}
+
+.modal-container {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-base);
+  backdrop-filter: var(--blur-lg);
+  -webkit-backdrop-filter: var(--blur-lg);
+  box-shadow: var(--shadow-hover);
+  width: 100%;
+  max-width: 560px;
+  max-height: 88vh;
+  overflow-y: auto;
+  animation: modalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalEnter {
+  from { opacity: 0; transform: translateY(28px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-search {
+  width: 100%;
+  padding: 1.1rem 1.4rem;
+  background: rgba(255,255,255,0.15);
+  border: 1.5px solid var(--border-base);
+  border-radius: var(--radius-md);
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  margin: 1.2rem 0;
+  transition: all var(--transition);
+}
+
+.dark .modal-search {
+  background: rgba(30,41,59,0.5);
+  border-color: rgba(148,163,184,0.65);
+}
+
+.modal-search:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+  outline: none;
+}
+
+.category-scroll {
+  padding: 0.6rem 1.6rem 1.8rem;
+}
+
+.category-option {
+  width: 100%;
+  padding: 1.15rem 1.4rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.22s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.category-option:hover {
+  background: var(--accent-glow);
+  color: var(--accent);
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.dark .category-option:hover {
+  background: rgba(96, 165, 250, 0.18);
+  color: var(--accent-soft);
+}
+
+.category-option:active {
+  transform: scale(0.98);
+  opacity: 0.92;
+}
+
+.no-results {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  padding: 3rem 1rem;
+  font-style: italic;
+}
+
+/* ── Subcategories (react-select multi-select menu content) ────── */
+.premium-select .react-select__menu {
+  background: var(--card-bg);
+  backdrop-filter: var(--blur-lg);
+  -webkit-backdrop-filter: var(--blur-lg);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hover);
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.premium-select .react-select__menu-list {
+  padding: 8px;
+  max-height: 360px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-glow) transparent;
+}
+
+.premium-select .react-select__option {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.premium-select .react-select__option--is-focused {
+  background: var(--accent-glow);
+}
+
+.premium-select .react-select__option--is-selected {
+  background: var(--accent);
+  color: white;
+  font-weight: 500;
+}
+
+.premium-select .react-select__multi-value {
+  background: rgba(37,99,235,0.12);
+  border-radius: 999px;
+  padding: 3px 8px;
+  margin: 2px;
+}
+
+.premium-select .react-select__multi-value__label {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.premium-select .react-select__multi-value__remove {
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.premium-select .react-select__multi-value__remove:hover {
+  background: rgba(37,99,235,0.25);
+  color: white;
+}

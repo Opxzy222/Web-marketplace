@@ -1,0 +1,406 @@
+/* ==========================================================================
+   All Recently Visited Shops – Compact Modern 2025 Style
+   Slim cards • Glassmorphism • Full light/dark mode support
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Root variables ── */
+:root {
+  --bg-page:           #f8fafc;
+  --bg-card:           rgba(255, 255, 255, 0.78);
+  --bg-card-hover:     rgba(255, 255, 255, 0.92);
+  --border-subtle:     rgba(226, 232, 240, 0.65);
+  --text-primary:      #0f172a;
+  --text-secondary:    #475569;
+  --text-tertiary:     #64748b;
+  --text-muted:        #94a3b8;
+  --accent:            #3b82f6;
+  --accent-hover:      #2563eb;
+  --accent-glow:       rgba(59, 130, 246, 0.20);
+  --accent-soft:       rgba(59, 130, 246, 0.10);
+  --shadow-soft:       0 6px 20px rgba(0,0,0,0.08);
+  --shadow-hover:      0 14px 40px rgba(0,0,0,0.15);
+  --radius-lg:         16px;
+  --radius-md:         12px;
+  --transition:        0.26s cubic-bezier(0.22, 1, 0.36, 1);
+  --blur-sm:           blur(12px);
+}
+
+
+/* Manual dark mode class (for theme toggle) */
+.dark {
+  --bg-page:         #0f172a;
+  --bg-card:         rgba(30, 41, 59, 0.82);
+  --bg-card-hover:   rgba(51, 65, 85, 0.92);
+  --border-subtle:   rgba(51, 65, 85, 0.65);
+  --text-primary:    #f1f5f9;
+  --text-secondary:  #cbd5e1;
+  --text-tertiary:   #94a3b8;
+  --text-muted:      #94a3b8;
+  --accent-soft:     rgba(96, 165, 250, 0.16);
+  --shadow-soft:     0 8px 28px rgba(0,0,0,0.48);
+  --shadow-hover:    0 16px 48px rgba(0,0,0,0.60);
+}
+
+/* ── Page container ── */
+.alrt-recently-visited-page .alrt-content-wrapper {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: 1.25rem 1rem 3.5rem;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text-primary);
+  transition: background 0.4s ease;
+}
+
+/* ── Filter bar (compact) ── */
+.alrt-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 1.4rem;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.alrt-filter-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: 0.94rem;
+  cursor: pointer;
+  backdrop-filter: var(--blur-sm);
+  box-shadow: var(--shadow-soft);
+  transition: all var(--transition);
+}
+
+.alrt-filter-toggle-btn:hover,
+.alrt-filter-toggle-btn:focus-visible {
+  background: var(--bg-card-hover);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+
+.alrt-filter-toggle-btn .alrt-icon {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.alrt-active-filter-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.5rem 1rem;
+  background: var(--accent-soft);
+  border-radius: 999px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  backdrop-filter: blur(8px);
+}
+
+.alrt-clear-filter-btn {
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.alrt-clear-filter-btn:hover {
+  background: rgba(59, 130, 246, 0.08);
+  color: var(--accent-hover);
+}
+
+/* ── Filter panel ── */
+.alrt-date-filter-panel {
+  display: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  margin: 0 auto 1.8rem;
+  max-width: 640px;
+  backdrop-filter: var(--blur-sm);
+  box-shadow: var(--shadow-soft);
+}
+
+.alrt-date-filter-panel.visible {
+  display: block;
+}
+
+.alrt-date-input-group {
+  margin-bottom: 1.1rem;
+}
+
+.alrt-date-input-group label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+.alrt-date-input-group input[type="date"] {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: var(--bg-page);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.98rem;
+  transition: all var(--transition);
+}
+
+.alrt-date-input-group input[type="date"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.alrt-filter-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.3rem;
+}
+
+.alrt-apply-filter-btn,
+.alrt-cancel-filter-btn {
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.alrt-apply-filter-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+}
+
+.alrt-apply-filter-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.alrt-cancel-filter-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.alrt-cancel-filter-btn:hover {
+  background: var(--bg-card-hover);
+}
+
+/* ── Timeline separators ── */
+.alrt-date-separator {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 1rem 0 0.8rem;
+}
+
+.alrt-date-title {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.alrt-date-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+/* ── Compact visit card ── */
+.alrt-visit-card {
+  display: flex;
+  height: 116px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: var(--blur-sm);
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.alrt-visit-card:hover,
+.alrt-visit-card:focus-visible {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--accent);
+}
+
+.alrt-visit-card:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3.5px var(--accent-glow), var(--shadow-hover);
+}
+
+.alrt-visit-image-wrapper {
+  width: 116px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.alrt-visit-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.42s ease;
+}
+
+.alrt-visit-card:hover .alrt-visit-image {
+  transform: scale(1.07);
+}
+
+.alrt-visit-info {
+  flex: 1;
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.38rem;
+}
+
+.alrt-shop-title {
+  font-size: 1.06rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.28;
+}
+
+.alrt-shop-address {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.32;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.alrt-visit-meta {
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.alrt-visit-meta strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.alrt-card-arrow {
+  align-self: center;
+  font-size: 1.95rem;
+  color: var(--text-tertiary);
+  margin-right: 1.1rem;
+  opacity: 0.7;
+  transition: all var(--transition);
+}
+
+.alrt-visit-card:hover .alrt-card-arrow,
+.alrt-visit-card:focus-visible .alrt-card-arrow {
+  color: var(--accent);
+  opacity: 1;
+  transform: translateX(6px);
+}
+
+/* ── States ── */
+.alrt-loading-state,
+.alrt-error-state,
+.alrt-empty-state {
+  text-align: center;
+  padding: 4.5rem 1.5rem;
+  color: var(--text-secondary);
+}
+
+.alrt-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border-subtle);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1.4rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.alrt-empty-icon {
+  font-size: 5rem;
+  margin-bottom: 1.2rem;
+  opacity: 0.7;
+}
+
+.alrt-empty-state h3 {
+  margin: 0 0 0.8rem;
+  color: var(--text-primary);
+  font-size: 1.32rem;
+}
+
+.alrt-empty-state p {
+  margin: 0;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .alrt-content-wrapper {
+    padding: 1rem 0.8rem 3rem;
+  }
+
+  .alrt-visit-card {
+    height: 108px;
+  }
+
+  .alrt-visit-image-wrapper {
+    width: 108px;
+  }
+
+  .alrt-visit-info {
+    padding: 0.8rem 1rem;
+  }
+
+  .alrt-shop-title {
+    font-size: 1.02rem;
+  }
+
+  .alrt-card-arrow {
+    font-size: 1.8rem;
+    margin-right: 0.9rem;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}

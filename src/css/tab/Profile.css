@@ -1,0 +1,311 @@
+/* Profile.css — Advanced 2026 Style (Glassmorphism + Perfect Dark/Light Switching) */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-page:          linear-gradient(145deg, #f8fafc 0%, #eef2f6 100%);
+  --bg-card:          rgba(255, 255, 255, 0.92);
+  --bg-overlay:       rgba(255, 255, 255, 0.75);
+  --text-primary:     #0f172a;
+  --text-secondary:   #475569;
+  --text-muted:       #64748b;
+  --border:           rgba(226, 232, 240, 0.7);
+  --accent:           #3b82f6;
+  --accent-glow:      rgba(59, 130, 246, 0.25);
+  --danger:           #ef4444;
+  --danger-glow:      rgba(239, 68, 68, 0.25);
+  --success:          #10b981;
+  --shadow-glass:     0 8px 32px rgba(0,0,0,0.1);
+  --shadow-hover:     0 16px 48px rgba(0,0,0,0.15);
+  --radius-lg:        20px;
+  --radius-md:        16px;
+  --transition:       0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dark {
+  --bg-page:          linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+  --bg-card:          rgba(30, 41, 59, 0.88);
+  --bg-overlay:       rgba(30, 41, 59, 0.75);
+  --text-primary:     #f1f5f9;
+  --text-secondary:   #cbd5e1;
+  --text-muted:       #94a3b8;
+  --border:           rgba(51, 65, 85, 0.65);
+  --accent:           #60a5fa;
+  --accent-glow:      rgba(96, 165, 250, 0.35);
+  --danger:           #f87171;
+  --danger-glow:      rgba(248, 113, 113, 0.35);
+  --shadow-glass:     0 12px 40px rgba(0,0,0,0.45);
+  --shadow-hover:     0 20px 60px rgba(0,0,0,0.55);
+}
+
+/* Force dark mode via class */
+html.dark .ppl-profile-wrapper,
+.dark .ppl-profile-wrapper {
+  --bg-page:          linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+  --bg-card:          rgba(30, 41, 59, 0.88);
+  --bg-overlay:       rgba(30, 41, 59, 0.75);
+  --text-primary:     #f1f5f9;
+  --text-secondary:   #cbd5e1;
+  --text-muted:       #94a3b8;
+  --border:           rgba(51, 65, 85, 0.65);
+  --accent:           #60a5fa;
+  --accent-glow:      rgba(96, 165, 250, 0.35);
+  --danger:           #f87171;
+  --danger-glow:      rgba(248, 113, 113, 0.35);
+  --shadow-glass:     0 12px 40px rgba(0,0,0,0.45);
+  --shadow-hover:     0 20px 60px rgba(0,0,0,0.55);
+}
+
+.ppl-profile-wrapper {
+  min-height: 100vh;
+  background: var(--bg-page);
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text-primary);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.ppl-profile-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 70%, #000) 100%);
+  opacity: 0.06;
+  z-index: -2;
+}
+
+/* Scroll Container */
+.ppl-scroll-container {
+  padding: 40px 20px;
+  max-width: 520px;
+  margin: 0 auto;
+  padding-top: 100px;
+}
+
+/* Profile Card (Customer ID) */
+.ppl-profile-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(20px) saturate(120%);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.ppl-profile-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+
+.ppl-profile-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 20px;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+.ppl-profile-row {
+  display: flex;
+  align-items: center;
+  background: color-mix(in srgb, var(--accent) 6%, var(--bg-overlay));
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  justify-content: space-between;
+  transition: var(--transition);
+}
+
+.ppl-profile-row:hover {
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg-overlay));
+}
+
+.ppl-profile-id-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-all;
+  max-width: 70%;
+}
+
+.ppl-copy-button {
+  padding: 10px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  min-width: 48px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
+
+.ppl-copy-button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  transform: translateY(-2px);
+}
+
+.ppl-copy-button.ppl-copied {
+  background: color-mix(in srgb, var(--success) 20%, transparent);
+  color: var(--success);
+}
+
+.ppl-copy-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Menu Container */
+.ppl-menu-container {
+  background: var(--bg-card);
+  backdrop-filter: blur(24px) saturate(130%);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* Menu Item */
+.ppl-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  border: none;
+  background: transparent;
+  width: 100%;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition);
+  color: var(--text-primary);
+}
+
+.ppl-menu-item:last-child {
+  border-bottom: none;
+}
+
+.ppl-menu-item:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  transform: translateX(6px);
+}
+
+.ppl-menu-item.ppl-danger {
+  --icon-color: var(--danger);
+  --text-color: var(--danger);
+}
+
+.ppl-menu-item.ppl-danger:hover {
+  background: color-mix(in srgb, var(--danger) 15%, transparent);
+}
+
+.ppl-menu-icon {
+  font-size: 24px;
+  color: var(--icon-color, var(--text-secondary));
+  flex-shrink: 0;
+  margin-right: 16px;
+  transition: var(--transition);
+}
+
+.ppl-menu-text {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text-color, var(--text-primary));
+}
+
+.ppl-menu-arrow {
+  font-size: 20px;
+  color: var(--text-muted);
+  opacity: 0.7;
+  transition: var(--transition);
+}
+
+.ppl-menu-item:hover .ppl-menu-arrow {
+  opacity: 1;
+  transform: translateX(6px);
+  color: var(--accent);
+}
+
+/* Copy Toast */
+.ppl-copy-toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  background: linear-gradient(135deg, var(--success), #059669);
+  color: white;
+  padding: 14px 28px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 15px;
+  box-shadow: var(--shadow-hover);
+  transform: translateX(120%);
+  opacity: 0;
+  z-index: 1000;
+  backdrop-filter: blur(12px);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ppl-copy-toast.ppl-show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .ppl-scroll-container {
+    padding: 32px 16px;
+    padding-top: 80px;
+  }
+
+  .ppl-profile-card {
+    padding: 24px;
+  }
+
+  .ppl-profile-id-text {
+    font-size: 16px;
+  }
+
+  .ppl-menu-item {
+    padding: 16px 20px;
+  }
+
+  .ppl-menu-text {
+    font-size: 16px;
+  }
+
+  .ppl-copy-toast {
+    right: 16px;
+    left: 16px;
+    top: 16px;
+    font-size: 14px;
+    padding: 12px 20px;
+  }
+}
+
+/* Hide scrollbar */
+.ppl-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.ppl-scroll-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Make logout visually consistent with danger items */
+.ppl-menu-container > [style*="color: var(--danger)"],
+.ppl-menu-container > [style*="--text-color: var(--danger)"] {
+  --text-color: var(--danger);
+  --icon-color: var(--danger);
+}
+
+.ppl-menu-container > [style*="color: var(--danger)"]:hover,
+.ppl-menu-container > [style*="--text-color: var(--danger)"]:hover {
+  background: color-mix(in srgb, var(--danger) 15%, transparent) !important;
+  transform: translateX(6px);
+}

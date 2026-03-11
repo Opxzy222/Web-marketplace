@@ -1,0 +1,339 @@
+/* EditProfileScreen.css — Modern + Dark/Light Mode (2025 style) */
+
+:root {
+  --bg-primary: #f8fafc;
+  --bg-secondary: rgba(255, 255, 255, 0.92);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --accent: #3b82f6;
+  --accent-dark: #2563eb;
+  --success: #10b981;
+  --danger: #ef4444;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.12);
+  --shadow-glass: 0 4px 30px rgba(0,0,0,0.1);
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --transition: all 0.25s ease;
+}
+
+/* Force dark mode */
+html.dark .edp-profile-page,
+.dark .edp-profile-page {
+  --bg-primary: #0f172a;
+  --bg-secondary: rgba(30, 41, 59, 0.92);
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --accent: #60a5fa;
+  --accent-dark: #3b82f6;
+  --shadow-sm: 0 4px 16px rgba(0,0,0,0.4);
+  --shadow-md: 0 12px 40px rgba(0,0,0,0.45);
+  --shadow-glass: 0 8px 32px rgba(0,0,0,0.35);
+}
+
+.edp-profile-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--bg-primary), color-mix(in srgb, var(--bg-primary) 80%, #000));
+  color: var(--text-primary);
+  padding-bottom: 80px;
+}
+
+/* Header */
+.edp-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(10px);
+}
+
+.edp-back-button {
+  background: rgba(255,255,255,0.25);
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  color: white;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.edp-back-button:hover {
+  background: rgba(255,255,255,0.4);
+  transform: scale(1.08);
+}
+
+.edp-header-title {
+  font-size: 24px;
+  font-weight: 700;
+  flex: 1;
+  text-align: center;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.edp-header-spacer {
+  width: 56px;
+}
+
+/* Main Content */
+.edp-profile-content {
+  padding: 32px 20px;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* Error Banner */
+.edp-error-banner {
+  background: color-mix(in srgb, var(--danger) 10%, var(--bg-secondary));
+  color: var(--danger);
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  border-left: 5px solid var(--danger);
+  margin-bottom: 32px;
+  font-weight: 600;
+}
+
+/* Profile Card */
+.edp-profile-card {
+  background: var(--bg-secondary);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-glass);
+  transition: var(--transition);
+}
+
+/* Image Section */
+.edp-image-section {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.edp-section-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+  letter-spacing: 0.5px;
+}
+
+.edp-image-container {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 16px;
+}
+
+.edp-profile-image {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 6px solid var(--accent);
+  object-fit: cover;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
+
+.edp-image-container:hover .edp-profile-image {
+  transform: scale(1.03);
+}
+
+.edp-upload-button {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  border: 4px solid var(--bg-secondary);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
+
+.edp-upload-button:hover {
+  transform: scale(1.12);
+  box-shadow: 0 12px 35px rgba(59, 130, 246, 0.4);
+}
+
+.edp-upload-hint {
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Profile ID Section */
+.edp-profile-id-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: color-mix(in srgb, var(--accent) 5%, var(--bg-secondary));
+  padding: 16px 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  margin-bottom: 40px;
+}
+
+.edp-profile-id {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.edp-copy-button {
+  background: rgba(59, 130, 246, 0.1);
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.edp-copy-button:hover {
+  background: rgba(59, 130, 246, 0.2);
+  transform: scale(1.1);
+}
+
+/* Info Grid */
+.edp-info-grid {
+  display: grid;
+  gap: 20px;
+  margin-bottom: 48px;
+}
+
+.edp-info-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: color-mix(in srgb, var(--accent) 3%, var(--bg-secondary));
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.edp-info-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.edp-info-item svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.edp-info-item label {
+  display: block;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.edp-info-item p,
+.edp-info-item input {
+  margin: 0;
+  font-size: 18px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.edp-info-item input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 4px 0;
+  font-size: 17px;
+}
+
+/* Update Button */
+.edp-update-button {
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  letter-spacing: 0.5px;
+  transition: var(--transition);
+}
+
+.edp-update-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(59, 130, 246, 0.35);
+}
+
+.edp-update-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Loading State */
+.edp-loading-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  gap: 24px;
+}
+
+.edp-spinner {
+  width: 56px;
+  height: 56px;
+  border: 5px solid var(--border);
+  border-top: 5px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .edp-profile-content {
+    padding: 24px 16px;
+  }
+
+  .edp-profile-card {
+    padding: 32px 24px;
+  }
+
+  .edp-profile-image {
+    width: 150px;
+    height: 150px;
+  }
+
+  .edp-upload-button {
+    width: 52px;
+    height: 52px;
+    bottom: 15px;
+    right: 15px;
+  }
+}

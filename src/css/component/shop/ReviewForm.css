@@ -1,0 +1,271 @@
+/* ==============================================
+   ReviewForm.css – Full Dark/Light Mode Support
+   Premium review submission form
+   ============================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-page: #f9fafb;
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --bg-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+  --bg-input: rgba(255, 255, 255, 0.8);
+
+  --text-primary: #1e293b;
+  --text-secondary: #374151;
+  --text-muted: #9ca3af;
+  --text-light: #ffffff;
+
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+  --accent-green-dark: #059669;
+  --accent-gold: #fbbf24;
+  --accent-red: #f87171;
+
+  --border-subtle: rgba(255, 255, 255, 0.6);
+  --border-input: #e5e7eb;
+  --border-focus: #93c5fd;
+
+  --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.12);
+  --shadow-hover: 0 20px 48px rgba(0, 0, 0, 0.18);
+  --shadow-button: 0 12px 32px rgba(16, 185, 129, 0.4);
+
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+  --bg-page: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.95);
+  --bg-gradient: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%);
+  --bg-input: rgba(30, 41, 59, 0.85);
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-light: #ffffff;
+
+  --accent-blue: #60a5fa;
+  --accent-green: #34d399;
+  --accent-green-dark: #10b981;
+  --accent-gold: #fcd34d;
+  --accent-red: #f87171;
+
+  --border-subtle: rgba(30, 41, 59, 0.6);
+  --border-input: #475569;
+  --border-focus: #60a5fa;
+
+  --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 20px 48px rgba(0, 0, 0, 0.6);
+  --shadow-button: 0 12px 32px rgba(52, 211, 153, 0.35);
+}
+
+/* Main container */
+.sprf-review-form-container {
+  background: var(--bg-gradient);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-subtle);
+  position: relative;
+  overflow: hidden;
+}
+
+.sprf-review-form-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-blue), #8b5cf6, #ec4899);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+/* Form layout */
+.sprf-review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sprf-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sprf-form-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.25px;
+}
+
+/* Textarea */
+.sprf-text-input {
+  width: 100%;
+  min-height: 80px;
+  max-height: 160px;
+  padding: 16px 20px;
+  border: 2px solid var(--border-input);
+  border-radius: var(--radius-lg);
+  background: var(--bg-input);
+  backdrop-filter: blur(10px);
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text-primary);
+  line-height: 1.6;
+  resize: vertical;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.sprf-text-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 
+    0 0 0 4px rgba(59, 130, 246, 0.15),
+    0 8px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+.sprf-text-input::placeholder {
+  color: var(--text-muted);
+}
+
+.sprf-text-input.error {
+  border-color: var(--accent-red);
+  box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.15);
+}
+
+/* Star rating */
+.sprf-star-rating-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.sprf-star-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.sprf-star-button.filled {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(251, 191, 36, 0.1) 100%);
+}
+
+.sprf-star-button svg {
+  color: #d1d5db !important;
+  stroke-width: 1.5;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.dark .sprf-star-button svg {
+  color: #475569 !important;
+}
+
+.sprf-star-button.filled svg {
+  color: var(--accent-gold) !important;
+  filter: drop-shadow(0 2px 8px rgba(251, 191, 36, 0.4));
+}
+
+/* Error message */
+.sprf-error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent-red);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 12px;
+  background: rgba(248, 113, 113, 0.1);
+  border-radius: 12px;
+  border-left: 4px solid var(--accent-red);
+}
+
+.sprf-error-message svg {
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+
+/* Submit button */
+.sprf-submit-button {
+  padding: 18px 32px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-green-dark) 100%);
+  color: var(--text-light);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: var(--shadow-button);
+  transition: all var(--transition-normal);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.sprf-submit-button:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 20px 48px rgba(16, 185, 129, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.sprf-submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.sprf-submit-button svg {
+  stroke-width: 2;
+}
+
+/* Spinner */
+.sprf-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sprf-review-form-container {
+    padding: 24px 20px;
+    margin: 0 12px 20px;
+  }
+  
+  .sprf-star-rating-container {
+    gap: 6px;
+  }
+  
+  .sprf-star-button svg {
+    width: 28px;
+    height: 28px;
+  }
+}

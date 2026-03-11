@@ -1,0 +1,208 @@
+/* ==========================================================================
+   Shop Space Settings (Details) – Advanced Modern Style 2025/2026
+   Excellent contrast | Light text in dark mode | Glassmorphism + depth
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Root variables ── */
+:root {
+  --bg-page:           #f8fafc;
+  --bg-card:           rgba(255, 255, 255, 0.82);
+  --bg-card-hover:     rgba(255, 255, 255, 0.94);
+  --border-subtle:     rgba(226, 232, 240, 0.68);
+  --text-primary:      #0f172a;
+  --text-secondary:    #475569;
+  --text-tertiary:     #64748b;
+  --text-light:        #e2e8f0;           /* used in dark mode for main text */
+  --text-muted-dark:   #94a3b8;
+  --accent:            #3b82f6;
+  --accent-hover:      #2563eb;
+  --accent-glow:       rgba(59, 130, 246, 0.28);
+  --accent-soft:       rgba(59, 130, 246, 0.10);
+  --shadow-soft:       0 10px 32px rgba(0,0,0,0.09);
+  --shadow-hover:      0 20px 56px rgba(0,0,0,0.16);
+  --radius-lg:         18px;
+  --radius-md:         14px;
+  --transition:        0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* Manual dark mode class (if you have a theme toggle) */
+.dark {
+  --bg-page:         #0f172a;
+  --bg-card:         rgba(30, 41, 59, 0.84);
+  --bg-card-hover:   rgba(51, 65, 85, 0.92);
+  --border-subtle:   rgba(51, 65, 85, 0.70);
+  --text-primary:    #f1f5f9;
+  --text-secondary:  #cbd5e1;
+  --text-tertiary:   #94a3b8;
+  --text-light:      #f1f5f9;
+  --text-muted-dark: #94a3b8;
+  --accent-soft:     rgba(96, 165, 250, 0.16);
+  --shadow-soft:     0 12px 40px rgba(0,0,0,0.50);
+  --shadow-hover:    0 24px 64px rgba(0,0,0,0.60);
+}
+
+/* ── Page container ── */
+.details-container {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: 1.5rem 1rem 2rem;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text-primary);
+}
+
+/* ── Card list ── */
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* ── Individual setting card ── */
+.option-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.375rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-soft);
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition);
+  overflow: hidden;
+}
+
+.option-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, var(--accent-soft));
+  opacity: 0;
+  transition: opacity var(--transition);
+  pointer-events: none;
+}
+
+.option-card:hover::after,
+.option-card:focus-visible::after {
+  opacity: 1;
+}
+
+.option-card:hover,
+.option-card:focus-visible {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border-subtle));
+}
+
+/* Active / pressed state */
+.option-card:active {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Icon container */
+.icon-wrapper {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-soft);
+  border-radius: var(--radius-md);
+  font-size: 1.9rem;
+  color: var(--accent);
+  transition: all var(--transition);
+}
+
+.option-card:hover .icon-wrapper,
+.option-card:focus-visible .icon-wrapper {
+  background: var(--accent);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* Text label */
+.option-text {
+  flex: 1;
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--text-primary) !important;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* Chevron (right arrow) */
+.chevron-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  transition: all var(--transition);
+  opacity: 0.75;
+}
+
+.option-card:hover .chevron-icon,
+.option-card:focus-visible .chevron-icon {
+  color: var(--accent);
+  opacity: 1;
+  transform: translateX(6px);
+}
+
+/* ── Focus & accessibility ── */
+.option-card:focus-visible {
+  outline: none;
+  box-shadow: 
+    0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent),
+    var(--shadow-hover);
+}
+
+/* ── Responsive adjustments ── */
+@media (max-width: 480px) {
+  .details-container {
+    padding: 1.125rem 0.875rem 1.75rem;
+  }
+
+  .option-card {
+    padding: 1.25rem 1.375rem;
+    gap: 1rem;
+  }
+
+  .icon-wrapper {
+    width: 52px;
+    height: 52px;
+    font-size: 1.75rem;
+  }
+
+  .option-text {
+    font-size: 1.02rem;
+  }
+
+  .chevron-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ── Respect reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .option-card,
+  .option-card:hover,
+  .option-card:focus-visible,
+  .icon-wrapper,
+  .chevron-icon {
+    transition: none !important;
+    transform: none !important;
+  }
+}

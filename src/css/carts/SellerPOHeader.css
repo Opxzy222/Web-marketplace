@@ -1,0 +1,239 @@
+/* =============================================
+   SellerPOHeader.css – Identical to BuyerPOHeader
+   Only class prefix changed: buy-po- → sell-po-
+   Uses same global variables for light/dark mode
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap');
+
+/* Header wrapper – identical to global */
+.sell-po-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding-top: env(safe-area-inset-top);
+  margin-top: calc(-1 * env(safe-area-inset-top));
+  background: transparent;
+  overflow: hidden;
+  box-shadow: var(--gl-shadow);
+  border-bottom: 1px solid var(--gl-border);
+  color: var(--gl-text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  transition: all 0.25s ease;
+}
+
+/* Inner container – glass + very slight blue tint overlay */
+.sell-po-header-inner {
+  background: var(--gl-bg);
+  backdrop-filter: var(--gl-blur);
+  -webkit-backdrop-filter: var(--gl-blur);
+  border-bottom: 1px solid var(--gl-border);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  border-bottom-left-radius: var(--gl-radius);
+  border-bottom-right-radius: var(--gl-radius);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.9rem;            /* very tight */
+  min-height: 42px;                   /* core height – was 3.5rem */
+  transition: all 0.25s ease;
+}
+
+/* Back button – uses theme variables */
+.sell-po-back-btn {
+  background: none;
+  border: none;
+  padding: 0.45rem;
+  border-radius: 9999px;
+  color: var(--gl-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.sell-po-back-btn:hover,
+.sell-po-back-btn:focus-visible {
+  background: var(--gl-hover-bg);
+  transform: scale(1.1);
+}
+
+/* Center container */
+.sell-po-header-center {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Buyer name – clean, no background, no border */
+.sell-po-buyer-name {
+  background: none !important;
+  border: none !important;
+  margin: 0;
+  padding: 0.4rem 0.8rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--gl-text);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 65vw;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.sell-po-buyer-name:hover {
+  background: var(--gl-hover-bg) !important;
+}
+
+.sell-po-buyer-name:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+/* Version toggle pill – theme adaptive */
+.sell-po-version-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--gl-hover-bg);
+  border: none;
+  border-radius: 9999px;
+  padding: 0.5rem 1rem;
+  color: var(--gl-text);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sell-po-version-toggle:hover,
+.sell-po-version-toggle.active {
+  background: color-mix(in srgb, var(--gl-hover-bg) 70%, var(--gl-text) 30%);
+  transform: scale(1.05);
+}
+
+.sell-po-version-label {
+  font-weight: 900;
+  letter-spacing: -0.4px;
+}
+
+/* ── Dropdown – full glassmorphism, theme adaptive ── */
+.sell-po-version-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 12px;
+  background: var(--gl-bg);
+  backdrop-filter: var(--gl-blur);
+  -webkit-backdrop-filter: var(--gl-blur);
+  border-radius: 20px;
+  box-shadow: var(--gl-shadow);
+  min-width: 300px;
+  max-height: 420px;
+  overflow: hidden;
+  z-index: 999;
+  border: 1px solid var(--gl-border);
+  color: var(--gl-text);
+}
+
+.sell-po-dropdown-scroll {
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.sell-po-version-item {
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.18s ease;
+  color: var(--gl-text);
+}
+
+.sell-po-version-item:hover,
+.sell-po-version-item.active {
+  background: var(--gl-hover-bg);
+}
+
+.sell-po-version-title {
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.latest-badge,
+.fake-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+
+.latest-badge {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.fake-badge {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.sell-po-version-meta {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 3px;
+}
+
+.dark .sell-po-version-meta {
+  color: #94a3b8;
+}
+
+.sell-po-selected-icon {
+  color: #3b82f6;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .sell-po-header-inner {
+    padding: 0.4rem 0.8rem;
+  }
+  .sell-po-buyer-name {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sell-po-header-inner {
+    padding: 0.35rem 0.7rem;
+  }
+  .sell-po-buyer-name {
+    font-size: 1rem;
+    max-width: 55vw;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .sell-po-back-btn,
+  .sell-po-back-btn:hover,
+  .sell-po-version-toggle,
+  .sell-po-version-toggle:hover {
+    transition: none;
+    transform: none;
+  }
+}

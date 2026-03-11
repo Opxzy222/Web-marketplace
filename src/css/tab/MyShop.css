@@ -1,0 +1,291 @@
+/* MyShop.css — Premium 2026 Dashboard (Glassmorphism + Full Dark/Light Mode) */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-page:          linear-gradient(145deg, #f8fafc 0%, #eef2f6 100%);
+  --card-bg:          rgba(255, 255, 255, 0.88);
+  --text-primary:     #0f172a;
+  --text-secondary:   #475569;
+  --text-muted:       #64748b;
+  --border:           rgba(226, 232, 240, 0.65);
+  --accent:           #3b82f6;
+  --accent-glow:      rgba(59, 130, 246, 0.28);
+  --success:          #10b981;
+  --danger:           #ef4444;
+  --shadow-card:      0 10px 32px -10px rgba(0,0,0,0.12);
+  --shadow-hover:     0 20px 48px -12px rgba(0,0,0,0.18);
+  --shadow-neu-light: 8px 8px 16px rgba(0,0,0,0.06), -8px -8px 16px rgba(255,255,255,0.8);
+  --shadow-neu-dark:  inset 6px 6px 12px rgba(0,0,0,0.35), inset -6px -6px 12px rgba(255,255,255,0.1);
+  --radius-lg:        20px;
+  --radius-md:        16px;
+  --transition:       0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.dark {
+  --bg-page:          linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+  --card-bg:          rgba(15, 23, 42, 0.82);
+  --text-primary:     #e2e8f0;
+  --text-secondary:   #94a3b8;
+  --text-muted:       #64748b;
+  --border:           rgba(51, 65, 85, 0.68);
+  --accent:           #60a5fa;
+  --accent-glow:      rgba(96, 165, 250, 0.38);
+  --shadow-card:      0 12px 36px -12px rgba(0,0,0,0.55);
+  --shadow-hover:     0 20px 48px -12px rgba(0,0,0,0.65);
+  --shadow-neu-light: 8px 8px 16px #0a101f, -8px -8px 16px #14233d;
+  --shadow-neu-dark:  inset 6px 6px 12px rgba(0,0,0,0.5), inset -6px -6px 12px rgba(255,255,255,0.08);
+}
+
+/* Force dark mode via class */
+html.dark .myshp-page,
+.dark .myshp-page {
+  --bg-page:          linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+  --card-bg:          rgba(15, 23, 42, 0.82);
+  --text-primary:     #e2e8f0;
+  --text-secondary:   #94a3b8;
+  --text-muted:       #64748b;
+  --border:           rgba(51, 65, 85, 0.68);
+  --accent:           #60a5fa;
+  --accent-glow:      rgba(96, 165, 250, 0.38);
+  --shadow-card:      0 12px 36px -12px rgba(0,0,0,0.55);
+  --shadow-hover:     0 20px 48px -12px rgba(0,0,0,0.65);
+}
+
+/* ── Page Root ───────────────────────────────────────────────────────── */
+.myshp-page {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: 1.5rem 1rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text-primary);
+}
+
+/* ── Main Content Wrapper ────────────────────────────────────────────── */
+.myshp-content {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2.2rem;
+}
+
+/* ── Loading State ───────────────────────────────────────────────────── */
+.myshp-loading {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.myshp-spinner {
+  width: 56px;
+  height: 56px;
+  border: 6px solid var(--accent-glow);
+  border-top: 6px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 1.1s cubic-bezier(0.55, 0.03, 0.68, 0.98) infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Error State ─────────────────────────────────────────────────────── */
+.myshp-error {
+  background: rgba(239,68,68,0.12);
+  color: var(--danger);
+  padding: 1.4rem;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  border: 1px solid rgba(239,68,68,0.3);
+  box-shadow: 0 6px 20px rgba(239,68,68,0.12);
+}
+
+.dark .myshp-error {
+  background: rgba(248,113,113,0.18);
+  color: #f87171;
+  border-color: rgba(248,113,113,0.35);
+  box-shadow: 0 6px 20px rgba(248,113,113,0.2);
+}
+
+.myshp-reload-btn {
+  margin-top: 1.2rem;
+  padding: 0.9rem 1.8rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  box-shadow: 0 6px 18px var(--accent-glow);
+  transition: all var(--transition);
+}
+
+.myshp-reload-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px var(--accent-glow);
+}
+
+/* ── Create Space Button ─────────────────────────────────────────────── */
+.myshp-create-space-btn {
+  width: 100%;
+  max-width: 420px;
+  margin: 2rem auto;
+  padding: 1.3rem 2rem;
+  background: linear-gradient(135deg, var(--success), #34d399);
+  color: white;
+  font-size: 1.12rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  box-shadow: 0 10px 28px rgba(16,185,129,0.35);
+  transition: all var(--transition);
+}
+
+.myshp-create-space-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 44px rgba(16,185,129,0.5);
+}
+
+/* ── Shops Grid ──────────────────────────────────────────────────────── */
+.myshp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.8rem;
+}
+
+/* ── Shop Card – Premium Glassmorphic ────────────────────────────────── */
+.myshp-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 1.8rem;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(22px) saturate(140%);
+  box-shadow: var(--shadow-card), var(--shadow-neu-light);
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.myshp-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover), 0 0 0 2px var(--accent);
+}
+
+.dark .myshp-card {
+  box-shadow: var(--shadow-card), var(--shadow-neu-dark);
+}
+
+.dark .myshp-card:hover {
+  border-color: var(--accent);
+}
+
+/* Shop Name */
+.myshp-shop-name {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.9rem;
+  letter-spacing: -0.02em;
+}
+
+/* Shop Info */
+.myshp-shop-info {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.8rem;
+}
+
+/* Actions Grid */
+.myshp-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+}
+
+/* Action Button */
+.myshp-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.1rem 0.9rem;
+  background: color-mix(in srgb, var(--accent) 5%, var(--card-bg));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.dark .myshp-action-btn {
+  background: color-mix(in srgb, var(--accent) 8%, var(--card-bg));
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.35);
+}
+
+.myshp-action-btn:hover {
+  background: var(--accent-glow);
+  transform: translateY(-3px);
+  border-color: var(--accent);
+}
+
+/* Specific action colors – now use variables or inherit */
+.myshp-admin    { color: var(--accent); }
+.myshp-services { color: #f59e0b; }
+.myshp-stories  { color: #8b5cf6; }
+.myshp-sales    { color: var(--success); }
+.myshp-details  { color: #06b6d4; }
+.myshp-quit     { color: var(--danger); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .myshp-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .myshp-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .myshp-page {
+    padding: 1rem 0.8rem;
+  }
+
+  .myshp-card {
+    padding: 1.5rem;
+  }
+
+  .myshp-action-btn {
+    padding: 1rem 0.8rem;
+    font-size: 0.86rem;
+  }
+}
+
+/* Reduced motion (accessibility) */
+@media (prefers-reduced-motion: reduce) {
+  .myshp-card,
+  .myshp-action-btn,
+  .myshp-create-space-btn,
+  .myshp-reload-btn {
+    transition: none;
+    transform: none !important;
+  }
+}

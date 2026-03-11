@@ -1,0 +1,427 @@
+/* ==========================================================================
+   Seller PO Dashboard – Premium Modern Style 2026
+   Glassmorphism | Dual-mode | Lagos commerce feel with orange accent touch
+   Active tab fully visible in light mode | Consistent with BuyerPOEditor
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ── Root variables ── */
+:root {
+  --bg-page:               #f9faff;
+  --bg-surface:            rgba(255, 255, 255, 0.84);
+  --bg-surface-hover:      rgba(255, 255, 255, 0.96);
+  --bg-glass:              rgba(255, 255, 255, 0.70);
+  --border-glass:          rgba(226, 232, 240, 0.48);
+  --text-primary:          #0f172a;
+  --text-secondary:        #475569;
+  --text-muted:            #64748b;
+  --accent-primary:        #6366f1;            /* indigo-purple base */
+  --accent-success:        #10b981;
+  --accent-warning:        #f97316;            /* warm orange touch */
+  --accent-danger:         #dc2626;
+  --accent-gradient:       linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+  --warning-gradient:      linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  --shadow-soft:           0 8px 24px rgba(0,0,0,0.07);
+  --shadow-medium:         0 16px 40px rgba(0,0,0,0.11);
+  --shadow-hover:          0 24px 56px rgba(0,0,0,0.15);
+  --radius-lg:             22px;
+  --radius-md:             16px;
+  --radius-pill:           9999px;
+  --transition:            0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  --max-content-width:     860px;
+}
+
+/* Dark mode */
+.dark {
+  --bg-page:               #0a0f1a;
+  --bg-surface:            rgba(30, 41, 59, 0.80);
+  --bg-surface-hover:      rgba(51, 65, 85, 0.92);
+  --bg-glass:              rgba(30, 41, 59, 0.65);
+  --border-glass:          rgba(71, 85, 105, 0.42);
+  --text-primary:          #f1f5f9;
+  --text-secondary:        #cbd5e1;
+  --text-muted:            #94a3b8;
+  --shadow-soft:           0 10px 32px rgba(0,0,0,0.50);
+  --shadow-medium:         0 20px 48px rgba(0,0,0,0.58);
+  --shadow-hover:          0 28px 64px rgba(0,0,0,0.65);
+}
+
+/* ── Global page ── */
+.selldshb-page-container {
+  min-height: 100vh;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  padding: 1rem;
+}
+
+.selldshb-scroll-content {
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: 1.5rem 1rem 6rem;
+}
+
+/* ── Action orb (pulsing orange count) ── */
+.selldshb-action-orb-container {
+  position: fixed;
+  top: 80px;
+  right: 1.5rem;
+  z-index: 100;
+}
+
+.selldshb-action-orb {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent-warning);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-medium);
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.14); }
+}
+
+.selldshb-action-orb-number {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: white;
+}
+
+/* ── Tab bar ── */
+.selldshb-tab-bar {
+  display: flex;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-glass);
+  backdrop-filter: blur(16px);
+  padding: 0.75rem 1rem;
+  gap: 0.5rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+.selldshb-tab {
+  flex: 1 0 auto;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.selldshb-tab:hover {
+  background: var(--bg-glass);
+  color: var(--text-primary);
+}
+
+.selldshb-active-tab {
+  background: var(--accent-warning);           /* orange for active tab */
+  color: white;
+  font-weight: 800;
+  box-shadow: var(--shadow-soft);
+}
+
+/* ── Date header ── */
+.selldshb-date-header {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 1.5rem 0 1rem;
+  padding-left: 1rem;
+}
+
+/* ── Card wrapper ── */
+.selldshb-card-wrapper {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+/* ── Card ── */
+.selldshb-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-soft);
+  padding: 1.25rem;
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.selldshb-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: color-mix(in srgb, var(--accent-warning) 40%, var(--border-glass));
+}
+
+/* ── Card header ── */
+.selldshb-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.selldshb-buyer-row {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 1rem;
+}
+
+.selldshb-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-glass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid color-mix(in srgb, var(--accent-warning) 30%, transparent);
+}
+
+.selldshb-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.selldshb-buyer-info {
+  flex: 1;
+}
+
+.selldshb-buyer-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.selldshb-meta {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.selldshb-version-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--accent-warning);           /* orange version pill */
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.selldshb-version-btn:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-soft);
+}
+
+/* ── Price & Status ── */
+.selldshb-price {
+  font-size: 1.6rem;
+  font-weight: 900;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.75rem;
+}
+
+.selldshb-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.selldshb-status-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.selldshb-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.selldshb-status-text {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.selldshb-timer-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-glass);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-glass);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.selldshb-timer-expired {
+  background: var(--accent-danger);
+  color: white;
+  border: none;
+}
+
+/* ── Action badge ── */
+.selldshb-action-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--accent-warning);
+  color: white;
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: 800;
+  box-shadow: var(--shadow-soft);
+}
+
+/* ── Version dropdown ── */
+.selldshb-version-dropdown {
+  margin-top: 0.75rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-medium);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+.selldshb-version-item {
+  padding: 1rem 1.25rem;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.selldshb-version-item:hover,
+.selldshb-current-version {
+  background: color-mix(in srgb, var(--accent-warning) 12%, transparent);
+}
+
+.selldshb-version-label {
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.selldshb-latest-badge {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  margin-left: 0.75rem;
+  background: #dcfce7;
+  color: #166534;
+}
+
+.selldshb-version-message {
+  font-size: 0.9rem;
+  color: var(--accent-warning);
+  font-style: italic;
+  margin-top: 0.25rem;
+}
+
+/* ── Empty & Loader ── */
+.selldshb-empty {
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.selldshb-empty-icon {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.selldshb-empty-text {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-top: 1.5rem;
+}
+
+.selldshb-full-page-loader {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  background: var(--bg-page);
+}
+
+.selldshb-loader-spinner {
+  width: 56px;
+  height: 56px;
+  border: 5px solid var(--border-glass);
+  border-top: 5px solid var(--accent-warning);     /* orange spinner */
+  border-radius: 50%;
+  animation: spin 1.1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.selldshb-loader-text {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .selldshb-tab-bar {
+    padding: 0.5rem;
+    gap: 0.25rem;
+  }
+  .selldshb-card {
+    padding: 1rem;
+  }
+  .selldshb-action-orb-container {
+    top: 70px;
+    right: 1rem;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}

@@ -1,0 +1,164 @@
+/* =============================================
+   Shop Header – glassmorphism 2026 style
+   Matches HeaderGlobal exactly (blur, curve, light/dark)
+   Now more compact – reduced vertical space
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Variables (identical to HeaderGlobal) ── */
+:root {
+  --gl-bg: #f8fafc;
+  --gl-blur: blur(24px) saturate(190%);
+  --gl-border: rgba(226, 232, 240, 0.45);
+  --gl-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
+  --gl-text: #111827;
+  --gl-hover-bg: rgba(255, 255, 255, 0.20);
+  --gl-radius: 24px;
+}
+
+.dark {
+  --gl-bg: #0f172a;
+  --gl-blur: blur(20px) saturate(150%);
+  --gl-border: rgba(51, 65, 85, 0.55);
+  --gl-shadow: 0 12px 40px rgba(0, 0, 0, 0.48);
+  --gl-text: #f1f5f9;
+  --gl-hover-bg: rgba(241, 245, 249, 0.16);
+  --gl-radius: 24px;
+}
+
+/* Header wrapper – full-width, sticky, safe-area */
+.shop-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding-top: env(safe-area-inset-top);
+  margin-top: calc(-1 * env(safe-area-inset-top));
+  background: var(--gl-bg);
+  overflow: visible !important;
+  box-shadow: var(--gl-shadow);
+  border-bottom: 1px solid var(--gl-border);
+  color: var(--gl-text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  transition: all 0.3s ease;
+}
+
+/* Inner glass + curve container – now more compact */
+.shop-header-inner {
+  background: var(--gl-bg);
+  backdrop-filter: var(--gl-blur);
+  -webkit-backdrop-filter: var(--gl-blur);
+  border-bottom: 1px solid var(--gl-border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+  border-bottom-left-radius: var(--gl-radius);
+  border-bottom-right-radius: var(--gl-radius);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;           /* tighter padding */
+  min-height: 3.5rem;                  /* significantly reduced height */
+  transition: all 0.3s ease;
+}
+
+/* Greeting area */
+.greeting-section {
+  flex: 1 1 auto;
+}
+
+.greeting-main {
+  margin: 0;
+  font-size: 1.25rem;                  /* smaller than before */
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--gl-text);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-name {
+  font-weight: 700;
+  color: var(--gl-text);
+}
+
+/* Avatar button */
+.avatar-btn {
+  background: none;
+  border: none;
+  padding: 0.4rem;                     /* tighter padding */
+  border-radius: 9999px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.28s ease;
+}
+
+.avatar {
+  width: 38px;                         /* smaller avatar */
+  height: 38px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;                     /* adjusted for smaller size */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+  transition: all 0.28s ease;
+}
+
+.avatar-btn:hover .avatar,
+.avatar-btn:focus-visible .avatar {
+  transform: scale(1.14) translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+}
+
+/* Responsive – even more compact on smaller screens */
+@media (max-width: 640px) {
+  .shop-header-inner {
+    padding: 0.65rem 1rem;
+    min-height: 3.25rem;
+    --gl-radius: 20px;
+  }
+  .greeting-main {
+    font-size: 1.15rem;
+  }
+  .avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .shop-header-inner {
+    padding: 0.6rem 0.9rem;
+    min-height: 3.1rem;
+    --gl-radius: 16px;
+  }
+  .greeting-main {
+    font-size: 1.05rem;
+  }
+  .avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .avatar-btn,
+  .avatar-btn:hover .avatar,
+  .avatar {
+    transition: none;
+    transform: none;
+  }
+}

@@ -1,0 +1,81 @@
+/* theme.css or at top of Home.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* src/css/theme.css */
+
+:root {
+  --bg-primary: #f9fafb;
+  --card-bg: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --header-bg: #3a7bd5;
+  --primary: #1e3a8a;
+  --accent: #fcd34d;
+  --buyer-accent: #3b82f6;
+  --seller-accent: #f97316;
+  --gradient-start: #4b6cb7;
+  --gradient-end: #8b5cf6;
+  --shadow-color: rgba(0,0,0,0.12);
+  --overlay-dark: rgba(0,0,0,0.7);
+  --glass-bg: rgba(255,255,255,0.45);
+
+  color-scheme: light dark;
+}
+
+.dark {
+  --bg-primary: #0f172a;
+  --card-bg: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --header-bg: #1e40af;
+  --primary: #60a5fa;
+  --accent: #fde047;
+  --buyer-accent: #60a5fa;
+  --seller-accent: #fb923c;
+  --gradient-start: #3b82f6;
+  --gradient-end: #a78bfa;
+  --shadow-color: rgba(0,0,0,0.5);
+  --overlay-dark: rgba(0,0,0,0.85);
+  --glass-bg: rgba(30,41,59,0.45);
+}
+
+/* You can also add base styles here that should always apply */
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Optional: improve scrollbar in dark mode */
+.dark::-webkit-scrollbar {
+  width: 10px;
+}
+.dark::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+.dark::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 5px;
+}
+
+/* Apply variables everywhere instead of hard-coded colors */
+
+.header {
+  background: var(--header-bg);
+  /* ... */
+}
+
+.hero-button {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  /* ... */
+}
+
+.role-card {
+  background: var(--card-bg);
+  box-shadow: var(--shadow-lg);
+  /* remove hardcoded rgba(255,255,255,...) */
+}
+
+/* etc. — replace almost every #hex with var(--name) */

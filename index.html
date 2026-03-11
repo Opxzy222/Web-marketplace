@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" class="ind-html">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no" />
+
+    <title>Marketplace</title>
+
+    <!-- Favicon & PWA icons -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Theme color – Android / browser UI fallback (dynamic one wins) -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8fafc" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="#0f172a" />
+
+    <!-- iOS / PWA settings -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Marketplace" />
+
+    <!-- Color scheme support -->
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- Prevent FOUC – apply dark class synchronously before paint -->
+    <script>
+      (function() {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        let isDark = false;
+
+        if (saved === 'dark') {
+          isDark = true;
+        } else if (saved === 'light') {
+          isDark = false;
+        } else {
+          isDark = prefersDark;
+        }
+
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        }
+
+        if (!saved || saved === 'system') {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            document.documentElement.classList.toggle('dark', e.matches);
+          });
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="ind-body">
+    <div id="root" class="ind-root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

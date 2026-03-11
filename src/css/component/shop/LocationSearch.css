@@ -1,0 +1,185 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ────────────────────────────────────────────────
+   Premium 2026 Location Search – Advanced Dropdowns
+   Glassmorphism + neumorphic + floating labels
+   Consistent with your other screens (.dark support)
+   ──────────────────────────────────────────────── */
+
+:root {
+  --bg:               linear-gradient(145deg, #f8fafc 0%, #eef2f6 100%);
+  --card-bg:          rgba(255, 255, 255, 0.85);
+  --text:             #0f172a;
+  --text-secondary:   #475569;
+  --text-muted:       #64748b;
+  --accent-start:     #3b82f6;
+  --accent-end:       #7c3aed;
+  --accent:           linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  --accent-solid:     #4f46e5;
+  --glow:             rgba(59, 130, 246, 0.28);
+  --border:           rgba(226, 232, 240, 0.6);
+  --shadow-card:      0 8px 28px -8px rgba(0,0,0,0.1);
+  --shadow-neu-light: 6px 6px 12px rgba(0,0,0,0.06), -6px -6px 12px rgba(255,255,255,0.8);
+  --shadow-neu-dark:  inset 4px 4px 10px rgba(0,0,0,0.35), inset -4px -4px 10px rgba(255,255,255,0.1);
+  --radius:           16px;
+  --transition:       0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.dark {
+  --card-bg:          rgba(15, 23, 42, 0.78);
+  --text:             #e2e8f0;
+  --text-secondary:   #94a3b8;
+  --text-muted:       #64748b;
+  --accent-start:     #60a5fa;
+  --accent-end:       #a78bfa;
+  --accent:           linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  --accent-solid:     #8b5cf6;
+  --glow:             rgba(96, 165, 250, 0.38);
+  --border:           rgba(51, 65, 85, 0.65);
+  --shadow-card:      0 10px 32px -10px rgba(0,0,0,0.5);
+  --shadow-neu-light: 6px 6px 12px #0a101f, -6px -6px 12px #14233d;
+  --shadow-neu-dark:  inset 4px 4px 10px rgba(0,0,0,0.5), inset -4px -4px 10px rgba(255,255,255,0.08);
+}
+
+/* ── Root container ──────────────────────────────────────────────────── */
+.location-search {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+/* ── Error message ───────────────────────────────────────────────────── */
+.location-error {
+  background: var(--error-bg);
+  color: var(--error-text);
+  padding: 1rem 1.3rem;
+  border-radius: 12px;
+  font-size: 0.94rem;
+  text-align: center;
+  border: 1px solid var(--error-border);
+}
+
+/* ── Floating label + glass select ───────────────────────────────────── */
+.location__input-group {
+  position: relative;
+  width: 100%;
+}
+
+.location__select,
+.location__input {
+  width: 100%;
+  padding: 1.45rem 1.3rem 0.65rem;
+  background: rgba(255,255,255,0.35);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1.04rem;
+  color: var(--text);
+  transition: all var(--transition);
+  appearance: none;                    /* Remove default arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8.825L1.175 4 2 3.175 6 7.175l4-4L10.825 4z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.3rem center;
+  background-size: 12px;
+}
+
+.dark .location__select,
+.dark .location__input {
+  background: rgba(30,41,59,0.38);
+}
+
+.location__select:focus,
+.location__input:focus {
+  border-color: var(--accent-start);
+  box-shadow: 0 0 0 4px var(--glow);
+  background: rgba(255,255,255,0.55);
+  outline: none;
+}
+
+.dark .location__select:focus,
+.dark .location__input:focus {
+  background: rgba(30,41,59,0.58);
+}
+
+.location__label {
+  position: absolute;
+  left: 1.3rem;
+  top: 1.15rem;
+  font-size: 1.04rem;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  transform-origin: left;
+}
+
+.location__input-group.filled .location__label,
+.location__select:focus ~ .location__label,
+.location__input:focus ~ .location__label {
+  top: 0.6rem;
+  font-size: 0.83rem;
+  color: var(--accent-start);
+  transform: scale(0.92);
+}
+
+/* ── Search input + button group ────────────────────────────────────── */
+.location__search-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.location__search-btn {
+  height: 56px;
+  background: var(--accent);
+  color: white;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px var(--glow), var(--shadow-neu-light);
+  transition: all var(--transition);
+}
+
+.dark .location__search-btn {
+  box-shadow: 0 8px 24px var(--glow), var(--shadow-neu-dark);
+}
+
+.location__search-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 36px var(--glow);
+}
+
+.location__search-btn:disabled {
+  opacity: 0.9;
+  cursor: wait;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .location-search {
+    gap: 1.4rem;
+  }
+
+  .location__select,
+  .location__input {
+    padding: 1.3rem 1.2rem 0.6rem;
+    font-size: 1rem;
+  }
+
+  .location__label {
+    font-size: 1rem;
+  }
+
+  .location__search-btn {
+    height: 52px;
+    font-size: 1rem;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

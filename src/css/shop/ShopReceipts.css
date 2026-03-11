@@ -1,0 +1,705 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ────────────────────────────────────────────────
+   Customer Receipts — Modern + Dark/Light Mode
+   srcp- prefix + full variable-based switching
+   ──────────────────────────────────────────────── */
+
+:root {
+  --bg-page:          #F9FAFB;
+  --bg-card:          #FFFFFF;
+  --bg-overlay:       rgba(255, 255, 255, 0.95);
+  --text-primary:     #1F2A44;
+  --text-secondary:   #374151;
+  --text-muted:       #6B7280;
+  --border:           rgba(203, 213, 225, 0.3);
+  --accent:           #2563EB;
+  --accent-glow:      rgba(37, 99, 235, 0.25);
+  --success:          #22C55E;
+  --danger:           #EF4444;
+  --shadow-sm:        0 2px 8px rgba(0,0,0,0.1);
+  --shadow-md:        0 4px 12px rgba(0,0,0,0.1);
+  --shadow-glass:     0 10px 30px rgba(0,0,0,0.15);
+  --radius-md:        12px;
+  --radius-lg:        16px;
+  --transition:       0.2s ease;
+}
+
+.dark {
+  --bg-page:          #0f172a;
+  --bg-card:          rgba(30, 41, 59, 0.92);
+  --bg-overlay:       rgba(30, 41, 59, 0.95);
+  --text-primary:     #f1f5f9;
+  --text-secondary:   #cbd5e1;
+  --text-muted:       #94a3b8;
+  --border:           rgba(51, 65, 85, 0.5);
+  --accent:           #60a5fa;
+  --accent-glow:      rgba(96, 165, 250, 0.35);
+  --success:          #34d399;
+  --danger:           #f87171;
+  --shadow-sm:        0 4px 16px rgba(0,0,0,0.4);
+  --shadow-md:        0 8px 24px rgba(0,0,0,0.45);
+  --shadow-glass:     0 12px 40px rgba(0,0,0,0.5);
+}
+
+/* Force dark mode */
+html.dark .srcp-receipts-container,
+.dark .srcp-receipts-container {
+  --bg-page:          #0f172a;
+  --bg-card:          rgba(30, 41, 59, 0.92);
+  --bg-overlay:       rgba(30, 41, 59, 0.95);
+  --text-primary:     #f1f5f9;
+  --text-secondary:   #cbd5e1;
+  --text-muted:       #94a3b8;
+  --border:           rgba(51, 65, 85, 0.5);
+  --accent:           #60a5fa;
+  --accent-glow:      rgba(96, 165, 250, 0.35);
+  --success:          #34d399;
+  --danger:           #f87171;
+  --shadow-sm:        0 4px 16px rgba(0,0,0,0.4);
+  --shadow-md:        0 8px 24px rgba(0,0,0,0.45);
+  --shadow-glass:     0 12px 40px rgba(0,0,0,0.5);
+}
+
+/* ── Loading & Empty States ──────────────────────────────────────────── */
+.srcp-centered,
+.srcp-empty-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  min-height: 400px;
+  color: var(--text-muted);
+}
+
+.srcp-loading-spinner {
+  font-size: 32px;
+  color: var(--accent);
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.srcp-loading-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.srcp-content {
+  padding: 10px;
+}
+
+/* ── Spending Card ───────────────────────────────────────────────────── */
+.srcp-spending-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+
+.srcp-spending-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.srcp-spending-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.srcp-month-button {
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--accent);
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.srcp-month-button:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.srcp-spending-amount {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0;
+}
+
+/* ── Navigation Tabs ─────────────────────────────────────────────────── */
+.srcp-nav-bar {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  border: 1px solid var(--border);
+}
+
+.srcp-nav-bar-inner {
+  display: flex;
+  flex: 1;
+}
+
+.srcp-nav-button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  color: var(--text-secondary);
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.srcp-nav-button:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.srcp-nav-button.srcp-active {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+}
+
+.srcp-nav-button span {
+  font-size: 14px;
+}
+
+.srcp-underline-gradient {
+  height: 3px;
+  width: 80%;
+  margin-top: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+}
+
+/* ── Filter ──────────────────────────────────────────────────────────── */
+.srcp-filter-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.srcp-filter-button {
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--accent);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition);
+}
+
+.srcp-filter-button:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.srcp-filter-info-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  flex: 1;
+  text-align: right;
+}
+
+/* ── Date Header ─────────────────────────────────────────────────────── */
+.srcp-date-header {
+  padding: 8px 12px;
+  margin: 16px 0 8px 0;
+}
+
+.srcp-date-header span {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-right: 8px;
+}
+
+.srcp-date-header-underline {
+  height: 2px;
+  flex: 1;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+  border-radius: 1px;
+}
+
+/* ── Receipt Card ────────────────────────────────────────────────────── */
+.srcp-receipt-card {
+  margin-bottom: 24px;                    /* ← Increased slightly for breathing room */
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: transparent;                /* Let glass show through */
+}
+
+/* Glass card base — now with stronger border in dark mode */
+.srcp-card-touchable {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-glass);
+  transition: all var(--transition);
+}
+
+/* Hover — makes each card clearly stand out */
+.srcp-card-touchable:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover);
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+}
+
+/* Dark mode: brighter border & deeper shadow for better separation */
+.dark .srcp-card-touchable {
+  border-color: color-mix(in srgb, var(--text-muted) 60%, var(--border));
+  box-shadow: 0 14px 40px rgba(0,0,0,0.5);
+}
+
+.dark .srcp-card-touchable:hover {
+  border-color: var(--accent);
+  box-shadow: 0 24px 72px rgba(0,0,0,0.65);
+}
+
+/* Subtle background tint difference (helps cards feel separate) */
+.srcp-card-background {
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--card-overlay) 98%, var(--bg-page));
+  transition: background var(--transition);
+}
+
+/* Dark mode tint adjustment */
+.dark .srcp-card-background {
+  background: color-mix(in srgb, var(--card-overlay) 96%, #000);
+}
+
+/* Optional: very subtle separator line between cards (clean look) */
+.srcp-receipt-card:not(:last-child)::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: var(--border);
+  margin: 20px auto 0;
+  width: 85%;
+  opacity: 0.4;
+}
+
+.dark .srcp-receipt-card:not(:last-child)::after {
+  background: color-mix(in srgb, var(--border) 80%, var(--text-muted));
+  opacity: 0.6;
+}
+
+/* Mobile: keep spacing but tighten padding */
+@media (max-width: 480px) {
+  .srcp-receipt-card {
+    margin-bottom: 20px;
+  }
+  
+  .srcp-card-background {
+    padding: 14px;
+  }
+}
+
+/* Reduced motion — rely on spacing & border only */
+@media (prefers-reduced-motion: reduce) {
+  .srcp-card-touchable,
+  .srcp-receipt-card {
+    transition: none;
+    transform: none !important;
+  }
+}
+
+.srcp-shop-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2.5px solid var(--accent);
+  box-shadow: 0 4px 12px var(--accent-glow);
+  flex-shrink: 0;
+}
+
+/* Main Info Block */
+.srcp-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.srcp-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.srcp-receipt-id {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 8px;
+}
+
+.srcp-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  flex-shrink: 0;
+}
+
+.srcp-bottom-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.srcp-receipt-amount {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.srcp-receipt-date {
+  color: var(--text-muted);
+}
+
+/* Divider */
+.srcp-card-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 12px 0;
+}
+
+/* Button Container */
+.srcp-button-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.srcp-shop-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2.5px solid var(--accent);
+  box-shadow: 0 4px 12px var(--accent-glow);
+  flex-shrink: 0;
+}
+
+.srcp-card-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 12px 0;
+}
+
+.srcp-pending-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.srcp-action-button {
+  min-width: 100px;
+  height: 38px;
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.srcp-action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+
+.srcp-button-inner {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  transition: all 0.28s;
+}
+
+.srcp-pending-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.srcp-action-button.srcp-void {
+  min-width: 110px;
+  height: 38px;
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.srcp-action-button.srcp-void:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(107, 114, 128, 0.3);
+}
+
+.srcp-void-inner {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  transition: all 0.28s;
+}
+
+.srcp-void-inner:hover {
+  background: linear-gradient(135deg, #4b5563, #374151);
+}
+
+/* Mobile: icon-only */
+@media (max-width: 480px) {
+  .srcp-action-button.srcp-void {
+    min-width: 44px;
+    width: 44px;
+    height: 38px;
+  }
+
+  .srcp-void-inner span {
+    display: none;
+  }
+
+  .srcp-void-inner {
+    padding: 0;
+  }
+}
+
+/* Mobile: icon-only */
+@media (max-width: 480px) {
+  .srcp-action-button {
+    min-width: 44px;
+    width: 44px;
+    height: 38px;
+  }
+
+  .srcp-button-inner span {
+    display: none;
+  }
+
+  .srcp-button-inner {
+    padding: 0;
+  }
+
+  .srcp-pending-actions {
+    gap: 8px;
+  }
+
+  .srcp-card-background {
+    padding: 14px;
+  }
+
+  .srcp-shop-image {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* ── Modals ──────────────────────────────────────────────────────────── */
+.srcp-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  z-index: 1000;
+}
+
+.srcp-modal-content {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-glass);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+.srcp-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.srcp-date-input,
+.srcp-picker {
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bg-card) 95%, var(--bg-page));
+  border: 2px solid transparent;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+}
+
+.srcp-date-input:hover,
+.srcp-picker:hover {
+  background: color-mix(in srgb, var(--accent) 5%, var(--bg-card));
+  border-color: var(--accent);
+}
+
+.srcp-date-picker {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-glass);
+  z-index: 1001;
+  border: 1px solid var(--border);
+}
+
+.srcp-modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.srcp-apply-button,
+.srcp-clear-button {
+  flex: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: none;
+  cursor: pointer;
+}
+
+.srcp-apply-button .srcp-button-gradient {
+  background: linear-gradient(135deg, var(--accent), #10B981);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.srcp-clear-button {
+  background: color-mix(in srgb, var(--bg-card) 90%, var(--bg-page));
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+}
+
+/* ── Empty State ─────────────────────────────────────────────────────── */
+.srcp-empty-container svg {
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.srcp-empty-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.srcp-receipts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .srcp-nav-bar-inner {
+    gap: 4px;
+  }
+  
+  .srcp-nav-button span {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .srcp-receipt-card {
+    margin-bottom: 12px;
+  }
+  
+  .srcp-card-background {
+    padding: 12px;
+  }
+}

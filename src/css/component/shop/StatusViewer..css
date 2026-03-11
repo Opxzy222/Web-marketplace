@@ -1,0 +1,250 @@
+/* StatusViewer.stv-css - Fullscreen WhatsApp Stories Modal */
+
+.stv-status-viewer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.stv-3s ease-out;
+}
+
+.stv-status-viewer.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.stv-backdrop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0,0,0,0.stv-3) 0%, black 100%);
+  backdrop-filter: blur(20px);
+}
+
+.stv-viewer-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.stv-header {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  padding: 0 20px;
+}
+
+.stv-shop-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stv-shop-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.stv-created-at {
+  font-size: 14px;
+  opacity: 0.stv-8;
+}
+
+.stv-close-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.stv-6);
+  border: none;
+  color: white;
+  font-size: 28px;
+  font-weight: 300;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  transition: all 0.stv-2s ease;
+}
+
+.stv-close-btn:hover {
+  background: rgba(0,0,0,0.stv-8);
+  transform: scale(1.stv-1);
+}
+
+.stv-progress-container {
+  position: absolute;
+  top: 80px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  gap: 6px;
+  padding: 0 10px;
+  z-index: 10;
+}
+
+.stv-progress-background {
+  flex: 1;
+  height: 3px;
+  background: rgba(255,255,255,0.stv-3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stv-progress-bar {
+  height: 100%;
+  background: white;
+  border-radius: 2px;
+  transform-origin: left center;
+  will-change: transform;
+}
+
+.stv-content-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.stv-media {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.stv-video {
+  background: black;
+}
+
+.stv-text-status,
+.stv-loading-container,
+.stv-error-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 40px;
+}
+
+.stv-text-status p {
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.stv-4;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.stv-8);
+  max-width: 90%;
+}
+
+.stv-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255,255,255,0.stv-3);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.stv-error-container p {
+  font-size: 18px;
+  text-align: center;
+  color: rgba(255,255,255,0.stv-9);
+}
+
+.stv-caption-container {
+  position: absolute;
+  bottom: 100px;
+  left: 20px;
+  right: 20px;
+  z-index: 8;
+  display: flex;
+  justify-content: center;
+}
+
+.stv-caption-bubble {
+  background: rgba(0,0,0,0.stv-7);
+  backdrop-filter: blur(20px);
+  padding: 16px 24px;
+  border-radius: 24px;
+  max-width: 90%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.stv-4);
+}
+
+.stv-caption-bubble p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.stv-4;
+  text-align: center;
+  color: white;
+}
+
+.stv-tap-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  z-index: 5;
+  transition: opacity 0.stv-2s ease;
+}
+
+.stv-tap-zone:hover {
+  opacity: 0.stv-8;
+}
+
+.stv-tap-zone.left {
+  left: 0;
+  width: 35%;
+}
+
+.stv-tap-zone.center {
+  left: 35%;
+  right: 35%;
+}
+
+.stv-tap-zone.right {
+  right: 0;
+  width: 35%;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .stv-header {
+    left: 16px;
+    right: 64px;
+  }
+  
+  .stv-shop-name {
+    font-size: 16px;
+  }
+  
+  .stv-progress-container {
+    top: 70px;
+    left: 16px;
+    right: 16px;
+  }
+  
+  .stv-caption-container {
+    bottom: 80px;
+    left: 16px;
+    right: 16px;
+  }
+}

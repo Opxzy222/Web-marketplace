@@ -1,0 +1,317 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ==========================================================================
+   Premium Login Screen – 2025/2026 Style
+   Glassmorphism + soft depth | Excellent contrast in both modes
+   Manual dark mode via .dark class
+   ========================================================================== */
+
+:root {
+  --bg-page:           linear-gradient(145deg, #f8fafc 0%, #eef2f6 100%);
+  --bg-card:           rgba(255, 255, 255, 0.80);
+  --bg-input:          rgba(255, 255, 255, 0.40);
+  --bg-input-focus:    rgba(255, 255, 255, 0.58);
+  --border-subtle:     rgba(226, 232, 240, 0.65);
+  --text-primary:      #0f172a;
+  --text-secondary:    #475569;
+  --text-muted:        #64748b;
+  --text-light:        #e2e8f0;           /* main text in dark mode */
+  --accent-start:      #3b82f6;
+  --accent-end:        #7c3aed;
+  --accent:            linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  --accent-solid:      #4f46e5;
+  --accent-hover:      #4338ca;
+  --accent-glow:       rgba(59, 130, 246, 0.30);
+  --accent-soft:       rgba(59, 130, 246, 0.12);
+  --error-bg:          rgba(239, 68, 68, 0.14);
+  --error-text:        #ef4444;
+  --error-border:      rgba(239, 68, 68, 0.30);
+  --shadow-soft:       0 12px 38px -10px rgba(0,0,0,0.14);
+  --shadow-hover:      0 20px 56px -12px rgba(0,0,0,0.22);
+  --shadow-neu-light:  6px 6px 14px rgba(0,0,0,0.07), -6px -6px 14px rgba(255,255,255,0.70);
+  --radius-lg:         20px;
+  --radius-md:         14px;
+  --transition:        0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dark {
+  --bg-page:           linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+  --bg-card:           rgba(15, 23, 42, 0.78);
+  --bg-input:          rgba(30, 41, 59, 0.48);
+  --bg-input-focus:    rgba(30, 41, 59, 0.68);
+  --border-subtle:     rgba(51, 65, 85, 0.68);
+  --text-primary:      #f1f5f9;
+  --text-secondary:    #cbd5e1;
+  --text-muted:        #94a3b8;
+  --text-light:        #f1f5f9;
+  --accent-start:      #60a5fa;
+  --accent-end:        #a78bfa;
+  --accent:            linear-gradient(135deg, var(--accent-start), var(--accent-end));
+  --accent-solid:      #8b5cf6;
+  --accent-hover:      #7c3aed;
+  --accent-glow:       rgba(96, 165, 250, 0.40);
+  --accent-soft:       rgba(96, 165, 250, 0.18);
+  --error-bg:          rgba(248, 113, 113, 0.22);
+  --error-text:        #f87171;
+  --error-border:      rgba(248, 113, 113, 0.38);
+  --shadow-soft:       0 14px 44px -10px rgba(0,0,0,0.50);
+  --shadow-hover:      0 24px 64px -12px rgba(0,0,0,0.60);
+  --shadow-neu-light:  6px 6px 14px #0a101f, -6px -6px 14px #14233d;
+}
+
+/* ── Root page ───────────────────────────────────────────────────────── */
+.login-screen {
+  min-height: 100vh;
+  background: var(--bg-page);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text-primary);
+}
+
+/* ── Main card ───────────────────────────────────────────────────────── */
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 2.8rem 2.2rem;
+  backdrop-filter: blur(30px) saturate(160%);
+  -webkit-backdrop-filter: blur(30px) saturate(160%);
+  box-shadow: var(--shadow-soft), var(--shadow-neu-light);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.login-card:hover {
+  transform: translateY(-6px) scale(1.014);
+  box-shadow: var(--shadow-hover), var(--shadow-neu-light),
+              0 0 0 1.5px color-mix(in srgb, var(--accent-start) 35%, transparent);
+}
+
+.dark .login-card:hover {
+  box-shadow: var(--shadow-hover), var(--shadow-neu-light),
+              0 0 0 1.5px color-mix(in srgb, var(--accent-start) 45%, transparent);
+}
+
+/* ── Header / Branding ───────────────────────────────────────────────── */
+.login__header {
+  text-align: center;
+  margin-bottom: 2.6rem;
+}
+
+.login__logo {
+  width: 88px;
+  height: auto;
+  margin-bottom: 1.4rem;
+  filter: drop-shadow(0 8px 20px var(--accent-glow));
+}
+
+.login__title {
+  font-size: 2.15rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: var(--accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 0.6rem;
+}
+
+.login__subtitle {
+  font-size: 0.96rem;
+  color: var(--text-secondary);
+  line-height: 1.48;
+}
+
+/* ── Error message ───────────────────────────────────────────────────── */
+.login__error {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: var(--error-bg);
+  color: var(--error-text);
+  padding: 1rem 1.3rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.9rem;
+  font-size: 0.94rem;
+  border: 1px solid var(--error-border);
+}
+
+/* ── Floating label input groups ─────────────────────────────────────── */
+.login__input-group {
+  position: relative;
+  margin-bottom: 1.8rem;
+}
+
+.login__input {
+  width: 100%;
+  padding: 1.45rem 3.2rem 0.65rem 1.3rem;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 1.04rem;
+  color: var(--text-primary);
+  transition: all var(--transition);
+}
+
+.login__input:focus {
+  border-color: var(--accent-start);
+  background: var(--bg-input-focus);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-glow), transparent 45%);
+  outline: none;
+}
+
+.login__label {
+  position: absolute;
+  left: 1.3rem;
+  top: 1.18rem;
+  font-size: 1.04rem;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: all 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: left;
+}
+
+.login__input:focus ~ .login__label,
+.login__input:not(:placeholder-shown) ~ .login__label,
+.login__input-group.filled .login__label {
+  top: 0.62rem;
+  font-size: 0.84rem;
+  color: var(--accent-start);
+  transform: scale(0.92);
+}
+
+/* ── Password visibility toggle ──────────────────────────────────────── */
+.login__visibility-toggle {
+  position: absolute;
+  right: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.28rem;
+  cursor: pointer;
+  padding: 0.6rem;
+  border-radius: 10px;
+  transition: all 0.28s ease;
+}
+
+.login__visibility-toggle:hover {
+  color: var(--text-primary);
+  background: var(--accent-soft);
+}
+
+/* ── Submit button ───────────────────────────────────────────────────── */
+.login__submit {
+  width: 100%;
+  height: 58px;
+  background: var(--accent);
+  color: white;
+  font-size: 1.07rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.72rem;
+  box-shadow: 0 10px 32px var(--accent-glow), var(--shadow-neu-light);
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.login__submit:hover:not(.loading) {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 48px var(--accent-glow);
+}
+
+.login__submit.loading {
+  cursor: wait;
+  opacity: 0.94;
+}
+
+.login__spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255,255,255,0.42);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* ── Secondary action links ──────────────────────────────────────────── */
+.login__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-top: 2.1rem;
+}
+
+.login__link {
+  width: 100%;
+  padding: 14px 0;
+  font-size: 0.98rem;
+  font-weight: 600;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all var(--transition);
+  border: none;
+  text-align: center;
+}
+
+.login__link--register {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: white;
+  box-shadow: 0 6px 22px rgba(16,185,129,0.38);
+}
+
+.login__link--forgot {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  color: white;
+  box-shadow: 0 6px 22px rgba(245,158,11,0.38);
+}
+
+.login__link:hover {
+  transform: translateY(-3px);
+}
+
+/* ── Animations ──────────────────────────────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 2.3rem 1.7rem;
+    margin: 1rem;
+    border-radius: 18px;
+  }
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .login-card,
+  .login-card:hover,
+  .login__submit,
+  .login__submit:hover,
+  .login__link,
+  .login__link:hover {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* ── Backdrop-filter fallback (very rare in 2026) ───────────────────── */
+@supports not (backdrop-filter: blur(1px)) {
+  .login-card {
+    background: color-mix(in srgb, var(--bg-card), var(--bg-page) 35%);
+    border: 1px solid color-mix(in srgb, var(--border-subtle), transparent 45%);
+  }
+}

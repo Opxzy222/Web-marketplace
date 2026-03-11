@@ -1,0 +1,623 @@
+/* ==========================================================================
+   Buyer Counter Editor – Liquid Glass + Neo-Morphic Blue 2025/2026
+   All selectors prefixed with buycntr- for consistency & specificity
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ── Root variables ── */
+:root {
+  --bg-page:           #f8f9fc;
+  --bg-glass:          rgba(255, 255, 255, 0.72);
+  --bg-glass-hover:    rgba(255, 255, 255, 0.92);
+  --bg-glass-active:   rgba(255, 255, 255, 0.98);
+  --bg-input:          rgba(250, 250, 255, 0.58);
+  --bg-input-focus:    rgba(255, 255, 255, 0.86);
+
+  --border-glass:      rgba(226, 232, 240, 0.45);
+  --border-highlight:  rgba(255, 255, 255, 0.28);
+
+  --text-primary:      #0f172a;
+  --text-secondary:    #475569;
+  --text-tertiary:     #64748b;
+  --text-on-accent:    #ffffff;
+
+  --accent:            #3b82f6;
+  --accent-dark:       #2563eb;
+  --accent-glow:       rgba(59, 130, 246, 0.35);
+  --accent-glow-strong:rgba(59, 130, 246, 0.55);
+  --accent-soft:       rgba(59, 130, 246, 0.15);
+  --accent-gradient:   linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+
+  --red-glow:          rgba(239, 68, 68, 0.32);
+  --red-soft:          rgba(239, 68, 68, 0.14);
+
+  --success-glow:      rgba(16, 185, 129, 0.35);
+
+  --radius-sm:         12px;
+  --radius-md:         16px;
+  --radius-lg:         22px;
+  --radius-pill:       999px;
+
+  --shadow-glass:      0 10px 30px -4px rgba(0,0,0,0.10),
+                       inset 0 1px 2px rgba(255,255,255,0.50);
+  --shadow-glass-hover:0 18px 44px -8px rgba(0,0,0,0.15),
+                       inset 0 1px 3px rgba(255,255,255,0.60);
+  --shadow-inner:      inset 0 2px 6px rgba(0,0,0,0.06);
+  --shadow-image:      inset 0 2px 8px rgba(0,0,0,0.12);
+
+  --transition-fast:   0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-smooth: 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Dark mode */
+.dark {
+  --bg-page:           #0a0f1d;
+  --bg-glass:          rgba(20, 28, 48, 0.80);
+  --bg-glass-hover:    rgba(30, 41, 68, 0.90);
+  --bg-glass-active:   rgba(40, 55, 90, 0.96);
+  --bg-input:          rgba(20, 28, 48, 0.70);
+  --bg-input-focus:    rgba(30, 41, 68, 0.88);
+
+  --border-glass:      rgba(71, 85, 105, 0.48);
+  --border-highlight:  rgba(165, 180, 252, 0.20);
+
+  --text-primary:      #f1f5f9;
+  --text-secondary:    #cbd5e1;
+  --text-tertiary:     #94a3b8;
+
+  --accent-glow:       rgba(93, 158, 255, 0.50);
+  --accent-glow-strong:rgba(93, 158, 255, 0.70);
+  --accent-soft:       rgba(93, 158, 255, 0.22);
+
+  --shadow-glass:      0 14px 38px -6px rgba(0,0,0,0.50),
+                       inset 0 -1px 2px rgba(255,255,255,0.10);
+  --shadow-glass-hover:0 26px 58px -10px rgba(0,0,0,0.60),
+                       inset 0 -1px 4px rgba(255,255,255,0.12);
+}
+
+/* Page container */
+.buycntr-page-container {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: 1rem 1rem 6rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--text-primary);
+  position: relative;
+}
+
+/* Message card from seller */
+.buycntr-seller-message-card {
+  margin: 0 0 1.5rem;
+  padding: 1.125rem 1.375rem;
+  background: var(--bg-glass);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow-glass);
+  font-size: 0.96rem;
+  line-height: 1.5;
+  position: relative;
+  overflow: hidden;
+}
+
+.buycntr-seller-message-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent-gradient);
+  opacity: 0.07;
+  pointer-events: none;
+}
+
+/* ── Item Card ── */
+.buycntr-item-card {
+  position: relative;
+  display: flex;
+  gap: 1.125rem;
+  padding: 1.125rem 1.25rem;
+  margin-bottom: 1.125rem;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-glass);
+  transition: all var(--transition-smooth);
+  isolation: isolate;
+}
+
+.buycntr-item-card:hover,
+.buycntr-item-card:focus-within {
+  transform: translateY(-5px) scale(1.012);
+  box-shadow: var(--shadow-glass-hover);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border-glass));
+}
+
+.buycntr-item-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(145deg, transparent 30%, var(--accent-soft) 70%, transparent);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.buycntr-item-card:hover::before {
+  opacity: 1;
+}
+
+/* ── Image & Placeholder ── */
+.buycntr-item-preview {
+  flex-shrink: 0;
+  width: 90px;
+  height: 90px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--accent-soft), rgba(255,255,255,0.08));
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--shadow-image);
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.buycntr-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-smooth);
+}
+
+.buycntr-item-card:hover .buycntr-item-image {
+  transform: scale(1.08);
+}
+
+.buycntr-item-placeholder {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: color-mix(in srgb, var(--accent) 70%, var(--text-tertiary));
+  background: linear-gradient(135deg, var(--accent-soft), transparent);
+  font-size: 1.8rem;
+  transition: all var(--transition-fast);
+}
+
+.buycntr-item-card:hover .buycntr-item-placeholder {
+  transform: scale(1.08);
+  color: var(--accent);
+}
+
+/* Main content area */
+.buycntr-item-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+/* Item name */
+.buycntr-item-name {
+  margin: 0 0 0.25rem;
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.38;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Note line */
+.buycntr-item-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+}
+
+.buycntr-note-text {
+  /* optional - can be used if you want extra styling later */
+}
+
+/* Controls row */
+.buycntr-item-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  margin-top: 0.375rem;
+}
+
+/* Price section */
+.buycntr-price-field {
+  flex: 1 1 160px;
+  min-width: 140px;
+}
+
+.buycntr-price-display-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.buycntr-price-display {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.buycntr-old-price {
+  font-size: 0.88rem;
+  color: var(--text-tertiary);
+  text-decoration: line-through;
+  opacity: 0.75;
+}
+
+.buycntr-current-price {
+  font-size: 1.14rem;
+  font-weight: 700;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.buycntr-price-edit {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.buycntr-price-input {
+  flex: 1;
+  padding: 0.62rem 1rem;
+  font-size: 1.12rem;
+  font-weight: 600;
+  background: var(--bg-input);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-inner);
+  transition: all var(--transition-fast);
+}
+
+.buycntr-price-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--bg-input-focus);
+  box-shadow: 0 0 0 3px var(--accent-glow), inset 0 1px 3px rgba(0,0,0,0.08);
+  transform: scale(1.015);
+}
+
+.buycntr-save-price-btn {
+  padding: 0.5rem;
+  background: var(--accent-soft);
+  border: none;
+  border-radius: 50%;
+  color: var(--success-glow);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.buycntr-save-price-btn:hover {
+  background: var(--accent);
+  color: white;
+  transform: scale(1.2) rotate(8deg);
+}
+
+/* Status pill (used for custom/seller changed/you changed) */
+.buycntr-status-pill {
+  padding: 0.25rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.buycntr-price-status {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.28rem 0.68rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 
+    0 1px 3px rgba(0,0,0,0.08),
+    inset 0 1px 2px rgba(255,255,255,0.5);
+  transition: all 0.18s ease;
+}
+
+.buycntr-price-display-container:hover .buycntr-price-status,
+.buycntr-price-display-container:focus-within .buycntr-price-status {
+  transform: scale(1.05);
+  box-shadow: 
+    0 2px 6px rgba(0,0,0,0.12),
+    inset 0 1px 2px rgba(255,255,255,0.6);
+}
+
+/* Dark mode pill adjustment */
+.dark .buycntr-price-status {
+  box-shadow: 
+    0 1px 4px rgba(0,0,0,0.4),
+    inset 0 1px 2px rgba(255,255,255,0.12);
+}
+
+/* Quantity controls */
+.buycntr-quantity-field {
+  display: flex;
+  align-items: center;
+  background: var(--bg-input);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-inner);
+}
+
+.buycntr-qty-btn {
+  padding: 0.62rem 0.9rem;
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.buycntr-qty-btn:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+
+.buycntr-qty-btn:disabled {
+  color: var(--text-tertiary);
+  opacity: 0.5;
+}
+
+.buycntr-qty-value {
+  min-width: 44px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.buycntr-qty-btn-minus,
+.buycntr-qty-btn-plus {
+  /* can be used for extra specificity if needed */
+}
+
+/* Remove button */
+.buycntr-remove-item-btn {
+  padding: 0.6rem;
+  background: var(--red-soft);
+  border: none;
+  border-radius: 50%;
+  color: #ef4444;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.buycntr-remove-item-btn:hover {
+  background: var(--red-glow);
+  transform: scale(1.15);
+}
+
+/* Add custom item button */
+.buycntr-add-custom-item-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.875rem;
+  width: 100%;
+  padding: 1.125rem;
+  margin: 1.75rem 0;
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--text-on-accent);
+  background: var(--accent-gradient);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px var(--accent-glow);
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+}
+
+.buycntr-add-custom-item-btn:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 18px 48px var(--accent-glow-strong);
+}
+
+.buycntr-add-btn-label {
+  /* optional extra class if you want to style the text separately */
+}
+
+/* Message input section */
+.buycntr-message-section {
+  margin: 2rem 0 1.5rem;
+}
+
+.buycntr-message-label {
+  font-size: 0.94rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.6rem;
+  display: block;
+}
+
+.buycntr-message-textarea {
+  width: 100%;
+  min-height: 92px;
+  padding: 1rem 1.125rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  font-size: 0.98rem;
+  color: var(--text-primary);
+  resize: vertical;
+  box-shadow: var(--shadow-inner);
+  transition: all var(--transition-fast);
+}
+
+.buycntr-message-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+}
+
+.buycntr-char-counter {
+  font-size: 0.82rem;
+  color: var(--text-tertiary);
+  text-align: right;
+  margin-top: 0.35rem;
+}
+
+/* Total summary card */
+.buycntr-total-summary-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.375rem 1.5rem;
+  background: var(--bg-glass);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-glass);
+  margin: 1.75rem 0 2.5rem;
+}
+
+.buycntr-total-label {
+  font-size: 1.08rem;
+  color: var(--text-secondary);
+}
+
+.buycntr-total-amount {
+  font-size: 1.48rem;
+  font-weight: 800;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Sticky footer with send button */
+.buycntr-action-footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.25rem 1rem;
+  background: linear-gradient(to top, var(--bg-page) 40%, transparent);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+}
+
+.buycntr-send-counter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.875rem;
+  width: 100%;
+  padding: 1.25rem;
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: white;
+  background: var(--accent-gradient);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 36px var(--accent-glow);
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+}
+
+.buycntr-send-counter-btn:hover:not(.buycntr-send-counter-btn-disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 56px var(--accent-glow-strong);
+}
+
+.buycntr-send-counter-btn-disabled {
+  background: var(--text-tertiary);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.buycntr-small-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Empty state & loader */
+.buycntr-empty-state,
+.buycntr-full-page-loader {
+  text-align: center;
+  padding: 5rem 1.5rem;
+  color: var(--text-tertiary);
+}
+
+.buycntr-empty-icon {
+  width: 96px;
+  height: 96px;
+  color: var(--accent-soft);
+  margin-bottom: 1.5rem;
+  opacity: 0.7;
+}
+
+.buycntr-loader-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--accent-soft);
+  border-top: 4px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.buycntr-loader-text {
+  font-size: 1.05rem;
+  margin-top: 0.8rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Reduced motion & mobile tweaks */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; transform: none !important; }
+}
+
+@media (max-width: 480px) {
+  .buycntr-item-card {
+    padding: 1rem 1.125rem;
+  }
+  .buycntr-item-preview {
+    width: 80px;
+    height: 80px;
+  }
+  .buycntr-item-name {
+    font-size: 1.02rem;
+  }
+  .buycntr-price-status {
+    font-size: 0.75rem;
+    padding: 0.24rem 0.6rem;
+  }
+}

@@ -1,0 +1,196 @@
+/* ==========================================================================
+   Sales Actions (Orders & Receipts) – Advanced Modern Dashboard 2025/2026
+   Glassmorphism + colored accent glow + depth + smooth micro-interactions
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── Root variables (shared feel with Details.css) ── */
+:root {
+  --bg-page:           #f8fafc;
+  --bg-card:           rgba(255, 255, 255, 0.78);
+  --bg-card-hover:     rgba(255, 255, 255, 0.92);
+  --border-subtle:     rgba(226, 232, 240, 0.65);
+  --text-primary:      #0f172a;
+  --text-secondary:    #475569;
+  --text-light:        #e2e8f0;
+  --shadow-soft:       0 10px 32px rgba(0,0,0,0.10);
+  --shadow-hover:      0 20px 56px rgba(0,0,0,0.18);
+  --radius-xl:         22px;
+  --radius-lg:         18px;
+  --transition:        0.36s cubic-bezier(0.22, 1, 0.36, 1);
+  --glow-opacity:      0.24;
+}
+
+/* Dark mode */
+
+.dark {
+  --bg-page:         #0f172a;
+  --bg-card:         rgba(30, 41, 59, 0.82);
+  --bg-card-hover:   rgba(51, 65, 85, 0.90);
+  --border-subtle:   rgba(51, 65, 85, 0.68);
+  --text-primary:    #f1f5f9;
+  --text-secondary:  #cbd5e1;
+  --text-light:      #f1f5f9;
+  --shadow-soft:     0 12px 40px rgba(0,0,0,0.52);
+  --shadow-hover:    0 24px 68px rgba(0,0,0,0.64);
+  --glow-opacity:    0.36;
+}
+
+/* ── Page wrapper ── */
+.slact-receipt-actions {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding: 1.5rem 1rem 3rem;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--text-primary);
+}
+
+/* ── Grid of action cards ── */
+.slact-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 2rem auto 0;
+}
+
+/* ── Individual action button/card ── */
+.slact-action-btn {
+  position: relative;
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: all var(--transition);
+  isolation: isolate;
+}
+
+.slact-action-btn:focus-visible {
+  outline: none;
+}
+
+.slact-action-gradient {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2.2rem 1.5rem;
+  min-height: 180px;
+  background: inherit; /* gradient comes from inline style */
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-soft);
+  color: white;
+  overflow: hidden;
+  transition: all var(--transition);
+}
+
+/* Subtle shine / glow overlay on hover */
+.slact-action-gradient::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 40%,
+    rgba(255,255,255,0.18) 50%,
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity var(--transition);
+  pointer-events: none;
+  transform: translateX(-100%);
+}
+
+.slact-action-btn:hover .slact-action-gradient::after,
+.slact-action-btn:focus-visible .slact-action-gradient::after {
+  opacity: 1;
+  transform: translateX(100%);
+  transition: all 1.2s ease;
+}
+
+/* Hover / focus states */
+.slact-action-btn:hover .slact-action-gradient,
+.slact-action-btn:focus-visible .slact-action-gradient {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(255,255,255,0.18);
+}
+
+/* Active / pressed */
+.slact-action-btn:active .slact-action-gradient {
+  transform: translateY(-2px) scale(1.01);
+}
+
+/* Icon */
+.slact-action-icon {
+  font-size: 3.6rem;
+  line-height: 1;
+  opacity: 0.95;
+  transition: all var(--transition);
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+}
+
+.slact-action-btn:hover .slact-action-icon {
+  transform: scale(1.14) rotate(8deg);
+  opacity: 1;
+}
+
+/* Label */
+.slact-action-label {
+  font-size: 1.18rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  transition: all var(--transition);
+}
+
+.slact-action-btn:hover .slact-action-label {
+  text-shadow: 0 3px 12px rgba(0,0,0,0.5);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .slact-actions-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .slact-action-gradient {
+    padding: 1.8rem 1.25rem;
+    min-height: 160px;
+  }
+
+  .slact-action-icon {
+    font-size: 3.2rem;
+  }
+
+  .slact-action-label {
+    font-size: 1.08rem;
+  }
+}
+
+/* ── Respect reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .slact-action-btn,
+  .slact-action-btn:hover,
+  .slact-action-btn:focus-visible,
+  .slact-action-gradient,
+  .slact-action-icon,
+  .slact-action-label {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .slact-action-gradient::after {
+    opacity: 0 !important;
+  }
+}

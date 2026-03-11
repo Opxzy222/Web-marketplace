@@ -1,0 +1,340 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* ────────────────────────────────────────────────
+   Hero SearchBar – 2026 Next-Gen Premium Glass UI
+   Fixed wrapping • Taller inputs • Minimal top margin
+   Sleek segmented navbar • Floating luxury depth
+   ──────────────────────────────────────────────── */
+
+:root {
+  --bg-hero:         rgba(255, 255, 255, 0.70);
+  --border-hero:     rgba(226, 232, 240, 0.42);
+  --shadow-hero:     0 12px 36px -8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.80);
+  --bg-tab:          rgba(255, 255, 255, 0.94);
+  --bg-panel:        rgba(255, 255, 255, 0.96);
+  --text-primary:    #0f172a;
+  --text-secondary:  #475569;
+  --text-tab-inactive: #334155;
+  --accent:          #3b82f6;
+  --accent-glow:     rgba(59, 130, 246, 0.2);
+  --radius:          30px;
+  --radius-sm:       22px;
+  --transition:      0.40s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark {
+  --bg-hero:         rgba(15, 23, 42, 0.76);
+  --border-hero:     rgba(51, 65, 85, 0.48);
+  --shadow-hero:     0 16px 48px -12px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05);
+  --bg-tab:          rgba(30, 41, 59, 0.94);
+  --bg-panel:        rgba(30, 41, 59, 0.94);
+  --text-primary:    #f1f5f9;
+  --text-secondary:  #94a3b8;
+  --text-tab-inactive: #64748b;
+  --accent:          #60a5fa;
+  --accent-glow:     rgba(96, 165, 250, 0.3);
+}
+
+/* Hero Container – minimal top spacing, feels like part of header */
+.sb-search-bar {
+  width: 100%;
+  max-width: 960px;
+  margin: -0.6rem auto 1.4rem;         /* Even tighter top margin */
+  
+  background: var(--bg-hero);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-hero);
+  backdrop-filter: blur(40px) saturate(190%);
+  box-shadow: var(--shadow-hero);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition);
+}
+
+/* Subtle animated top flow – luxurious accent */
+.sb-search-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 5px;
+  background: linear-gradient(90deg, #c4b5fd, #60a5fa, #34d399, #fbbf24);
+  background-size: 300% 100%;
+  animation: flowAccent 10s linear infinite;
+  opacity: 0.75;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+@keyframes flowAccent {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+/* Segmented Navbar – modern, no wrapping, pill-like */
+.sb-tabs-container {
+  display: flex;
+  background: var(--bg-tab);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem;
+  margin-bottom: 1.3rem;
+  backdrop-filter: blur(18px);
+  border: 1px solid var(--border-hero);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.05);
+  gap: 0.3rem;
+  overflow-x: auto;                     /* Scrollable on very small screens */
+  scrollbar-width: none;
+}
+
+.sb-tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+.sb-tab {
+  flex: 0 0 auto;                       /* Prevent shrinking too much */
+  min-width: 110px;                     /* Ensures "City / Area" fits */
+  padding: 0.9rem 1.1rem;
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: var(--text-tab-inactive);
+  background: transparent;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;                  /* No wrapping/line break */
+  position: relative;
+  z-index: 1;
+}
+
+.sb-tab-active {
+  color: white;
+  font-weight: 800;
+}
+
+.sb-tab::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  border-radius: inherit;
+  opacity: 0;
+  transform: scale(0.97);
+  transition: all var(--transition);
+  z-index: -1;
+  box-shadow: 0 8px 28px var(--accent-glow);
+}
+
+.sb-tab-active::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.sb-tab:hover:not(.sb-tab-active) {
+  color: var(--accent);
+  background: rgba(59, 130, 246, 0.09);
+}
+
+/* Panel */
+.sb-panel {
+  background: var(--bg-panel);
+  border-radius: var(--radius-sm);
+  padding: 1.7rem 1.9rem;
+  border: 1px solid var(--border-hero);
+  box-shadow: 0 10px 38px rgba(0,0,0,0.07);
+  backdrop-filter: blur(20px);
+}
+
+/* ── Form – Taller inputs, never slim/tiny ── */
+.sb-location-search {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.sb-select-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.3rem;
+}
+
+.sb-select-group label {
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.sb-select-group select,
+.sb-search-input {
+  height: 60px;                         /* Taller & consistent */
+  min-height: 56px;                     /* Prevents tiny collapse on mobile */
+  padding: 0 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  background: rgba(255,255,255,0.84);
+  border: 1.5px solid var(--border-hero);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  backdrop-filter: blur(14px);
+  transition: all var(--transition);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.03);
+}
+
+.dark .sb-select-group select,
+.dark .sb-search-input {
+  background: rgba(30,41,59,0.88);
+  color: #f1f5f9;
+  border-color: rgba(51,65,85,0.58);
+}
+
+.sb-select-group select:focus,
+.sb-search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow), inset 0 1px 4px rgba(0,0,0,0.03);
+  transform: translateY(-1px);
+}
+
+.sb-input-group {
+  display: flex;
+  gap: 1.1rem;
+  align-items: stretch;
+}
+
+.sb-search-input {
+  flex: 1;
+}
+
+.sb-search-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.75;
+}
+
+.sb-search-btn {
+  min-width: 180px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--accent), color-mix(in srgb, var(--accent), black 10%));
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: calc(var(--radius-sm) + 4px);
+  cursor: pointer;
+  box-shadow: 0 8px 24px var(--accent-glow), inset 0 2px 0 rgba(255,255,255,0.25), inset 0 -2px 0 rgba(0,0,0,0.1);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.sb-search-btn:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 14px 36px var(--accent-glow), inset 0 2px 0 rgba(255,255,255,0.25), inset 0 -2px 0 rgba(0,0,0,0.1);
+}
+
+.sb-search-btn:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.sb-error-message {
+  color: #ef4444;
+  font-weight: 600;
+  text-align: center;
+  background: rgba(254, 226, 226, 0.78);
+  padding: 1rem 1.4rem;
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(12px);
+}
+
+/* Responsive – mobile-first polish */
+@media (max-width: 768px) {
+  .sb-search-bar {
+    margin: 0.7rem auto 1.6rem;
+    padding: 1.5rem 1.3rem 1.9rem;
+    border-radius: 26px;
+  }
+
+  .sb-tabs-container {
+    padding: 0.3rem;
+    overflow-x: auto;
+  }
+
+  .sb-tab {
+    min-width: 100px;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.94rem;
+  }
+
+  .sb-input-group {
+    flex-direction: column;
+  }
+
+  .sb-search-btn {
+    height: 58px;
+  }
+
+  .sb-select-group {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.sb-spinner {
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.sb-geo-hint {
+  margin-top: 0.9rem;
+  text-align: center;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+}
+
+.sb-geo-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.sb-geo-link:hover {
+  color: var(--accent-hover || var(--accent));
+  text-decoration: underline;
+}
+
+.sb-error-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(254, 226, 226, 0.8);
+  color: #dc2626;
+  padding: 0.9rem 1.3rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.1rem;
+  backdrop-filter: blur(10px);
+}
+
+.sb-info-message {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.94rem;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
