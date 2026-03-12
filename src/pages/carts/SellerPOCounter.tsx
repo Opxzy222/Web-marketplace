@@ -29,6 +29,7 @@ interface POItem {
   original_price: number;
   proposed_price: number;
   added_by?: 'buyer' | 'seller';
+  last_changed_by?: 'buyer' | 'seller' | null;   // ← NEW
   _source: 'server' | 'local_cart';
   note?: string;
   is_custom?: boolean;
@@ -54,23 +55,28 @@ const LuxeItemCard = ({
     setEditingPrice(false);
   };
 
-  const priceChanged = item.proposed_price !== item.original_price;
-  const displayImage = item.custom_image_url || item.image_url;
-
+  // ──────────────────────────────────────────────
+  // NEW: Correct who-changed badge using last_changed_by
+  // ──────────────────────────────────────────────
   const getChangeInfo = () => {
     if (item.is_custom) {
       return { text: 'Custom Item', color: '#a855f7', bg: 'rgba(168, 85, 247, 0.12)' };
     }
-    if (priceChanged && item.added_by === 'seller') {
-      return { text: 'You changed', color: '#f97316', bg: 'rgba(249, 115, 22, 0.12)' };
+
+    if (item.last_changed_by) {
+      if (item.last_changed_by === 'seller') {
+        return { text: 'You changed', color: '#f97316', bg: 'rgba(249, 115, 22, 0.12)' };
+      } else if (item.last_changed_by === 'buyer') {
+        return { text: 'Buyer changed', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)' };
+      }
     }
-    if (priceChanged && item.added_by === 'buyer') {
-      return { text: 'Buyer changed', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)' };
-    }
+
     return null;
   };
 
   const change = getChangeInfo();
+  const priceChanged = !!item.last_changed_by; // show strikethrough only if changed
+  const displayImage = item.custom_image_url || item.image_url;
 
   return (
     <div className="sellcntr-item-card">
@@ -239,6 +245,7 @@ export default function SellerPOCounter() {
             original_price: Number(i.original_price) || 0,
             proposed_price: Number(i.proposed_price) || 0,
             added_by: i.added_by,
+            last_changed_by: i.last_changed_by,   // ← NEW
             _source: 'server' as const,
             note: i.note || '',
             is_custom: !!i.custom_name,
@@ -274,6 +281,7 @@ export default function SellerPOCounter() {
       original_price: itemData.price,
       proposed_price: itemData.price,
       added_by: 'seller',
+      last_changed_by: 'seller',   // ← NEW: seller added/changed it
       _source: 'local_cart',
       note: itemData.note?.trim(),
       is_custom: true,

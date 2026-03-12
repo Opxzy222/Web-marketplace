@@ -38,9 +38,10 @@ type Version = {
     proposed_price: string;
     total_price: string;
     change_type: string;
+    added_by: 'buyer' | 'seller';
+    last_changed_by?: 'buyer' | 'seller' | null;   // ← NEW FIELD
     image_url?: string | null;
     custom_image_url?: string | null;
-    added_by: 'buyer' | 'seller';
     _from_cart?: boolean;
     note?: string;
   }>;
@@ -89,7 +90,7 @@ export default function BuyerPOEditor() {
         items: [...accepted.items],
       };
       setAllVersions([fake, accepted]);
-      setSelectedVersionId(accepted.id); // stay on latest
+      setSelectedVersionId(accepted.id);
     }
   }, [allVersions, po?.status]);
 
@@ -146,26 +147,29 @@ export default function BuyerPOEditor() {
   }, [fetchFullThread]);
 
   // ──────────────────────────────────────────────
-  //  RESTORED: getTrueChangeLabel function
+  //  NEW: Determine badge label using last_changed_by
   // ──────────────────────────────────────────────
-  const getTrueChangeLabel = (item: any) => {
+  const getPriceChangeBadge = (item: Version['items'][number]) => {
+    // Items added from cart (not part of negotiation yet)
     if (item._from_cart) {
       return { text: 'You added from cart', color: '#166534', bg: '#DCFCE7' };
     }
 
-    const priceChanged = parseFloat(item.proposed_price) !== parseFloat(item.original_price);
-    if (priceChanged) {
-      if (item.added_by === 'buyer' || currentVersion?.last_counter === 'buyer') {
-        return { text: 'You changed price', color: '#3B82F6', bg: '#DBEAFE' };
-      } else {
-        return { text: 'Seller changed price', color: '#EA580C', bg: '#FFEDD5' };
-      }
-    }
-
+    // Custom items
     if (item.change_type === 'custom' || item.custom_name) {
       return { text: 'Custom item', color: '#7C3AED', bg: '#E9D5FF' };
     }
 
+    // Price changed during negotiation
+    if (item.last_changed_by) {
+      if (item.last_changed_by === 'buyer') {
+        return { text: 'You changed price', color: '#3B82F6', bg: '#DBEAFE' };
+      } else if (item.last_changed_by === 'seller') {
+        return { text: 'Seller changed price', color: '#EA580C', bg: '#FFEDD5' };
+      }
+    }
+
+    // No change badge if last_changed_by is null/undefined
     return null;
   };
 
@@ -223,6 +227,7 @@ export default function BuyerPOEditor() {
           added_by: 'buyer',
           _from_cart: true,
           note: item.note || '',
+          last_changed_by: null, // cart items aren't negotiated yet
         });
       }
     });
@@ -372,8 +377,8 @@ export default function BuyerPOEditor() {
             </div>
           ) : (
             displayItems.map((item, idx) => {
-              const changeInfo = getTrueChangeLabel(item);
-              const isEdited = parseFloat(item.proposed_price) !== parseFloat(item.original_price);
+              const badgeInfo = getPriceChangeBadge(item);
+              const priceChanged = !!item.last_changed_by; // if someone changed it
               const itemImage = item.custom_image_url || item.image_url;
 
               return (
@@ -384,7 +389,7 @@ export default function BuyerPOEditor() {
                         className="buyeditr-image-btn"
                         onClick={() => {
                           const validImages = displayItems
-                            .map((it: any) => it.custom_image_url || it.image_url)
+                            .map((it) => it.custom_image_url || it.image_url)
                             .filter(Boolean) as string[];
                           const index = validImages.indexOf(itemImage);
                           setImageViewerImages(validImages);
@@ -409,7 +414,7 @@ export default function BuyerPOEditor() {
                     {item.note && <p className="buyeditr-note">Note: {item.note}</p>}
 
                     <div className="buyeditr-compact-price-row">
-                      {isEdited && (
+                      {priceChanged && (
                         <span className="buyeditr-compact-old-price">
                           ₦{parseFloat(item.original_price).toLocaleString()}
                         </span>
@@ -420,15 +425,16 @@ export default function BuyerPOEditor() {
                       <span className="buyeditr-compact-quantity">× {item.quantity}</span>
                     </div>
 
-                    {changeInfo && (
+                    {badgeInfo && (
                       <div
                         className="buyeditr-compact-badge"
                         style={{
-                          backgroundColor: `${changeInfo.bg}30`,
-                          color: changeInfo.color,
+                          backgroundColor: `${badgeInfo.bg}30`,
+                          color: badgeInfo.color,
+                          borderColor: `${badgeInfo.color}80`,
                         }}
                       >
-                        {changeInfo.text}
+                        {badgeInfo.text}
                       </div>
                     )}
                   </div>

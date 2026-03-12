@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PageShell from '../../components/PageShell';
-import '../../css/carts/BuyerCounterEditor.css'; // ← remember to update selectors in this file too
+import '../../css/carts/BuyerCounterEditor.css';
 import axios from 'axios';
 
 import {
@@ -36,6 +36,7 @@ interface POItem {
   original_price: number;
   proposed_price: number;
   added_by?: 'buyer' | 'seller';
+  last_changed_by?: 'buyer' | 'seller' | null;   // ← NEW
   _source: 'server' | 'local_cart';
   note?: string;
   is_custom?: boolean;
@@ -61,23 +62,28 @@ const LuxeItemCard = ({
     setEditingPrice(false);
   };
 
-  const priceChanged = item.proposed_price !== item.original_price;
-  const displayImage = item.custom_image_url || item.image_url;
-
+  // ──────────────────────────────────────────────
+  // NEW: Use last_changed_by to show correct who-changed badge
+  // ──────────────────────────────────────────────
   const getChangeInfo = () => {
     if (item.is_custom) {
       return { text: 'Custom Item', color: '#7C3AED', bg: '#FAF5FF' };
     }
-    if (priceChanged && item.added_by === 'seller') {
-      return { text: 'Seller changed', color: '#DC2626', bg: '#FEF2F2' };
+
+    if (item.last_changed_by) {
+      if (item.last_changed_by === 'buyer') {
+        return { text: 'You changed', color: '#3B82F6', bg: '#EFF6FF' };
+      } else if (item.last_changed_by === 'seller') {
+        return { text: 'Seller changed', color: '#DC2626', bg: '#FEF2F2' };
+      }
     }
-    if (priceChanged && item.added_by === 'buyer') {
-      return { text: 'You changed', color: '#3B82F6', bg: '#EFF6FF' };
-    }
+
     return null;
   };
 
   const change = getChangeInfo();
+  const priceChanged = !!item.last_changed_by; // show strikethrough only if someone changed it
+  const displayImage = item.custom_image_url || item.image_url;
 
   return (
     <div className="buycntr-item-card">
@@ -232,6 +238,7 @@ export default function BuyerCounterEditor() {
           original_price: Number(i.original_price) || 0,
           proposed_price: Number(i.proposed_price) || 0,
           added_by: i.added_by,
+          last_changed_by: i.last_changed_by,   // ← NEW
           _source: 'server' as const,
           note: i.note || '',
           is_custom: !!i.custom_name,
@@ -256,6 +263,7 @@ export default function BuyerCounterEditor() {
               original_price: Math.round(cartItem.original_price || cartItem.price),
               proposed_price: Math.round(cartItem.price),
               added_by: 'buyer',
+              last_changed_by: null,   // ← cart items not negotiated yet
               _source: 'local_cart',
               note: cartItem.note || '',
               is_custom: !!cartItem.is_custom,
@@ -281,10 +289,6 @@ export default function BuyerCounterEditor() {
     note?: string;
     image?: string;
   }) => {
-    // Note: `addItem` is not defined in this file → assuming it's from context or typo
-    // If it's missing, you'll need to import or get it from useCart()
-    // addItem({...})
-
     const newItem: POItem = {
       id: `local-${Date.now()}-${Math.random()}`,
       name: itemData.product_name,
@@ -294,6 +298,7 @@ export default function BuyerCounterEditor() {
       original_price: itemData.price,
       proposed_price: itemData.price,
       added_by: 'buyer',
+      last_changed_by: 'buyer',   // ← new custom = changed by you
       _source: 'local_cart',
       note: itemData.note?.trim() || undefined,
       is_custom: true,

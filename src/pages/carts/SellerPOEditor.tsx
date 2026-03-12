@@ -41,6 +41,7 @@ type Version = {
     image_url?: string | null;
     custom_image_url?: string | null;
     added_by: 'buyer' | 'seller';
+    last_changed_by?: 'buyer' | 'seller' | null;   // ← NEW
     note?: string;
   }>;
 };
@@ -126,20 +127,20 @@ export default function SellerPOEditor() {
     fetchFullThread();
   }, [fetchFullThread]);
 
-  // Seller-specific change label logic
-  const getTrueChangeLabel = (item: any) => {
-    const priceChanged = parseFloat(item.proposed_price) !== parseFloat(item.original_price);
-
-    if (priceChanged) {
-      if (item.added_by === 'buyer' || currentVersion?.last_counter === 'buyer') {
-        return { text: 'Buyer changed price', color: '#3B82F6', bg: '#DBEAFE' };
-      } else {
-        return { text: 'You changed price', color: '#EA580C', bg: '#FFEDD5' };
-      }
-    }
-
+  // ──────────────────────────────────────────────
+  // Seller-specific change badge logic using last_changed_by
+  // ──────────────────────────────────────────────
+  const getPriceChangeBadge = (item: any) => {
     if (item.change_type === 'custom' || item.custom_name) {
       return { text: 'Custom item by buyer', color: '#7C3AED', bg: '#E9D5FF' };
+    }
+
+    if (item.last_changed_by) {
+      if (item.last_changed_by === 'seller') {
+        return { text: 'You changed price', color: '#EA580C', bg: '#FFEDD5' };
+      } else if (item.last_changed_by === 'buyer') {
+        return { text: 'Buyer changed price', color: '#3B82F6', bg: '#DBEAFE' };
+      }
     }
 
     return null;
@@ -350,8 +351,8 @@ export default function SellerPOEditor() {
             </div>
           ) : (
             displayItems.map((item, idx) => {
-              const changeInfo = getTrueChangeLabel(item);
-              const isEdited = parseFloat(item.proposed_price) !== parseFloat(item.original_price);
+              const changeInfo = getPriceChangeBadge(item);
+              const isEdited = !!item.last_changed_by; // ← CHANGED
               const itemImage = item.custom_image_url || item.image_url;
 
               return (
