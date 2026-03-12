@@ -39,7 +39,7 @@ type Version = {
     total_price: string;
     change_type: string;
     added_by: 'buyer' | 'seller';
-    last_changed_by?: 'buyer' | 'seller' | null;   // ← NEW FIELD
+    last_changed_by?: 'buyer' | 'seller' | null;
     image_url?: string | null;
     custom_image_url?: string | null;
     _from_cart?: boolean;
@@ -63,7 +63,6 @@ export default function BuyerPOEditor() {
   const [showVersions, setShowVersions] = useState(false);
   const [showFullMessage, setShowFullMessage] = useState(false);
   const [rootPoId, setRootPoId] = useState<string | null>(null);
-  const [manuallySelectedVersionId, setManuallySelectedVersionId] = useState<string | null>(null);
   const [showPreviewSheet, setShowPreviewSheet] = useState(false);
 
   const [imageViewerVisible, setImageViewerVisible] = useState(false);
@@ -90,6 +89,7 @@ export default function BuyerPOEditor() {
         items: [...accepted.items],
       };
       setAllVersions([fake, accepted]);
+      // Prefer real (latest) version after faking
       setSelectedVersionId(accepted.id);
     }
   }, [allVersions, po?.status]);
@@ -129,10 +129,8 @@ export default function BuyerPOEditor() {
       setPo(fullPo);
       setAllVersions(sorted);
 
-      if (!manuallySelectedVersionId) {
-        const useLatest = ['completed', 'pickup_pending'].includes(fullPo.status);
-        setSelectedVersionId(useLatest ? latest.id : poId);
-      }
+      const useLatest = ['completed', 'pickup_pending'].includes(fullPo.status);
+      setSelectedVersionId(useLatest ? latest.id : poId);
     } catch (err: any) {
       console.error('Fetch error:', err);
       alert(err.response?.data?.error || 'Failed to load offer');
@@ -140,56 +138,65 @@ export default function BuyerPOEditor() {
     } finally {
       setLoading(false);
     }
-  }, [poId, sessionToken, navigate, manuallySelectedVersionId]);
+  }, [poId, sessionToken, navigate]);
 
   useEffect(() => {
     fetchFullThread();
   }, [fetchFullThread]);
 
-  // ──────────────────────────────────────────────
-  //  NEW: Determine badge label using last_changed_by
-  // ──────────────────────────────────────────────
   const getPriceChangeBadge = (item: Version['items'][number]) => {
-    // Items added from cart (not part of negotiation yet)
     if (item._from_cart) {
       return { text: 'You added from cart', color: '#166534', bg: '#DCFCE7' };
     }
-
-    // Custom items
     if (item.change_type === 'custom' || item.custom_name) {
-      return { text: 'Custom item', color: '#7C3AED', bg: '#E9D5FF' };
+      const who = item.last_changed_by || item.added_by;
+      if (who === 'buyer') {
+        return { text: 'Added by you', color: '#7C3AED', bg: '#E9D5FF' };
+      }
+      return { text: 'Added by seller', color: '#a855f7', bg: '#E9D5FF' };
     }
-
-    // Price changed during negotiation
     if (item.last_changed_by) {
       if (item.last_changed_by === 'buyer') {
         return { text: 'You changed price', color: '#3B82F6', bg: '#DBEAFE' };
-      } else if (item.last_changed_by === 'seller') {
+      }
+      if (item.last_changed_by === 'seller') {
         return { text: 'Seller changed price', color: '#EA580C', bg: '#FFEDD5' };
       }
     }
-
-    // No change badge if last_changed_by is null/undefined
     return null;
   };
 
-  const currentVersion = useMemo(
-    () => allVersions.find((v) => v.id === selectedVersionId) || allVersions[allVersions.length - 1],
+  const currentVersion = useMemo<Version | null>(
+    () =>
+      allVersions.find((v) => v.id === selectedVersionId) ||
+      allVersions[allVersions.length - 1] ||
+      null,
     [allVersions, selectedVersionId]
   );
 
-  const latestVersion = useMemo(
-    () => allVersions.find((v) => v.is_latest) || allVersions[allVersions.length - 1],
+  const latestVersion = useMemo<Version | null>(
+    () =>
+      allVersions.find((v) => v.is_latest) ||
+      allVersions[allVersions.length - 1] ||
+      null,
     [allVersions]
   );
 
-  const isViewingOldVersion = selectedVersionId !== latestVersion?.id;
-  const isNegotiating = currentVersion && ['proposed', 'countered'].includes(currentVersion.status);
-  const canAccept = po?.can_accept === true;
+  const isViewingOldVersion = !!latestVersion && selectedVersionId !== latestVersion.id;
+
+  const isNegotiating = !!currentVersion && ['proposed', 'countered'].includes(currentVersion.status);
+
+  const canAccept = !!po?.can_accept;
+
   const terminalStatuses = ['completed', 'cancelled', 'cancelled_by_seller', 'rejected', 'expired'];
-  const isTerminalStatus = terminalStatuses.includes(po?.status) || po?.is_expired === true;
+  const isTerminalStatus = !!po && (terminalStatuses.includes(po.status) || po.is_expired === true);
+
   const showActionButtons =
-    !isViewingOldVersion && isNegotiating && po?.status !== 'pickup_pending' && !isTerminalStatus;
+    !isViewingOldVersion &&
+    isNegotiating &&
+    !!po &&
+    po.status !== 'pickup_pending' &&
+    !isTerminalStatus;
 
   const displayItems = useMemo(() => {
     if (!po || !currentVersion) return [];
@@ -219,7 +226,7 @@ export default function BuyerPOEditor() {
           custom_name: item.custom_name,
           quantity: item.quantity,
           original_price: (item.original_price ?? item.price ?? 0).toString(),
-          proposed_price: item.price?.toString() ?? '0',
+          proposed_price: (item.price ?? 0).toString(),
           total_price: (item.price * item.quantity).toString(),
           change_type: 'original',
           image_url: item.image || null,
@@ -227,7 +234,7 @@ export default function BuyerPOEditor() {
           added_by: 'buyer',
           _from_cart: true,
           note: item.note || '',
-          last_changed_by: null, // cart items aren't negotiated yet
+          last_changed_by: null,
         });
       }
     });
@@ -235,9 +242,17 @@ export default function BuyerPOEditor() {
     return merged;
   }, [po, currentVersion, getShopItems]);
 
-  // Pickup countdown timer
+  // Pickup countdown timer — only relevant when viewing latest pickup_pending version
   useEffect(() => {
-    if (!po?.pickup_info?.expires_in_seconds || po?.status !== 'pickup_pending') return;
+    if (
+      !currentVersion ||
+      !currentVersion.is_latest ||
+      currentVersion.status !== 'pickup_pending' ||
+      !po?.pickup_info?.expires_in_seconds
+    ) {
+      setTimeLeft('');
+      return;
+    }
 
     const start = Date.now();
     const duration = po.pickup_info.expires_in_seconds;
@@ -246,7 +261,7 @@ export default function BuyerPOEditor() {
       const elapsed = Math.floor((Date.now() - start) / 1000);
       const left = Math.max(0, duration - elapsed);
 
-      if (left === 0) {
+      if (left <= 0) {
         setTimeLeft('Expired');
         clearInterval(timer);
         return;
@@ -259,13 +274,14 @@ export default function BuyerPOEditor() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [po?.pickup_info?.expires_in_seconds, po?.status]);
+  }, [currentVersion, po?.pickup_info?.expires_in_seconds, po?.status]);
 
   const handleVersionSelect = (versionId: string) => {
-    setManuallySelectedVersionId(versionId);
+    setSelectedVersionId(versionId);
     setShowVersions(false);
   };
 
+  // Early return - protects against undefined currentVersion
   if (loading || !currentVersion || allVersions.length === 0) {
     return (
       <div className="buyeditr-full-page-loader">
@@ -275,9 +291,10 @@ export default function BuyerPOEditor() {
     );
   }
 
+  const isPickupPending = currentVersion.status === 'pickup_pending' && currentVersion.is_latest;
+
   return (
     <div className="buyeditr-page-container">
-      {/* Header with version selector */}
       <BuyerPOHeader
         shopName={po?.shop_name || 'Shop'}
         shopId={po?.shop_id}
@@ -291,7 +308,6 @@ export default function BuyerPOEditor() {
       />
 
       <main className="buyeditr-main-content">
-        {/* Old version warning */}
         {isViewingOldVersion && (
           <div className="buyeditr-old-version-banner">
             <AlertCircle size={20} />
@@ -299,7 +315,6 @@ export default function BuyerPOEditor() {
           </div>
         )}
 
-        {/* Message bubble */}
         {currentVersion.message && (
           <div
             className={`buyeditr-message-bubble buyeditr-message-${
@@ -321,8 +336,7 @@ export default function BuyerPOEditor() {
           </div>
         )}
 
-        {/* Pickup ready card */}
-        {po?.status === 'pickup_pending' && currentVersion.is_latest && (
+        {isPickupPending && (
           <div className="buyeditr-pickup-card">
             <div className="buyeditr-pickup-header">
               <CheckCircle size={32} className="buyeditr-success-icon" />
@@ -331,18 +345,18 @@ export default function BuyerPOEditor() {
 
             <div className="buyeditr-pickup-code-row">
               <span className="buyeditr-code-label">Code:</span>
-              <span className="buyeditr-pickup-code">{po.pickup_info.pickup_code}</span>
+              <span className="buyeditr-pickup-code">{po?.pickup_info?.pickup_code || '—'}</span>
             </div>
 
             <div className="buyeditr-timer-row">
               <Clock size={20} />
-              <span className="buyeditr-timer-text">{timeLeft}</span>
+              <span className="buyeditr-timer-text">{timeLeft || 'Calculating...'}</span>
             </div>
 
             <div className="buyeditr-address-row">
               <MapPin size={18} />
               <span className="buyeditr-address-text">
-                {po.pickup_info.shop_address || 'Address not provided'}
+                {po?.pickup_info?.shop_address || 'Address not provided'}
               </span>
             </div>
 
@@ -354,7 +368,7 @@ export default function BuyerPOEditor() {
             <button
               className="buyeditr-map-btn"
               onClick={() => {
-                const geo = po.pickup_info?.geo_location;
+                const geo = po?.pickup_info?.geo_location;
                 if (geo?.latitude && geo?.longitude) {
                   window.open(`https://maps.google.com/?q=${geo.latitude},${geo.longitude}`);
                 } else {
@@ -368,7 +382,6 @@ export default function BuyerPOEditor() {
           </div>
         )}
 
-        {/* Items list */}
         <div className="buyeditr-items-container">
           {displayItems.length === 0 ? (
             <div className="buyeditr-empty-items">
@@ -378,7 +391,7 @@ export default function BuyerPOEditor() {
           ) : (
             displayItems.map((item, idx) => {
               const badgeInfo = getPriceChangeBadge(item);
-              const priceChanged = !!item.last_changed_by; // if someone changed it
+              const priceChanged = !!item.last_changed_by;
               const itemImage = item.custom_image_url || item.image_url;
 
               return (
@@ -390,7 +403,7 @@ export default function BuyerPOEditor() {
                         onClick={() => {
                           const validImages = displayItems
                             .map((it) => it.custom_image_url || it.image_url)
-                            .filter(Boolean) as string[];
+                            .filter((url): url is string => !!url);
                           const index = validImages.indexOf(itemImage);
                           setImageViewerImages(validImages);
                           setImageViewerStartIndex(index >= 0 ? index : 0);
@@ -416,11 +429,11 @@ export default function BuyerPOEditor() {
                     <div className="buyeditr-compact-price-row">
                       {priceChanged && (
                         <span className="buyeditr-compact-old-price">
-                          ₦{parseFloat(item.original_price).toLocaleString()}
+                          ₦{parseFloat(item.original_price || '0').toLocaleString()}
                         </span>
                       )}
                       <span className="buyeditr-compact-new-price">
-                        ₦{parseFloat(item.proposed_price).toLocaleString()}
+                        ₦{parseFloat(item.proposed_price || '0').toLocaleString()}
                       </span>
                       <span className="buyeditr-compact-quantity">× {item.quantity}</span>
                     </div>
@@ -448,13 +461,12 @@ export default function BuyerPOEditor() {
             <span className="buyeditr-compact-total-price">
               ₦
               {displayItems
-                .reduce((sum, i) => sum + parseFloat(i.proposed_price) * i.quantity, 0)
+                .reduce((sum, i) => sum + parseFloat(i.proposed_price || '0') * i.quantity, 0)
                 .toLocaleString()}
             </span>
           </div>
         </div>
 
-        {/* Action buttons */}
         {showActionButtons && (
           <div className="buyeditr-modern-actions">
             <button className="buyeditr-action-btn buyeditr-action-cancel" disabled={actionLoading}>
@@ -463,16 +475,14 @@ export default function BuyerPOEditor() {
 
             <button
               className="buyeditr-action-btn buyeditr-action-edit"
-              onClick={() => navigate("/cart/buyer-counter", { state: { po_id: latestVersion.id } })}
-              disabled={actionLoading}
+              onClick={() => navigate('/cart/buyer-counter', { state: { po_id: latestVersion?.id } })}
+              disabled={actionLoading || !latestVersion}
             >
               Counter
             </button>
 
             <button
-              className={`buyeditr-action-btn buyeditr-action-accept ${
-                !canAccept ? 'buyeditr-action-disabled' : ''
-              }`}
+              className={`buyeditr-action-btn buyeditr-action-accept ${!canAccept ? 'buyeditr-action-disabled' : ''}`}
               onClick={() => alert('Accept functionality to be implemented')}
               disabled={!canAccept || actionLoading}
             >
@@ -482,7 +492,6 @@ export default function BuyerPOEditor() {
         )}
       </main>
 
-      {/* Image viewer placeholder */}
       {imageViewerVisible && (
         <div className="buyeditr-image-viewer-overlay">
           <div className="buyeditr-image-viewer-content">

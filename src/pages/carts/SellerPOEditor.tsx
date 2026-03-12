@@ -3,9 +3,9 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useCart } from '../../contexts/CartContext'; // assuming same context exists
-import '../../css/carts/SellerPOEditor.css'; // we'll create this next
-import SellerPOHeader from '../../components/carts/SellerPOHeader'; // to be created next
+import { useCart } from '../../contexts/CartContext';
+import '../../css/carts/SellerPOEditor.css';
+import SellerPOHeader from '../../components/carts/SellerPOHeader';
 
 import {
   CheckCircle,
@@ -41,7 +41,7 @@ type Version = {
     image_url?: string | null;
     custom_image_url?: string | null;
     added_by: 'buyer' | 'seller';
-    last_changed_by?: 'buyer' | 'seller' | null;   // ← NEW
+    last_changed_by?: 'buyer' | 'seller' | null;
     note?: string;
   }>;
 };
@@ -50,7 +50,7 @@ export default function SellerPOEditor() {
   const location = useLocation();
   const poId = location.state?.poId as string | undefined;
   const navigate = useNavigate();
-  const { getShopItems } = useCart(); // assuming seller also has access or adjust if needed
+  const { getShopItems } = useCart();
 
   const [po, setPo] = useState<any>(null);
   const [allVersions, setAllVersions] = useState<Version[]>([]);
@@ -58,11 +58,11 @@ export default function SellerPOEditor() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [sessionToken, setSessionToken] = useState<string | null>(null);
-  const [codeInput, setCodeInput] = useState(''); // for pickup confirmation
+  const [codeInput, setCodeInput] = useState('');
+  const [timeLeft, setTimeLeft] = useState('');
   const [showVersions, setShowVersions] = useState(false);
   const [showFullMessage, setShowFullMessage] = useState(false);
   const [rootPoId, setRootPoId] = useState<string | null>(null);
-  const [manuallySelectedVersionId, setManuallySelectedVersionId] = useState<string | null>(null);
   const [showPreviewSheet, setShowPreviewSheet] = useState(false);
 
   const [imageViewerVisible, setImageViewerVisible] = useState(false);
@@ -110,35 +110,36 @@ export default function SellerPOEditor() {
       setPo(fullPo);
       setAllVersions(sorted);
 
-      if (!manuallySelectedVersionId) {
-        const useLatest = ['completed', 'pickup_pending'].includes(fullPo.status);
-        setSelectedVersionId(useLatest ? latest.id : poId);
-      }
+      const useLatest = ['completed', 'pickup_pending'].includes(fullPo.status);
+      setSelectedVersionId(useLatest ? latest.id : poId);
     } catch (err: any) {
       console.error('Fetch error:', err);
       alert(err.response?.data?.error || 'Failed to load order');
-      navigate('/cart/SellerPODashboard');
+      navigate('/cart/seller-dashboard');
     } finally {
       setLoading(false);
     }
-  }, [poId, sessionToken, navigate, manuallySelectedVersionId]);
+  }, [poId, sessionToken, navigate]);
 
   useEffect(() => {
     fetchFullThread();
   }, [fetchFullThread]);
 
-  // ──────────────────────────────────────────────
-  // Seller-specific change badge logic using last_changed_by
-  // ──────────────────────────────────────────────
-  const getPriceChangeBadge = (item: any) => {
+  const getPriceChangeBadge = (item: Version['items'][number]) => {
+    // Custom items — check who added / last changed
     if (item.change_type === 'custom' || item.custom_name) {
+      if (item.last_changed_by === 'seller' || item.added_by === 'seller') {
+        return { text: 'Custom item by you', color: '#a855f7', bg: '#E9D5FF' };
+      }
       return { text: 'Custom item by buyer', color: '#7C3AED', bg: '#E9D5FF' };
     }
 
+    // Regular price changes
     if (item.last_changed_by) {
       if (item.last_changed_by === 'seller') {
         return { text: 'You changed price', color: '#EA580C', bg: '#FFEDD5' };
-      } else if (item.last_changed_by === 'buyer') {
+      }
+      if (item.last_changed_by === 'buyer') {
         return { text: 'Buyer changed price', color: '#3B82F6', bg: '#DBEAFE' };
       }
     }
@@ -146,33 +147,55 @@ export default function SellerPOEditor() {
     return null;
   };
 
-  const currentVersion = useMemo(
-    () => allVersions.find((v) => v.id === selectedVersionId) || allVersions[allVersions.length - 1],
+  const currentVersion = useMemo<Version | null>(
+    () =>
+      allVersions.find((v) => v.id === selectedVersionId) ||
+      allVersions[allVersions.length - 1] ||
+      null,
     [allVersions, selectedVersionId]
   );
 
-  const latestVersion = useMemo(
-    () => allVersions.find((v) => v.is_latest) || allVersions[allVersions.length - 1],
+  const latestVersion = useMemo<Version | null>(
+    () =>
+      allVersions.find((v) => v.is_latest) ||
+      allVersions[allVersions.length - 1] ||
+      null,
     [allVersions]
   );
 
-  const isViewingOldVersion = selectedVersionId !== latestVersion?.id;
-  const isNegotiating = currentVersion && ['proposed', 'countered'].includes(currentVersion.status);
-  const canAccept = po?.can_accept === true;
+  const isViewingOldVersion = !!latestVersion && selectedVersionId !== latestVersion.id;
+
+  const isNegotiating = !!currentVersion && ['proposed', 'countered'].includes(currentVersion.status);
+
+  const canAccept = !!po?.can_accept;
+
   const terminalStatuses = ['completed', 'cancelled_by_seller', 'rejected', 'expired'];
-  const isTerminalStatus = terminalStatuses.includes(po?.status) || po?.is_expired === true;
+  const isTerminalStatus = !!po && (terminalStatuses.includes(po.status) || po.is_expired === true);
+
   const showActionButtons =
-    !isViewingOldVersion && isNegotiating && po?.status !== 'pickup_pending' && !isTerminalStatus;
+    !isViewingOldVersion &&
+    isNegotiating &&
+    !!po &&
+    po.status !== 'pickup_pending' &&
+    !isTerminalStatus;
 
   const displayItems = useMemo(() => {
-    // For seller, we don't merge cart items (seller doesn't have a cart in this context)
-    return currentVersion?.items || [];
+    if (!currentVersion) return [];
+    // Seller doesn't merge cart items — just use version items
+    return currentVersion.items;
   }, [currentVersion]);
 
-  // Pickup countdown timer (same as buyer)
-  const [timeLeft, setTimeLeft] = useState('');
+  // Pickup timer — only for latest pickup_pending version
   useEffect(() => {
-    if (!po?.pickup_info?.expires_in_seconds || po?.status !== 'pickup_pending') return;
+    if (
+      !currentVersion ||
+      !currentVersion.is_latest ||
+      currentVersion.status !== 'pickup_pending' ||
+      !po?.pickup_info?.expires_in_seconds
+    ) {
+      setTimeLeft('');
+      return;
+    }
 
     const start = Date.now();
     const duration = po.pickup_info.expires_in_seconds;
@@ -181,7 +204,7 @@ export default function SellerPOEditor() {
       const elapsed = Math.floor((Date.now() - start) / 1000);
       const left = Math.max(0, duration - elapsed);
 
-      if (left === 0) {
+      if (left <= 0) {
         setTimeLeft('Expired');
         clearInterval(timer);
         return;
@@ -194,42 +217,29 @@ export default function SellerPOEditor() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [po?.pickup_info?.expires_in_seconds, po?.status]);
+  }, [currentVersion, po?.pickup_info?.expires_in_seconds]);
 
   const handleVersionSelect = (versionId: string) => {
-    setManuallySelectedVersionId(versionId);
+    setSelectedVersionId(versionId);
     setShowVersions(false);
   };
 
-  // Seller-specific actions (to be implemented with real API calls)
-  const handleReject = () => {
-    alert('Reject functionality to be implemented');
-    // Example: POST /po/reject/ with po_id
-  };
-
-  const handleCounter = () => {
-    navigate("/cart/seller-counter", { state: { poId: latestVersion.id } });
-  };
-
-  const handleAccept = () => {
-    alert('Accept functionality to be implemented');
-    // Example: POST /po/accept/ with po_id
-  };
+  // Placeholder action handlers — replace with real API calls later
+  const handleReject = () => alert('Reject functionality to be implemented');
+  const handleCounter = () =>
+    navigate('/cart/seller-counter', { state: { poId: latestVersion?.id } });
+  const handleAccept = () => alert('Accept functionality to be implemented');
 
   const handleConfirmPickup = () => {
     if (codeInput.length !== 4 || !/^\d+$/.test(codeInput)) {
       alert('Enter valid 4-digit code');
       return;
     }
-    alert(`Confirm pickup with code: ${codeInput} (to be implemented)`);
+    alert(`Confirming pickup with code: ${codeInput} (API call needed)`);
     setCodeInput('');
-    // Example: POST /po/confirm-pickup/ with po_id & pickup_code
   };
 
-  const handleCancelPickup = () => {
-    alert('Cancel pickup (buyer didn’t show) - to be implemented');
-    // Example: POST /po/cancel-pickup/ with po_id
-  };
+  const handleCancelPickup = () => alert('Cancel pickup (API call needed)');
 
   if (loading || !currentVersion || allVersions.length === 0) {
     return (
@@ -240,23 +250,23 @@ export default function SellerPOEditor() {
     );
   }
 
+  const isPickupPending = currentVersion.status === 'pickup_pending' && currentVersion.is_latest;
+
   return (
     <div className="selleditr-page-container">
-      {/* Header with version selector */}
       <SellerPOHeader
         buyerName={po?.buyer_name || 'Customer'}
-        buyerId={po?.buyer_id} // adjust if needed
+        buyerId={po?.buyer_id}
         currentVersion={currentVersion}
         allVersions={allVersions}
         selectedVersionId={selectedVersionId}
         showVersions={showVersions}
         setShowVersions={setShowVersions}
         onVersionSelect={handleVersionSelect}
-        onBack={() => navigate('/cart/SellerPODashboard')}
+        onBack={() => navigate('/cart/seller-dashboard')}
       />
 
       <main className="selleditr-main-content">
-        {/* Old version warning */}
         {isViewingOldVersion && (
           <div className="selleditr-old-version-banner">
             <AlertCircle size={20} />
@@ -264,7 +274,6 @@ export default function SellerPOEditor() {
           </div>
         )}
 
-        {/* Message bubble */}
         {currentVersion.message && (
           <div
             className={`selleditr-message-bubble selleditr-message-${
@@ -286,8 +295,7 @@ export default function SellerPOEditor() {
           </div>
         )}
 
-        {/* Pickup ready card - Seller view */}
-        {po?.status === 'pickup_pending' && currentVersion.is_latest && (
+        {isPickupPending && (
           <div className="selleditr-pickup-card">
             <div className="selleditr-pickup-header">
               <CheckCircle size={32} className="selleditr-success-icon" />
@@ -308,13 +316,13 @@ export default function SellerPOEditor() {
 
             <div className="selleditr-timer-row">
               <Clock size={20} />
-              <span className="selleditr-timer-text">{timeLeft}</span>
+              <span className="selleditr-timer-text">{timeLeft || 'Calculating...'}</span>
             </div>
 
             <div className="selleditr-address-row">
               <MapPin size={18} />
               <span className="selleditr-address-text">
-                {po.pickup_info.shop_address || 'Shop address'}
+                {po?.pickup_info?.shop_address || 'Shop address'}
               </span>
             </div>
 
@@ -342,7 +350,6 @@ export default function SellerPOEditor() {
           </div>
         )}
 
-        {/* Items list */}
         <div className="selleditr-items-container">
           {displayItems.length === 0 ? (
             <div className="selleditr-empty-items">
@@ -351,8 +358,8 @@ export default function SellerPOEditor() {
             </div>
           ) : (
             displayItems.map((item, idx) => {
-              const changeInfo = getPriceChangeBadge(item);
-              const isEdited = !!item.last_changed_by; // ← CHANGED
+              const badgeInfo = getPriceChangeBadge(item);
+              const priceChanged = !!item.last_changed_by;
               const itemImage = item.custom_image_url || item.image_url;
 
               return (
@@ -363,8 +370,8 @@ export default function SellerPOEditor() {
                         className="selleditr-image-btn"
                         onClick={() => {
                           const validImages = displayItems
-                            .map((it: any) => it.custom_image_url || it.image_url)
-                            .filter(Boolean) as string[];
+                            .map((it) => it.custom_image_url || it.image_url)
+                            .filter((url): url is string => !!url);
                           const index = validImages.indexOf(itemImage);
                           setImageViewerImages(validImages);
                           setImageViewerStartIndex(index >= 0 ? index : 0);
@@ -388,26 +395,27 @@ export default function SellerPOEditor() {
                     {item.note && <p className="selleditr-note">Note: {item.note}</p>}
 
                     <div className="selleditr-compact-price-row">
-                      {isEdited && (
+                      {priceChanged && (
                         <span className="selleditr-compact-old-price">
-                          ₦{parseFloat(item.original_price).toLocaleString()}
+                          ₦{parseFloat(item.original_price || '0').toLocaleString()}
                         </span>
                       )}
                       <span className="selleditr-compact-new-price">
-                        ₦{parseFloat(item.proposed_price).toLocaleString()}
+                        ₦{parseFloat(item.proposed_price || '0').toLocaleString()}
                       </span>
                       <span className="selleditr-compact-quantity">× {item.quantity}</span>
                     </div>
 
-                    {changeInfo && (
+                    {badgeInfo && (
                       <div
                         className="selleditr-compact-badge"
                         style={{
-                          backgroundColor: `${changeInfo.bg}30`,
-                          color: changeInfo.color,
+                          backgroundColor: `${badgeInfo.bg}30`,
+                          color: badgeInfo.color,
+                          borderColor: `${badgeInfo.color}80`,
                         }}
                       >
-                        {changeInfo.text}
+                        {badgeInfo.text}
                       </div>
                     )}
                   </div>
@@ -418,18 +426,17 @@ export default function SellerPOEditor() {
 
           <div className="selleditr-compact-total-card">
             <span className="selleditr-compact-total-label">
-              {po?.status === 'completed' ? 'Customer paid' : 'Customer wants to pay'}
+              {po?.status === 'completed' ? 'Customer paid' : 'Customer will pay'}
             </span>
             <span className="selleditr-compact-total-price">
               ₦
               {displayItems
-                .reduce((sum, i) => sum + parseFloat(i.proposed_price) * i.quantity, 0)
+                .reduce((sum, i) => sum + parseFloat(i.proposed_price || '0') * i.quantity, 0)
                 .toLocaleString()}
             </span>
           </div>
         </div>
 
-        {/* Action buttons */}
         {showActionButtons && (
           <div className="selleditr-modern-actions">
             <button
@@ -443,15 +450,13 @@ export default function SellerPOEditor() {
             <button
               className="selleditr-action-btn selleditr-action-counter"
               onClick={handleCounter}
-              disabled={actionLoading}
+              disabled={actionLoading || !latestVersion}
             >
               Counter
             </button>
 
             <button
-              className={`selleditr-action-btn selleditr-action-accept ${
-                !canAccept ? 'selleditr-action-disabled' : ''
-              }`}
+              className={`selleditr-action-btn selleditr-action-accept ${!canAccept ? 'selleditr-action-disabled' : ''}`}
               onClick={handleAccept}
               disabled={!canAccept || actionLoading}
             >
@@ -461,7 +466,6 @@ export default function SellerPOEditor() {
         )}
       </main>
 
-      {/* Image viewer placeholder */}
       {imageViewerVisible && (
         <div className="selleditr-image-viewer-overlay">
           <div className="selleditr-image-viewer-content">

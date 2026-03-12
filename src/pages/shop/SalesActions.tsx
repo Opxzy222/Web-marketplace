@@ -26,7 +26,7 @@ export default function SalesActions() {
             icon="🛒"
             label="Orders"
             gradient={['#3B82F6', '#2563EB']}
-            onClick={() => navigateTo("/seller-dashboard")}
+            onClick={() => navigateTo("/cart/seller-dashboard")}
           />
 
           {/* Generate Receipt */}

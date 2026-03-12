@@ -1,4 +1,5 @@
 // src/pages/cart/SellerPOCounter.tsx
+
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PageShell from '../../components/PageShell';
@@ -29,7 +30,7 @@ interface POItem {
   original_price: number;
   proposed_price: number;
   added_by?: 'buyer' | 'seller';
-  last_changed_by?: 'buyer' | 'seller' | null;   // ← NEW
+  last_changed_by?: 'buyer' | 'seller' | null;
   _source: 'server' | 'local_cart';
   note?: string;
   is_custom?: boolean;
@@ -56,13 +57,20 @@ const LuxeItemCard = ({
   };
 
   // ──────────────────────────────────────────────
-  // NEW: Correct who-changed badge using last_changed_by
+  // Updated: Correct badge for custom items (same pattern as SellerPOEditor)
   // ──────────────────────────────────────────────
   const getChangeInfo = () => {
+    // Custom items — check who added / last changed
     if (item.is_custom) {
-      return { text: 'Custom Item', color: '#a855f7', bg: 'rgba(168, 85, 247, 0.12)' };
+      const who = item.last_changed_by || item.added_by;
+      if (who === 'seller') {
+        return { text: 'Custom item by you', color: '#a855f7', bg: 'rgba(168, 85, 247, 0.12)' };
+      } else {
+        return { text: 'Custom item by buyer', color: '#7C3AED', bg: 'rgba(168, 85, 247, 0.12)' };
+      }
     }
 
+    // Regular price changes (unchanged from your previous version)
     if (item.last_changed_by) {
       if (item.last_changed_by === 'seller') {
         return { text: 'You changed', color: '#f97316', bg: 'rgba(249, 115, 22, 0.12)' };
@@ -245,7 +253,7 @@ export default function SellerPOCounter() {
             original_price: Number(i.original_price) || 0,
             proposed_price: Number(i.proposed_price) || 0,
             added_by: i.added_by,
-            last_changed_by: i.last_changed_by,   // ← NEW
+            last_changed_by: i.last_changed_by,
             _source: 'server' as const,
             note: i.note || '',
             is_custom: !!i.custom_name,
@@ -281,7 +289,7 @@ export default function SellerPOCounter() {
       original_price: itemData.price,
       proposed_price: itemData.price,
       added_by: 'seller',
-      last_changed_by: 'seller',   // ← NEW: seller added/changed it
+      last_changed_by: 'seller',
       _source: 'local_cart',
       note: itemData.note?.trim(),
       is_custom: true,
