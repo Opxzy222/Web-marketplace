@@ -14,7 +14,7 @@ export type CartItem = {
   id: string;
   shopId: number;
   shopName: string;
-  product_name: string; // ← SOURCE OF TRUTH
+  product_name: string; // ← SOURCE OF TRUTH for display
   custom_name?: string; // Optional override
   price: number;
   original_price: number;
@@ -24,12 +24,13 @@ export type CartItem = {
   note?: string;
   is_custom: boolean; // true = buyer added manually
   added_by?: 'buyer' | 'seller'; // for future use in PO
+  productId?: number | string; // ← backend product.id (unique per product)
 };
 
 type CartContextType = {
   cart: Record<number, CartItem[]>;
   items: CartItem[];
-  addItem: (item: Omit<CartItem, 'id' | 'quantity'>) => void;
+  addItem: (item: Omit<CartItem, 'id' | 'quantity'> & { productId?: number | string }) => void;
   updateQuantity: (id: string, quantity: number) => void;
   updatePrice: (id: string, price: number) => void;
   removeItem: (id: string) => void;
@@ -63,34 +64,58 @@ interface CartProviderProps {
 export const CartProvider = ({ children }: CartProviderProps) => {
   const [cart, setCart] = useState<Record<number, CartItem[]>>({});
 
-  // Generate stable ID using shop + product_name (or timestamp for custom)
-  const generateId = (item: Omit<CartItem, 'id'>): string => {
+  // Stable ID generation — prioritizes backend productId
+  const generateId = (item: Omit<CartItem, 'id'> & { productId?: number | string }): string => {
     const base = `shop_${item.shopId}`;
-    if (item.is_custom) {
-      return `${base}_custom_${Date.now()}_${Math.random().toFixed(6)}`;
+
+    // Priority 1: Use unique backend productId when available
+    if (item.productId != null) {
+      return `${base}_prod_${item.productId}`;
     }
-    const safeName = (item.product_name || 'item')
+
+    // Priority 2: For customs → use custom_name or product_name
+    let key = item.custom_name?.trim() || item.product_name.trim() || 'unnamed';
+
+    const safeKey = key
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '_')
-      .slice(0, 30);
-    return `${base}_item_${safeName}`;
+      .replace(/_+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .slice(0, 60);
+
+    // Rare fallback for empty name
+    if (!safeKey || safeKey === 'unnamed') {
+      return `${base}_unnamed`;
+    }
+
+    return `${base}_custom_${safeKey}`;
   };
 
   const addItem = useCallback(
-    (newItem: Omit<CartItem, 'id' | 'quantity'>) => {
+    (newItem: Omit<CartItem, 'id' | 'quantity'> & { productId?: number | string }) => {
       setCart((prev) => {
         const shopId = newItem.shopId;
         const shopItems = prev[shopId] || [];
 
-        // Match catalog items by product_name only
-        const existing = shopItems.find(
-          (i) =>
-            !i.is_custom &&
-            i.product_name === newItem.product_name &&
-            i.shopId === shopId
-        );
+        // Priority: match by productId first (unique & safe)
+        const existingById = newItem.productId != null
+          ? shopItems.find((i) => i.productId === newItem.productId)
+          : null;
+
+        // Fallback: match non-custom by name (only if no productId)
+        const existingByName = !existingById && !newItem.is_custom
+          ? shopItems.find(
+              (i) =>
+                !i.is_custom &&
+                i.product_name === newItem.product_name &&
+                i.shopId === shopId
+            )
+          : null;
+
+        const existing = existingById || existingByName;
 
         if (existing) {
+          // Increment quantity on duplicate
           return {
             ...prev,
             [shopId]: shopItems.map((i) =>
@@ -107,7 +132,8 @@ export const CartProvider = ({ children }: CartProviderProps) => {
           quantity: 1,
           product_name: newItem.product_name,
           is_custom: newItem.is_custom || false,
-          added_by: 'buyer', // default — will be updated on counter
+          added_by: 'buyer',
+          productId: newItem.productId, // store for matching/removal
         };
 
         return {
@@ -167,6 +193,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   }, []);
 
   const clearCart = useCallback(() => setCart({}), []);
+
   const clearShopCart = useCallback((shopId: number) => {
     setCart((prev) => {
       const updated = { ...prev };

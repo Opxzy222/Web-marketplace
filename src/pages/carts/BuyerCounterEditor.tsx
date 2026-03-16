@@ -62,11 +62,7 @@ const LuxeItemCard = ({
     setEditingPrice(false);
   };
 
-  // ──────────────────────────────────────────────
-  // Updated: Correct badge for custom items (same pattern as SellerPOEditor)
-  // ──────────────────────────────────────────────
   const getChangeInfo = () => {
-    // Custom items — check who added / last changed
     if (item.is_custom) {
       const who = item.last_changed_by || item.added_by;
       if (who === 'buyer') {
@@ -76,7 +72,6 @@ const LuxeItemCard = ({
       }
     }
 
-    // Regular price changes
     if (item.last_changed_by) {
       if (item.last_changed_by === 'buyer') {
         return { text: 'You changed', color: '#3B82F6', bg: '#EFF6FF' };
@@ -89,7 +84,7 @@ const LuxeItemCard = ({
   };
 
   const change = getChangeInfo();
-  const priceChanged = !!item.last_changed_by; // show strikethrough only if someone changed it
+  const priceChanged = !!item.last_changed_by;
   const displayImage = item.custom_image_url || item.image_url;
 
   return (
@@ -198,7 +193,7 @@ export default function BuyerCounterEditor() {
   const navigate = useNavigate();
   const { po_id } = location.state || {};
 
-  const { getShopItems, clearShopCart } = useCart();
+  const { getShopItems, clearShopCart, removeItem: removeFromGlobalCart } = useCart();
 
   const [items, setItems] = useState<POItem[]>([]);
   const [shopName, setShopName] = useState('Shop');
@@ -262,7 +257,7 @@ export default function BuyerCounterEditor() {
 
           if (!exists) {
             merged.push({
-              id: `cart-${cartItem.id}-${Date.now()}`,
+              id: cartItem.id,  // ← Use the REAL global ID from cart (stable now!)
               name: cartItem.product_name || cartItem.custom_name || 'Item',
               image_url: cartItem.image || null,
               custom_image_url: null,
@@ -297,7 +292,7 @@ export default function BuyerCounterEditor() {
     image?: string;
   }) => {
     const newItem: POItem = {
-      id: `local-${Date.now()}-${Math.random()}`,
+      id: `local-${Date.now()}-${Math.random()}`, // temporary local ID — will be replaced on send
       name: itemData.product_name,
       image_url: null,
       custom_image_url: itemData.image || null,
@@ -324,7 +319,14 @@ export default function BuyerCounterEditor() {
   };
 
   const removeItem = (id: string) => {
+    // Remove from local editor state
     setItems(prev => prev.filter(it => it.id !== id));
+
+    // Remove from global cart — IDs now match thanks to stable generation
+    removeFromGlobalCart(id);
+
+    // Debug log — remove after testing
+    console.log(`Removed item with ID: ${id} from both editor and global cart`);
   };
 
   const sendCounter = async () => {

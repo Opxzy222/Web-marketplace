@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../../contexts/CartContext';
+import '../../css/carts/AddCustomItemModal.css';
+
 import {
   Camera,
   Image as ImageIcon,
   X,
-  PlusCircle,
 } from 'lucide-react';
 
 type Props = {
@@ -18,9 +19,9 @@ type Props = {
     product_name: string;
     price: number;
     note?: string;
-    image?: string; // base64 or URL on web
+    image?: string;
   }) => void;
-  isSeller?: boolean; // default = buyer
+  isSeller?: boolean;
 };
 
 export default function AddCustomItemModal({
@@ -31,7 +32,7 @@ export default function AddCustomItemModal({
   onAdd,
   isSeller = false,
 }: Props) {
-  const { addItem } = useCart(); // only used if !isSeller
+  const { addItem } = useCart();
 
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
@@ -39,7 +40,6 @@ export default function AddCustomItemModal({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Subscription state
   const [subscriptionModalVisible, setSubscriptionModalVisible] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState<boolean | null>(null);
 
@@ -76,7 +76,6 @@ export default function AddCustomItemModal({
     onClose();
   };
 
-  // Web: handle file input for image
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isSubscribed === false) {
       setSubscriptionModalVisible(true);
@@ -93,7 +92,7 @@ export default function AddCustomItemModal({
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImagePreview(reader.result as string); // base64 for preview
+      setImagePreview(reader.result as string);
     };
     reader.readAsDataURL(file);
   };
@@ -117,15 +116,13 @@ export default function AddCustomItemModal({
         product_name: name.trim(),
         price: priceNum,
         note: note.trim() || undefined,
-        image: imagePreview || undefined, // base64 string
+        image: imagePreview || undefined,
       };
 
-      // ONLY BUYER ADDS TO GLOBAL CART
       if (!isSeller) {
         addItem({
           shopId,
           shopName,
-          shopProductId: null,
           product_name: itemData.product_name,
           price: itemData.price,
           original_price: Math.round(itemData.price),
@@ -136,7 +133,6 @@ export default function AddCustomItemModal({
         });
       }
 
-      // Notify parent (buyer or seller)
       onAdd?.(itemData);
 
       window.alert('Added!', `"${name.trim()}" has been added to your order.`);
@@ -153,149 +149,54 @@ export default function AddCustomItemModal({
 
   return (
     <>
-      {/* Modal Backdrop */}
-      <div
-        style={{
-          position: 'fixed',
-          inset: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'center',
-          zIndex: 9999,
-        }}
-        onClick={handleClose}
-      >
-        {/* Modal Content */}
-        <div
-          onClick={(e) => e.stopPropagation()}
-          style={{
-            backgroundColor: '#FFFFFF',
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            width: '100%',
-            maxWidth: 500,
-            maxHeight: '90vh',
-            boxShadow: '0 -4px 12px rgba(0,0,0,0.15)',
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {/* Header */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: 20,
-              borderBottom: '1px solid #E2E8F0',
-            }}
-          >
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#1E293B', margin: 0 }}>
-              Add Custom Item
-            </h2>
-            <button
-              onClick={handleClose}
-              style={{ background: 'none', border: 'none', padding: 4, cursor: 'pointer' }}
-            >
-              <X size={24} color="#64748B" />
+      <div className="custitm-backdrop" onClick={handleClose}>
+        <div className="custitm-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="custitm-header">
+            <h2 className="custitm-title">Add Custom Item</h2>
+            <button className="custitm-close-btn" onClick={handleClose}>
+              <X size={24} />
             </button>
           </div>
 
-          {/* Scrollable Body */}
-          <div
-            style={{
-              padding: 20,
-              overflowY: 'auto',
-              flex: 1,
-            }}
-          >
-            {/* Item Name */}
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ fontSize: 14, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 8 }}>
-                Item Name *
-              </label>
+          <div className="custitm-body">
+            <div className="custitm-form-group">
+              <label className="custitm-label">Item Name *</label>
               <input
                 type="text"
+                className="custitm-input"
                 placeholder="e.g. Custom Logo Design"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 autoFocus
-                style={{
-                  width: '100%',
-                  border: '1px solid #CBD5E1',
-                  borderRadius: 12,
-                  padding: '12px 16px',
-                  fontSize: 16,
-                  backgroundColor: '#F8FAFC',
-                }}
               />
             </div>
 
-            {/* Price */}
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ fontSize: 14, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 8 }}>
-                Price (₦) *
-              </label>
+            <div className="custitm-form-group">
+              <label className="custitm-label">Price (₦) *</label>
               <input
                 type="text"
+                className="custitm-input"
                 placeholder="25000"
                 value={price}
                 onChange={(e) => setPrice(e.target.value.replace(/[^0-9.]/g, ''))}
-                style={{
-                  width: '100%',
-                  border: '1px solid #CBD5E1',
-                  borderRadius: 12,
-                  padding: '12px 16px',
-                  fontSize: 16,
-                  backgroundColor: '#F8FAFC',
-                }}
               />
             </div>
 
-            {/* Note */}
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ fontSize: 14, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 8 }}>
-                Note (optional)
-              </label>
+            <div className="custitm-form-group">
+              <label className="custitm-label">Note (optional)</label>
               <textarea
+                className="custitm-textarea"
                 placeholder="e.g. Add extra large size, red color"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                style={{
-                  width: '100%',
-                  minHeight: 80,
-                  border: '1px solid #CBD5E1',
-                  borderRadius: 12,
-                  padding: '12px 16px',
-                  fontSize: 16,
-                  backgroundColor: '#F8FAFC',
-                  resize: 'vertical',
-                }}
               />
             </div>
 
-            {/* Image */}
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ fontSize: 14, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 8 }}>
-                Image (optional)
-              </label>
+            <div className="custitm-form-group">
+              <label className="custitm-label">Image (optional)</label>
 
-              <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
-                <label
-                  style={{
-                    flex: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: '#4CAF50',
-                    color: 'white',
-                    padding: 12,
-                    borderRadius: 12,
-                    cursor: 'pointer',
-                  }}
-                >
+              <div className="custitm-image-buttons">
+                <label className="custitm-image-btn custitm-camera-btn">
                   <input
                     type="file"
                     accept="image/*"
@@ -303,22 +204,10 @@ export default function AddCustomItemModal({
                     style={{ display: 'none' }}
                   />
                   <Camera size={24} />
-                  <span style={{ marginLeft: 8, fontWeight: 600 }}>Camera (not supported)</span>
+                  <span>Camera (not supported)</span>
                 </label>
 
-                <label
-                  style={{
-                    flex: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: '#2196F3',
-                    color: 'white',
-                    padding: 12,
-                    borderRadius: 12,
-                    cursor: 'pointer',
-                  }}
-                >
+                <label className="custitm-image-btn custitm-gallery-btn">
                   <input
                     type="file"
                     accept="image/*"
@@ -326,89 +215,41 @@ export default function AddCustomItemModal({
                     style={{ display: 'none' }}
                   />
                   <ImageIcon size={24} />
-                  <span style={{ marginLeft: 8, fontWeight: 600 }}>Gallery</span>
+                  <span>Gallery</span>
                 </label>
               </div>
 
               {imagePreview && (
-                <div
-                  style={{
-                    position: 'relative',
-                    borderRadius: 12,
-                    overflow: 'hidden',
-                    border: '1px solid #CBD5E1',
-                  }}
-                >
+                <div className="custitm-image-preview-wrapper">
                   <img
                     src={imagePreview}
                     alt="Preview"
-                    style={{
-                      width: '100%',
-                      height: 120,
-                      objectFit: 'cover',
-                    }}
+                    className="custitm-image-preview"
                   />
                   <button
+                    className="custitm-remove-image-btn"
                     onClick={() => setImagePreview(null)}
-                    style={{
-                      position: 'absolute',
-                      top: 8,
-                      right: 8,
-                      backgroundColor: 'rgba(255,255,255,0.9)',
-                      borderRadius: '50%',
-                      border: 'none',
-                      padding: 4,
-                      cursor: 'pointer',
-                    }}
                   >
-                    <X size={20} color="#EF4444" />
+                    <X size={20} />
                   </button>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Footer Buttons */}
-          <div
-            style={{
-              display: 'flex',
-              gap: 12,
-              padding: 20,
-              borderTop: '1px solid #E2E8F0',
-            }}
-          >
+          <div className="custitm-footer">
             <button
+              className="custitm-btn custitm-btn-cancel"
               onClick={handleClose}
               disabled={loading}
-              style={{
-                flex: 1,
-                backgroundColor: '#F1F5F9',
-                padding: '14px',
-                borderRadius: 12,
-                border: 'none',
-                fontWeight: 600,
-                color: '#64748B',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.6 : 1,
-              }}
             >
               Cancel
             </button>
 
             <button
+              className="custitm-btn custitm-btn-add"
               onClick={handleAdd}
               disabled={loading}
-              style={{
-                flex: 1,
-                backgroundColor: loading ? '#94a3b8' : '#2563EB',
-                padding: '14px',
-                borderRadius: 12,
-                border: 'none',
-                color: 'white',
-                fontWeight: 700,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.6 : 1,
-              }}
             >
               {loading ? 'Adding...' : 'Add to Order'}
             </button>
@@ -416,41 +257,14 @@ export default function AddCustomItemModal({
         </div>
       </div>
 
-      {/* Subscription Modal Placeholder */}
       {subscriptionModalVisible && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.7)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10000,
-          }}
-        >
-          <div
-            style={{
-              background: 'white',
-              borderRadius: 16,
-              padding: 24,
-              maxWidth: 400,
-              textAlign: 'center',
-            }}
-          >
+        <div className="custitm-subscription-backdrop">
+          <div className="custitm-subscription-modal">
             <h3>Subscription Required</h3>
-            <p style={{ margin: '16px 0' }}>
-              You need an active subscription to upload images.
-            </p>
+            <p>You need an active subscription to upload images.</p>
             <button
+              className="custitm-btn custitm-btn-primary"
               onClick={() => setSubscriptionModalVisible(false)}
-              style={{
-                background: '#2563EB',
-                color: 'white',
-                padding: '12px 24px',
-                borderRadius: 12,
-                border: 'none',
-              }}
             >
               Close
             </button>

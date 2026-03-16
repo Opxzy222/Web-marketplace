@@ -88,28 +88,29 @@ const ShopProduct: React.FC<Props> = ({ products = [], shopId, shopName }) => {
   }, []);
 
   const handleAddToCart = useCallback((product: Product) => {
-    if (!product.is_available) {
-      alert('Item Unavailable', 'This item is currently not available.');
-      return;
-    }
-    if (!currentShopId) {
-      alert('Error', 'Shop ID is missing.');
-      return;
-    }
+  if (!product.is_available) {
+    alert('Item Unavailable', 'This item is currently not available.');
+    return;
+  }
+  if (!currentShopId) {
+    alert('Error', 'Shop ID is missing.');
+    return;
+  }
 
-    addItem({
-      shopId: currentShopId,
-      shopName: currentShopName,
-      product_name: product.product_name,
-      price: product.price || 0,
-      original_price: product.price || 0,
-      quantity: 1,
-      image: product.images?.[0] || product.image,
-      is_custom: false,
-    });
+  addItem({
+    shopId: currentShopId,
+    shopName: currentShopName,
+    product_name: product.product_name,
+    price: product.price || 0,
+    original_price: product.price || 0,
+    quantity: 1,
+    image: product.images?.[0] || product.image,
+    is_custom: false,
+    productId: product.id,  // ← THIS IS THE KEY CHANGE
+  });
 
-    alert('Added to Cart!', `"${product.product_name}" added to cart`);
-  }, [currentShopId, currentShopName, addItem]);
+  alert('Added to Cart!', `"${product.product_name}" added to cart`);
+}, [currentShopId, currentShopName, addItem]);
 
   // Flatten data structure with search
   const flatData = useMemo(() => {

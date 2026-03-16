@@ -45,7 +45,7 @@ const ReceiptCard = React.memo(({ item, handleAction }) => {
 
             <div className="srcp-card-main">
               <div className="srcp-top-row">
-                <h3 className="srcp-receipt-id">{receipt.shop || "Unknown Shop"}</h3>
+                <h3 className="srcp-receipt-id">{receipt.customer_name || "Unknown Shop"}</h3>
                 <div className="srcp-status-chip" style={{ backgroundColor: status.color }}>
                   <span className="srcp-status-icon">{status.icon}</span>
                   <span className="srcp-status-text">{status.label || "Unknown"}</span>

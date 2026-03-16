@@ -703,3 +703,55 @@ html.dark .srcp-receipts-container,
     padding: 12px;
   }
 }
+
+/* ── Date filter inputs ──────────────────────────────────────── */
+.srcp-date-field-wrapper {
+  margin-bottom: 20px;
+}
+
+.srcp-date-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.srcp-date-input-native {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  color: var(--text-primary);
+  appearance: none;           /* remove default spinner on some browsers */
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.srcp-date-input-native::-webkit-calendar-picker-indicator {
+  opacity: 0.6;
+  filter: invert(0.5) brightness(1.4);   /* light mode friendly */
+  cursor: pointer;
+}
+
+.dark .srcp-date-input-native::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) brightness(0.9);
+}
+
+.srcp-date-input-native:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+/* Optional: placeholder style when empty */
+.srcp-date-input-native:not(:placeholder-shown) {
+  color: var(--text-primary);
+}
+
+.srcp-date-input-native::placeholder {
+  color: var(--text-muted);
+}

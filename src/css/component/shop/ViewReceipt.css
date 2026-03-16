@@ -1,4 +1,6 @@
-/* ViewReceipt.css */
+/* ViewReceipt.css – Receipt image maximized, minimal wasted space */
+
+/* Card-side buttons – unchanged */
 .view-receipt-container {
   display: flex;
   flex-direction: column;
@@ -13,7 +15,8 @@
   flex-wrap: wrap;
 }
 
-.view-button, .pdf-button {
+.view-button,
+.pdf-button {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -26,7 +29,6 @@
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
-  text-decoration: none;
 }
 
 .pdf-button {
@@ -34,7 +36,8 @@
   color: #10B981;
 }
 
-.view-button:hover:not(.disabled), .pdf-button:hover {
+.view-button:hover:not(.disabled),
+.pdf-button:hover {
   background: #2563EB;
   color: white;
   transform: translateY(-2px);
@@ -54,220 +57,143 @@
   color: #6B7280;
 }
 
-.view-button.disabled:hover {
-  background: white;
-  transform: none;
-  box-shadow: none;
-}
-
-/* Modal */
+/* ── MODAL ROOT ── */
 .image-viewer-modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.95);
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.94);
   backdrop-filter: blur(8px);
+  z-index: 10000;
+  overflow: hidden;
 }
 
 .viewer-content {
-  width: 100%;
-  max-width: 1200px;
-  max-height: 90vh;
-  height: 90vh;
-  position: relative;
-  border-radius: 20px;
-  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
   background: #000;
+  position: relative;
+  overflow: hidden;
 }
 
-.error-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: white;
-  gap: 24px;
-  padding: 60px 40px;
-}
-
-.error-icon-large {
-  color: #EF4444;
-}
-
-.error-message {
-  font-size: 18px;
-  text-align: center;
-  max-width: 400px;
-  line-height: 1.6;
-}
-
-.close-error-button {
-  padding: 14px 32px;
-  background: #2563EB;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.close-error-button:hover {
-  background: #1D4ED8;
-  transform: translateY(-2px);
-}
-
-/* Header */
+/* ── HEADER – as small as practical ── */
 .viewer-header {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
+  z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(20px);
-  z-index: 10;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(16px);
+  height: 50px;
+  box-sizing: border-box;
 }
 
 .header-title {
   color: white;
-  font-size: 18px;
-  font-weight: 700;
-  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
   flex: 1;
-  margin: 0 48px;
+  text-align: center;
+  margin: 0 52px;
 }
 
 .header-button {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255,255,255,0.12);
   border: none;
   color: white;
-  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
 .header-button:hover:not(.saving) {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255,255,255,0.24);
 }
 
 .header-button.saving {
+  opacity: 0.6;
   cursor: not-allowed;
-  opacity: 0.7;
 }
 
-.header-button svg {
-  stroke: currentColor;
-  stroke-width: 2;
-}
-
-/* Image Container */
+/* ── IMAGE CONTAINER – full area below header ── */
 .image-container {
-  height: 100%;
+  position: absolute;
+  inset: 50px 0 0 0;           /* starts immediately below header */
   width: 100%;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: calc(100% - 50px);
+  margin: 0;
+  padding: 0;
+  background: #000;
+  overflow: hidden;
+}
+
+/* ── MAIN IMAGE – fills the space completely ── */
+.main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: top center;     /* start from top, most receipts read top-down */
+  display: block;
+  margin: 0;
+  padding: 0;
   background: #000;
 }
 
-.main-image {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-}
-
-.page-indicator {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 16px;
-  font-weight: 600;
-  backdrop-filter: blur(10px);
-}
-
-/* Navigation Buttons */
+/* ── NAVIGATION ARROWS ── */
 .nav-button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  z-index: 40;
+  width: 54px;
+  height: 54px;
   border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
   color: white;
+  font-size: 24px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(20px);
-  transition: all 0.3s ease;
-  z-index: 5;
+  backdrop-filter: blur(10px);
 }
 
 .nav-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-50%) scale(1.1);
+  background: rgba(255,255,255,0.18);
 }
 
-.nav-button.prev {
-  left: 30px;
-}
+.nav-button.prev { left: 16px; }
+.nav-button.next { right: 16px; }
 
-.nav-button.next {
-  right: 30px;
-}
-
-.nav-button svg {
-  width: 24px;
-  height: 24px;
-}
-
-/* Thumbnails */
+/* ── THUMBNAILS – compact bottom bar ── */
 .thumbnails {
   position: absolute;
-  bottom: 20px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 40;
   display: flex;
-  gap: 12px;
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 24px;
-  backdrop-filter: blur(20px);
-  max-width: 90%;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(0,0,0,0.72);
+  border-radius: 999px;
+  backdrop-filter: blur(16px);
+  max-width: 96vw;
   overflow-x: auto;
   scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
 }
 
 .thumbnails::-webkit-scrollbar {
@@ -275,14 +201,18 @@
 }
 
 .thumbnail {
-  width: 80px;
-  height: 120px;
-  border-radius: 12px;
+  width: 62px;
+  height: 94px;
+  border-radius: 8px;
   overflow: hidden;
-  cursor: pointer;
-  border: 3px solid transparent;
-  position: relative;
-  flex-shrink: 0;
+  border: 2.5px solid transparent;
+  transition: all 0.18s;
+}
+
+.thumbnail.active,
+.thumbnail:hover {
+  border-color: #60a5fa;
+  transform: scale(1.05);
 }
 
 .thumbnail img {
@@ -291,70 +221,57 @@
   object-fit: cover;
 }
 
-.thumbnail:hover {
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-.thumbnail.active {
-  border-color: #2563EB;
-}
-
-.thumbnail-active-overlay {
+/* ── ERROR STATE ── */
+.error-content {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(37, 99, 235, 0.3);
-  z-index: 1;
-}
-
-/* Error States */
-.receipt-error {
+  inset: 50px 0 0 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 20px;
-  color: #6B7280;
-}
-
-.error-icon {
-  color: #EF4444;
-  margin-bottom: 12px;
-}
-
-.error-text {
-  font-size: 16px;
+  justify-content: center;
+  color: white;
+  background: #000;
+  padding: 40px;
   text-align: center;
 }
 
-.spinner {
-  animation: spin 1s linear infinite;
+.error-icon-large {
+  color: #f87171;
+  width: 80px;
+  height: 80px;
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.error-message {
+  font-size: 1.25rem;
+  max-width: 480px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .viewer-content {
-    height: 100vh;
-    max-height: 100vh;
-    border-radius: 0;
+.close-error-button {
+  padding: 14px 40px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+/* ── MOBILE ADJUSTMENTS ── */
+@media (max-width: 640px) {
+  .viewer-header {
+    height: 48px;
+    padding: 8px 14px;
   }
-  
+  .image-container {
+    inset: 48px 0 0 0;
+  }
   .nav-button {
     width: 48px;
     height: 48px;
+    font-size: 20px;
   }
-  
-  .nav-button.prev {
-    left: 16px;
-  }
-  
-  .nav-button.next {
-    right: 16px;
+  .thumbnail {
+    width: 56px;
+    height: 84px;
   }
 }

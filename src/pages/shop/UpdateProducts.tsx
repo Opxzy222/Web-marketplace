@@ -482,7 +482,7 @@ const UpdateShopProducts = () => {
             <div className="custom-product-container">
               {uncategorizedCustoms.length > 0 && (
                 <div className="table-wrapper">
-                  <h3 className="custom-table-title">Create Your Own Listing</h3>
+                  <h3 className="custom-table-title">Uncategorized Listing</h3>
                   <div className="table-scroll-container">
                     <table className="product-table">
                       <thead>

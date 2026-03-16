@@ -338,32 +338,69 @@ export default function NotificationBell() {
 
   const navigateToNotification = useCallback((notification: any) => {
     const type = notification.type?.toLowerCase() || '';
+    const shopId = notification.shop_id;
+    const poId = notification.po_id || notification.meta_data?.po_id;
+    const receiptId = notification.receipt_id || notification.meta_data?.receipt_id;
 
-    if (type === 'po_notification' && notification.po_id) {
-      const isSeller = /new order|countered|accepted|pick up|cancelled/i.test(notification.message || '');
-      const route = isSeller
-        ? `/cart/SellerPOEditor?poId=${notification.po_id}`
-        : `/cart/BuyerPOEditor?poId=${notification.po_id}`;
-      window.location.href = route;
+    // ── PO Notification (Purchase Order) ─────────────────────────────
+    if (type === 'po_notification' && poId) {
+      const messageLower = (notification.message || '').toLowerCase();
+
+      const isSeller = messageLower.includes('new order') ||
+                       messageLower.includes('countered') ||
+                       messageLower.includes('accepted') ||
+                       messageLower.includes('pick up') ||
+                       messageLower.includes('cancelled') ||
+                       messageLower.includes('seller') ||
+                       messageLower.includes('you received') ||
+                       messageLower.includes('your order was');
+
+      if (isSeller) {
+        navigate("/cart/seller-editor", { state: { poId } });
+      } else {
+        navigate("/cart/buyer-editor", { state: { poId } });
+      }
       return;
     }
 
-    if (['shop_post', 'shop_review', 'shop_follower'].includes(type) && notification.shop_id) {
-      window.location.href = `/shop/shop-page?shopId=${notification.shop_id}`;
+    // ── Shop related (post, review, follower) ────────────────────────
+    if (['shop_post', 'shop_review', 'shop_follower'].includes(type) && shopId) {
+      navigate(`/shop/shop-page/${shopId}`);
+      // Alternative if your route expects state instead of param:
+      // navigate("/shop/shop-page", { state: { shopId } });
       return;
     }
 
-    if (type === 'receipt_created' && notification.receipt_id) {
-      window.location.href = `/shop/CustomerReceipts?receiptId=${notification.receipt_id}&shopId=${notification.shop_id}`;
+    // ── Receipt Created ──────────────────────────────────────────────
+    if (type === 'receipt_created' && receiptId && shopId) {
+      // As per your instruction: use { state: { shopId } }
+      navigate("/customer-receipts", { state: { shopId } });
       return;
     }
 
-    if (type === 'receipt_status' && notification.receipt_id) {
+    // ── Receipt Status Update ────────────────────────────────────────
+    if (type === 'receipt_status' && receiptId && shopId) {
       const isVoided = notification.meta_data?.status === 'voided';
-      const pathname = isVoided ? '/shop/CustomerReceipts' : '/shop/ShopReceipts';
-      window.location.href = `${pathname}?receiptId=${notification.receipt_id}&shopId=${notification.shop_id}`;
+
+      if (isVoided) {
+        navigate("/customer-receipts", { state: { shopId } });
+      } else {
+        // Shop/seller receipts view
+        navigate("/shop-receipts", { state: { shopId } });
+      }
+      return;
     }
-  }, []);
+
+    // Fallback for chat messages or other types with conversation_id
+    if (notification.conversation_id) {
+      navigate(`/messages/${notification.conversation_id}`);
+      return;
+    }
+
+    // Optional: log unhandled notifications
+    console.warn('[Notification] Unhandled navigation type:', type, notification);
+
+  }, [navigate]);
 
   const handleNotificationClick = useCallback((notification: any) => {
     setIsOpen(false);
@@ -384,7 +421,7 @@ export default function NotificationBell() {
       top: `${rect.bottom + window.scrollY + 10}px`,
       right: `${window.innerWidth - rect.right}px`,
     };
-  }, [isOpen]); // recalculate only when open changes
+  }, [isOpen]);
 
   const dropdownContent = isOpen ? (
     <div
@@ -424,15 +461,15 @@ export default function NotificationBell() {
     <>
       <div className="notification-bell">
         <button
-  ref={bellRef}
-  className={`bell-btn ${isOpen ? 'active' : ''}`}   // ← add this class when open
-  onClick={(e) => {
-    e.stopPropagation();
-    setIsOpen((prev) => !prev);
-  }}
-  aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
-  aria-expanded={isOpen}
->
+          ref={bellRef}
+          className={`bell-btn ${isOpen ? 'active' : ''}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsOpen((prev) => !prev);
+          }}
+          aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
+          aria-expanded={isOpen}
+        >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="bell-icon">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />
