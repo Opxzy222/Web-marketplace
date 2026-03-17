@@ -1,3 +1,4 @@
+// FollowedShopStatusScreen.jsx
 import React, { useCallback, useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PageShell from "../components/PageShell";
@@ -8,6 +9,7 @@ import "../css/tab/FollowedShopStatus.css";
 
 const BACKEND_URL = "https://retail-alvinia-goza-f6a0e4f7.koyeb.app";
 const FALLBACK_IMAGE = "https://via.placeholder.com/150x150/E3F2FD/6B7280?text=No+Image";
+const FETCH_TIMEOUT = 30000; // 15 seconds
 
 const FollowedShopStatusScreen = () => {
   const [searchParams] = useSearchParams();
@@ -22,7 +24,6 @@ const FollowedShopStatusScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [userId, setUserId] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-  const isMountedRef = useRef(true);
 
   // Viewer state
   const [viewerOpen, setViewerOpen] = useState(false);
@@ -31,28 +32,30 @@ const FollowedShopStatusScreen = () => {
   const [viewerKey, setViewerKey] = useState(0);
   const [currentlyViewingShopId, setCurrentlyViewingShopId] = useState(null);
 
-  // Abort controller for fetch cancellation
+  // Refs
   const abortControllerRef = useRef(null);
+  const isMountedRef = useRef(true);
+  const timeoutRef = useRef(null);
 
   const validateUrl = (url) => {
     if (!url || typeof url !== "string") return null;
-    if (url.startsWith('http')) return url;
-    return `${BACKEND_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+    if (url.startsWith("http")) return url;
+    return `${BACKEND_URL}${url.startsWith("/") ? "" : "/"}${url}`;
   };
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (isRefresh = false) => {
     if (!isMountedRef.current) return;
 
-    // Cancel any previous fetch
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
+    // Cancel any previous request
+    abortControllerRef.current?.abort();
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
     abortControllerRef.current = new AbortController();
     const signal = abortControllerRef.current.signal;
 
     try {
-      setLoading(true);
-      setRefreshing(true);
+      if (!isRefresh) setLoading(true);
+      setRefreshing(isRefresh);
       setErrorMessage(null);
 
       const userIdString = localStorage.getItem("user_id");
@@ -68,34 +71,39 @@ const FollowedShopStatusScreen = () => {
       const token = localStorage.getItem("sessionToken") || userIdString;
 
       const url = `${BACKEND_URL}/combined-feed/?user_id=${userIdNum}`;
-      console.log("[FETCH START] URL:", url);
+      console.log(`[FETCH ${isRefresh ? "REFRESH" : "START"}] URL:`, url);
+
+      // Set timeout to prevent hanging forever
+      timeoutRef.current = setTimeout(() => {
+        abortControllerRef.current?.abort();
+      }, FETCH_TIMEOUT);
 
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Accept": "application/json",
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
         },
         signal,
       });
 
-      console.log("[FETCH] Status:", response.status, response.statusText);
+      console.log(`[FETCH ${isRefresh ? "REFRESH" : ""}] Status:`, response.status, response.statusText);
 
       if (!response.ok) {
-        const text = await response.text();
+        const text = await response.text().catch(() => "");
         console.error("[FETCH ERROR BODY]:", text.substring(0, 300));
         throw new Error(`Server responded with ${response.status}`);
       }
 
       const contentType = response.headers.get("content-type");
       if (!contentType?.includes("application/json")) {
-        const text = await response.text();
-        console.error("[FETCH] Not JSON:", text.substring(0, 300));
+        const text = await response.text().catch(() => "");
+        console.error("[FETCH] Not JSON response:", text.substring(0, 300));
         throw new Error("Server returned non-JSON response");
       }
 
       const data = await response.json();
-      console.log("[FETCH SUCCESS] Received:", {
+      console.log("[FETCH SUCCESS] Data received:", {
         statuses: data.statuses?.length || 0,
         followed_posts: data.followed_posts?.length || 0,
         nearby_posts: data.nearby_posts?.length || 0,
@@ -106,8 +114,8 @@ const FollowedShopStatusScreen = () => {
       // Group statuses by shop
       const grouped = {};
       fetchedStatuses
-        .filter(status => status?.shop?.id)
-        .forEach(status => {
+        .filter((status) => status?.shop?.id)
+        .forEach((status) => {
           const shopId = status.shop.id;
           if (!grouped[shopId]) {
             grouped[shopId] = {
@@ -130,22 +138,22 @@ const FollowedShopStatusScreen = () => {
           if (!status.viewed) grouped[shopId].hasUnviewed = true;
         });
 
-      Object.values(grouped).forEach(group => {
+      Object.values(grouped).forEach((group) => {
         group.statuses.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
       });
 
       const groups = Object.values(grouped);
 
       const unviewed = groups
-        .filter(g => g.hasUnviewed)
+        .filter((g) => g.hasUnviewed)
         .sort((a, b) => {
-          const latestA = [...a.statuses].reverse().find(s => !s.viewed)?.created_at || 0;
-          const latestB = [...b.statuses].reverse().find(s => !s.viewed)?.created_at || 0;
+          const latestA = [...a.statuses].reverse().find((s) => !s.viewed)?.created_at || 0;
+          const latestB = [...b.statuses].reverse().find((s) => !s.viewed)?.created_at || 0;
           return new Date(latestB) - new Date(latestA);
         });
 
       const viewed = groups
-        .filter(g => !g.hasUnviewed)
+        .filter((g) => !g.hasUnviewed)
         .sort((a, b) => {
           const latestA = a.statuses[a.statuses.length - 1]?.created_at || 0;
           const latestB = b.statuses[b.statuses.length - 1]?.created_at || 0;
@@ -153,12 +161,12 @@ const FollowedShopStatusScreen = () => {
         });
 
       const transformPosts = (posts = []) =>
-        posts.map(post => ({
+        posts.map((post) => ({
           id: post.id ?? `post-${Date.now()}-${Math.random()}`,
           ...post,
           shop_image: validateUrl(post.shop_image) || "",
           media: Array.isArray(post.media)
-            ? post.media.map(item => ({
+            ? post.media.map((item) => ({
                 url: validateUrl(item.url) || "",
                 thumbnail_url: validateUrl(item.thumbnail_url) || "",
                 type: item.type || "image",
@@ -174,16 +182,34 @@ const FollowedShopStatusScreen = () => {
         setCurrentlyViewingShopId(null);
       }
     } catch (error) {
-      if (error.name === 'AbortError') return;
+      if (error.name === "AbortError") {
+        console.log("[FETCH ABORTED] - likely timeout or manual cancel");
+        if (!isRefresh && isMountedRef.current) {
+          setErrorMessage("Request timed out. Please check your connection and try again.");
+        }
+        return;
+      }
+
       console.error("[FETCH ERROR]:", error);
       let msg = "Failed to load content";
-      if (error.message.includes("Network")) msg = "Network error – check your connection";
-      if (error.message.includes("401") || error.message.includes("403")) {
+
+      if (error.message.includes("Network") || error.message.includes("Failed to fetch")) {
+        msg = "Network error – check your internet connection";
+      } else if (error.message.includes("401") || error.message.includes("403")) {
         msg = "Session expired – please log in again";
         navigate("/login");
+      } else if (error.message.includes("JSON") || error.message.includes("non-JSON")) {
+        msg = "Server returned invalid data";
+      } else if (error.message.includes("timed out")) {
+        msg = "Request timed out. Please try again.";
       }
+
       if (isMountedRef.current) setErrorMessage(msg);
     } finally {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
       if (isMountedRef.current) {
         setLoading(false);
         setRefreshing(false);
@@ -193,39 +219,50 @@ const FollowedShopStatusScreen = () => {
 
   // Initial fetch + periodic refresh
   useEffect(() => {
-    fetchData();
+    fetchData(false); // initial load
 
-    const interval = setInterval(fetchData, 15 * 60 * 1000); // every 15 min
+    const interval = setInterval(() => {
+      fetchData(true); // refresh
+    }, 15 * 60 * 1000); // every 15 minutes
 
     return () => {
       isMountedRef.current = false;
       clearInterval(interval);
-      if (abortControllerRef.current) abortControllerRef.current.abort();
+      abortControllerRef.current?.abort();
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [fetchData]);
 
-  const handleRefresh = () => fetchData();
+  const handleRefresh = () => fetchData(true);
 
   // Mark single status as viewed
   const handleSingleStatusViewed = (statusId, shopId) => {
-    setUnviewedGroups(prev => prev.map(group =>
-      group.shopId === shopId
-        ? {
-            ...group,
-            statuses: group.statuses.map(s => s.id === statusId ? { ...s, viewed: true } : s),
-            hasUnviewed: group.statuses.some(s => s.id !== statusId && !s.viewed),
-          }
-        : group
-    ));
+    setUnviewedGroups((prev) =>
+      prev.map((group) =>
+        group.shopId === shopId
+          ? {
+              ...group,
+              statuses: group.statuses.map((s) =>
+                s.id === statusId ? { ...s, viewed: true } : s
+              ),
+              hasUnviewed: group.statuses.some((s) => s.id !== statusId && !s.viewed),
+            }
+          : group
+      )
+    );
 
-    setViewedGroups(prev => prev.map(group =>
-      group.shopId === shopId
-        ? {
-            ...group,
-            statuses: group.statuses.map(s => s.id === statusId ? { ...s, viewed: true } : s),
-          }
-        : group
-    ));
+    setViewedGroups((prev) =>
+      prev.map((group) =>
+        group.shopId === shopId
+          ? {
+              ...group,
+              statuses: group.statuses.map((s) =>
+                s.id === statusId ? { ...s, viewed: true } : s
+              ),
+            }
+          : group
+      )
+    );
   };
 
   // Mark whole group viewed
@@ -235,21 +272,21 @@ const FollowedShopStatusScreen = () => {
 
     setCurrentlyViewingShopId(null);
 
-    setUnviewedGroups(prev => prev.filter(g => g.shopId !== shopId));
+    setUnviewedGroups((prev) => prev.filter((g) => g.shopId !== shopId));
 
-    setViewedGroups(prev => {
-      const exists = prev.find(g => g.shopId === shopId);
-      const newStatuses = viewedStatusGroup.statuses.map(s => ({ ...s, viewed: true }));
+    setViewedGroups((prev) => {
+      const exists = prev.find((g) => g.shopId === shopId);
+      const newStatuses = viewedStatusGroup.statuses.map((s) => ({ ...s, viewed: true }));
 
       let updated;
       if (exists) {
-        updated = prev.map(g =>
+        updated = prev.map((g) =>
           g.shopId === shopId
             ? {
                 ...g,
                 hasUnviewed: false,
                 statuses: [...g.statuses, ...newStatuses]
-                  .filter((s, i, self) => self.findIndex(t => t.id === s.id) === i)
+                  .filter((s, i, self) => self.findIndex((t) => t.id === s.id) === i)
                   .sort((a, b) => new Date(a.created_at) - new Date(b.created_at)),
               }
             : g
@@ -280,7 +317,7 @@ const FollowedShopStatusScreen = () => {
     setViewerInitialIndex(0);
     setViewerFlattenedStatuses([]);
     setCurrentlyViewingShopId(null);
-    setViewerKey(k => k + 1);
+    setViewerKey((k) => k + 1);
   };
 
   const getTimeAgo = (createdAt) => {
@@ -301,8 +338,8 @@ const FollowedShopStatusScreen = () => {
   };
 
   const flattenedStatuses = useMemo(() => {
-    return [...unviewedGroups, ...viewedGroups].flatMap(group =>
-      group.statuses.map(s => ({
+    return [...unviewedGroups, ...viewedGroups].flatMap((group) =>
+      group.statuses.map((s) => ({
         ...s,
         shop: { ...s.shop, image: group.shopImage },
       }))
@@ -316,11 +353,11 @@ const FollowedShopStatusScreen = () => {
     const selectedGroup = allGroups[groupIndex];
     if (!selectedGroup?.statuses?.length) return;
 
-    const firstUnviewed = selectedGroup.statuses.find(s => !s.viewed);
+    const firstUnviewed = selectedGroup.statuses.find((s) => !s.viewed);
     const startStatus = firstUnviewed || selectedGroup.statuses[0];
 
     const correctInitialIndex = flattenedStatuses.findIndex(
-      s => s.id === startStatus.id && s.shop?.id === selectedGroup.shopId
+      (s) => s.id === startStatus.id && s.shop?.id === selectedGroup.shopId
     );
 
     if (correctInitialIndex === -1) return;
@@ -329,7 +366,7 @@ const FollowedShopStatusScreen = () => {
     setViewerFlattenedStatuses(flattenedStatuses);
     setViewerInitialIndex(correctInitialIndex);
     setViewerOpen(true);
-    setViewerKey(k => k + 1);
+    setViewerKey((k) => k + 1);
   };
 
   const renderStatusItem = ({ item: group, index }) => {
@@ -339,8 +376,10 @@ const FollowedShopStatusScreen = () => {
     if (latestStatus?.media_type === "image" && latestStatus.media) {
       thumbnailUri = validateUrl(latestStatus.media) || FALLBACK_IMAGE;
     } else if (latestStatus?.media_type === "video") {
-      thumbnailUri = validateUrl(latestStatus.thumbnail_url) ||
-                     validateUrl(latestStatus.shop?.image) || FALLBACK_IMAGE;
+      thumbnailUri =
+        validateUrl(latestStatus.thumbnail_url) ||
+        validateUrl(latestStatus.shop?.image) ||
+        FALLBACK_IMAGE;
     } else if (latestStatus?.shop?.image) {
       thumbnailUri = validateUrl(latestStatus.shop.image) || FALLBACK_IMAGE;
     }
@@ -349,7 +388,7 @@ const FollowedShopStatusScreen = () => {
     const isViewing = currentlyViewingShopId === group.shopId;
     const hasUnviewed = group.hasUnviewed && !isViewing;
     const viewedCount = isViewing
-      ? group.statuses.filter(s => s.viewed).length
+      ? group.statuses.filter((s) => s.viewed).length
       : group.statuses.length;
 
     return (
@@ -412,9 +451,7 @@ const FollowedShopStatusScreen = () => {
                 <h2>Stories</h2>
                 <div className="status-wrapper">
                   <div className="status-list">
-                    {allShops.map((group, index) => (
-                      renderStatusItem({ item: group, index })
-                    ))}
+                    {allShops.map((group, index) => renderStatusItem({ item: group, index }))}
                   </div>
                   <div className="fade-effect" />
                 </div>
@@ -428,15 +465,12 @@ const FollowedShopStatusScreen = () => {
                   <h2>Latest Posts</h2>
                   <button
                     className="see-more-btn"
-                    onClick={() => handleSeeMorePosts(followedPosts, 'followed')}
+                    onClick={() => handleSeeMorePosts(followedPosts, "followed")}
                   >
                     See More →
                   </button>
                 </div>
-                <ShopPostsFeed
-                  posts={followedPosts.slice(0, 6)}
-                  showDistance={false}
-                />
+                <ShopPostsFeed posts={followedPosts.slice(0, 6)} showDistance={false} />
               </section>
             )}
 
@@ -447,15 +481,12 @@ const FollowedShopStatusScreen = () => {
                   <h2>Nearby Posts</h2>
                   <button
                     className="see-more-btn"
-                    onClick={() => handleSeeMorePosts(nearbyPosts, 'nearby')}
+                    onClick={() => handleSeeMorePosts(nearbyPosts, "nearby")}
                   >
                     See More →
                   </button>
                 </div>
-                <ShopPostsFeed
-                  posts={nearbyPosts.slice(0, 6)}
-                  showDistance={true}
-                />
+                <ShopPostsFeed posts={nearbyPosts.slice(0, 6)} showDistance={true} />
               </section>
             )}
           </div>

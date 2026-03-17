@@ -1,48 +1,57 @@
-/* StatusViewer.stv-css - Fullscreen WhatsApp Stories Modal */
+/* ==========================================================================
+   Status Viewer – Advanced WhatsApp Style 2025/2026
+   Full dark/light mode support | Glassmorphism | Highly visible progress
+   ========================================================================== */
 
-.stv-status-viewer {
+.status-viewer {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   z-index: 9999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.stv-3s ease-out;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-.stv-status-viewer.visible {
-  opacity: 1;
-  pointer-events: all;
+.status-viewer.visible {
+  display: flex;
 }
 
+/* Backdrop */
 .stv-backdrop {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(0,0,0,0.stv-3) 0%, black 100%);
-  backdrop-filter: blur(20px);
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
+/* Main Container */
 .stv-viewer-container {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  height: 100vh;
+  max-height: 100vh;
+  background: #000;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
   display: flex;
   flex-direction: column;
-  color: white;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
+/* Header */
 .stv-header {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  right: 80px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 10;
-  padding: 0 20px;
+  padding: 14px 16px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.75), transparent);
 }
 
 .stv-shop-info {
@@ -52,199 +61,225 @@
 }
 
 .stv-shop-name {
-  font-size: 18px;
+  font-size: 15.5px;
   font-weight: 600;
-  color: white;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
 
 .stv-created-at {
-  font-size: 14px;
-  opacity: 0.stv-8;
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
 }
 
 .stv-close-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.stv-6);
+  width: 36px;
+  height: 36px;
   border: none;
+  background: rgba(255,255,255,0.15);
   color: white;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 300;
-  cursor: pointer;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(10px);
-  transition: all 0.stv-2s ease;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .stv-close-btn:hover {
-  background: rgba(0,0,0,0.stv-8);
-  transform: scale(1.stv-1);
+  background: rgba(255,255,255,0.25);
+  transform: scale(1.05);
 }
 
+/* Progress Bars - Very Visible */
 .stv-progress-container {
   position: absolute;
-  top: 80px;
-  left: 20px;
-  right: 20px;
+  top: 58px;
+  left: 12px;
+  right: 12px;
+  z-index: 11;
   display: flex;
-  gap: 6px;
-  padding: 0 10px;
-  z-index: 10;
+  gap: 4px;
+  padding: 4px 0;
 }
 
 .stv-progress-background {
   flex: 1;
-  height: 3px;
-  background: rgba(255,255,255,0.stv-3);
-  border-radius: 2px;
+  height: 3.2px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 9999px;
   overflow: hidden;
+  position: relative;
 }
 
 .stv-progress-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
   height: 100%;
-  background: white;
-  border-radius: 2px;
-  transform-origin: left center;
-  will-change: transform;
+  background: #ffffff;
+  transform-origin: left;
+  border-radius: 9999px;
+  box-shadow: 0 0 6px rgba(255,255,255,0.6);
+  transition: transform 0.08s linear;
 }
 
+/* Make current progress bar brighter and more visible */
+.stv-progress-background:has(.stv-progress-bar[style*="scaleX(1)"]) .stv-progress-bar {
+  background: #3b82f6;
+  box-shadow: 0 0 8px #3b82f6;
+}
+
+/* Content Area */
 .stv-content-wrapper {
   flex: 1;
+  position: relative;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  background: #000;
   overflow: hidden;
 }
 
 .stv-media {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.stv-video {
-  background: black;
-}
-
-.stv-text-status,
-.stv-loading-container,
-.stv-error-container {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
-  padding: 40px;
+  height: 100%;
+  object-fit: contain;
+  max-height: 100vh;
+}
+
+.stv-text-status {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 30px;
+  background: linear-gradient(135deg, #1e3a8a, #312e81);
+  color: white;
+  text-align: center;
 }
 
 .stv-text-status p {
   font-size: 28px;
   font-weight: 600;
+  line-height: 1.35;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+}
+
+/* Loading & Error */
+.stv-loading-container,
+.stv-error-container {
+  color: white;
   text-align: center;
-  line-height: 1.stv-4;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.stv-8);
-  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 .stv-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid rgba(255,255,255,0.stv-3);
-  border-top: 4px solid white;
+  border: 4px solid rgba(255,255,255,0.2);
+  border-top-color: #fff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-}
-
-.stv-error-container p {
-  font-size: 18px;
-  text-align: center;
-  color: rgba(255,255,255,0.stv-9);
-}
-
-.stv-caption-container {
-  position: absolute;
-  bottom: 100px;
-  left: 20px;
-  right: 20px;
-  z-index: 8;
-  display: flex;
-  justify-content: center;
-}
-
-.stv-caption-bubble {
-  background: rgba(0,0,0,0.stv-7);
-  backdrop-filter: blur(20px);
-  padding: 16px 24px;
-  border-radius: 24px;
-  max-width: 90%;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.stv-4);
-}
-
-.stv-caption-bubble p {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.stv-4;
-  text-align: center;
-  color: white;
-}
-
-.stv-tap-zone {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-  z-index: 5;
-  transition: opacity 0.stv-2s ease;
-}
-
-.stv-tap-zone:hover {
-  opacity: 0.stv-8;
-}
-
-.stv-tap-zone.left {
-  left: 0;
-  width: 35%;
-}
-
-.stv-tap-zone.center {
-  left: 35%;
-  right: 35%;
-}
-
-.stv-tap-zone.right {
-  right: 0;
-  width: 35%;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-@media (max-width: 768px) {
-  .stv-header {
-    left: 16px;
-    right: 64px;
+/* Caption */
+.stv-caption-container {
+  position: absolute;
+  bottom: 80px;
+  left: 16px;
+  right: 16px;
+  z-index: 10;
+}
+
+.stv-caption-bubble {
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 18px;
+  font-size: 15.5px;
+  line-height: 1.4;
+  max-width: 85%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+/* Tap Zones */
+.stv-tap-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 20;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  user-select: none;
+}
+
+.stv-tap-zone.left   { left: 0;   width: 35%; }
+.stv-tap-zone.center { left: 35%; right: 35%; }
+.stv-tap-zone.right  { right: 0;  width: 35%; }
+
+/* Pause Indicator */
+.status-viewer .stv-viewer-container.paused::after {
+  content: "⏸";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 68px;
+  color: rgba(255,255,255,0.85);
+  z-index: 30;
+  pointer-events: none;
+  animation: pausePulse 2s infinite;
+}
+
+@keyframes pausePulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Dark Mode Adjustments (already handled via variables, but extra safety) */
+.dark .status-viewer .stv-viewer-container {
+  background: #000;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 480px) {
+  .stv-progress-background {
+    height: 3px;
   }
   
   .stv-shop-name {
-    font-size: 16px;
+    font-size: 15px;
   }
   
-  .stv-progress-container {
-    top: 70px;
-    left: 16px;
-    right: 16px;
+  .stv-text-status p {
+    font-size: 24px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .stv-progress-bar,
+  .stv-close-btn,
+  .stv-caption-bubble {
+    transition: none !important;
   }
   
-  .stv-caption-container {
-    bottom: 80px;
-    left: 16px;
-    right: 16px;
+  @keyframes pausePulse {
+    0%, 100% { opacity: 0.9; }
   }
 }

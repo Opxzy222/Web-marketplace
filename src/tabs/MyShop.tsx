@@ -315,7 +315,7 @@ const MyShop = () => {
 
                       <button
                         className="myshp-action-btn myshp-stories"
-                        onClick={() => navigate("/status-updates", { state: { shopId: shop.id } })}
+                        onClick={() => navigate("/stories-updates", { state: { shopId: shop.id } })}
                       >
                         <RefreshCw size={24} />
                         <span>Stories</span>

@@ -150,7 +150,7 @@ useEffect(() => {
           <Route path="/all-categories" element={<AllCategories />} />
           <Route path="/child-category" element={<ChildCategories />} />
           <Route path="/sub-categories" element={<SubcategoryList />} />
-          <Route path="/status-updates" element={<ShopStatus />} />
+          <Route path="/stories-updates" element={<ShopStatus />} />
           <Route path="/shop/welcome-work-hours" element={<WelcomeWorkingHours />} />
           <Route path="/work-hours" element={<WorkingHours />} />
           <Route path="/space-profile" element={<ShopProfile />} />

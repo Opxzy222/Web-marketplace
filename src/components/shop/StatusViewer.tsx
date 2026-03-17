@@ -2,8 +2,8 @@
 import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import '../../css/component/shop/StatusViewer..css';
 
-const IMAGE_TEXT_DURATION = 6000;
-const VIDEO_MAX_DURATION = 30000;
+const IMAGE_TEXT_DURATION = 6000;     // 6 seconds
+const VIDEO_MAX_DURATION = 30000;     // 30 seconds max
 const LOAD_TIMEOUT = 10000;
 
 const formatRelativeTime = (createdAt: string | undefined): string => {
@@ -23,9 +23,9 @@ const formatRelativeTime = (createdAt: string | undefined): string => {
 };
 
 interface StatusViewerProps {
-  visible?: boolean;
+  visible: boolean;
   statuses: any[];
-  initialIndex?: number;
+  initialIndex: number;
   onClose: () => void;
   onStatusViewed?: (data: any) => void;
   onSingleStatusViewed?: (statusId: string | number, shopId: string | number) => void;
@@ -34,7 +34,7 @@ interface StatusViewerProps {
 }
 
 const StatusViewer: React.FC<StatusViewerProps> = ({
-  visible = true,
+  visible,
   statuses,
   initialIndex = 0,
   onClose,
@@ -46,253 +46,218 @@ const StatusViewer: React.FC<StatusViewerProps> = ({
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
 
-  const progressRef = useRef(0);
-  const animationRef = useRef<number | null>(null);
-  const isPausedRef = useRef(false);
-  const pausedTimeRef = useRef(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const pausedTimeRef = useRef<number>(0);
+  const durationRef = useRef<number>(IMAGE_TEXT_DURATION);
   const isNavigatingRef = useRef(false);
-  const currentIndexRef = useRef(initialIndex);
   const finishedIdsRef = useRef(new Set<string | number>());
-  const startedWithUnviewedRef = useRef(false);
 
   const flattened = useMemo(() => statuses ?? [], [statuses]);
 
-  // Determine smart starting point (first unviewed in the same shop)
+  // Find the correct starting index (first unviewed in the shop)
   const smartStartIndex = useMemo(() => {
-    if (!flattened.length) return 0;
+    if (!flattened.length || initialIndex >= flattened.length) return 0;
 
-    const clicked = flattened[initialIndex];
-    const shopId = clicked?.shop?.id;
-    if (!shopId) return 0;
+    const clickedStatus = flattened[initialIndex];
+    const shopId = clickedStatus?.shop?.id;
+    if (!shopId) return initialIndex;
 
-    const shopStart = flattened.findIndex((s: any) => s.shop?.id === shopId);
-    if (shopStart === -1) return 0;
+    const shopStartIndex = flattened.findIndex((s: any) => s.shop?.id === shopId);
+    if (shopStartIndex === -1) return initialIndex;
 
-    const shopSlice = flattened.slice(shopStart).filter((s: any) => s.shop?.id === shopId);
-    const firstUnviewed = shopSlice.findIndex(
-      (s: any) => !s.viewed && !finishedIdsRef.current.has(s.id)
-    );
+    const shopSlice = flattened.slice(shopStartIndex).filter((s: any) => s.shop?.id === shopId);
+    const firstUnviewed = shopSlice.findIndex((s: any) => !s.viewed);
 
-    startedWithUnviewedRef.current = firstUnviewed >= 0;
-    return firstUnviewed >= 0 ? shopStart + firstUnviewed : shopStart;
+    return firstUnviewed >= 0 ? shopStartIndex + firstUnviewed : shopStartIndex;
   }, [flattened, initialIndex]);
 
+  // Update currentIndex when visible or initialIndex changes
   useEffect(() => {
-    setCurrentIndex(smartStartIndex);
-    currentIndexRef.current = smartStartIndex;
-  }, [smartStartIndex]);
+    if (visible) {
+      setCurrentIndex(smartStartIndex);
+    }
+  }, [visible, smartStartIndex]);
 
   const currentStatus = useMemo(() => {
-    let s = flattened[currentIndex] ?? {};
-    if (s.media && /\.(mp4|mov|avi)$/i.test(s.media) && s.media_type !== "video") {
-      s = { ...s, media_type: "video" };
+    let status = flattened[currentIndex] ?? {};
+    if (status.media && /\.(mp4|mov|avi|webm)$/i.test(status.media) && status.media_type !== "video") {
+      status = { ...status, media_type: "video" };
     }
-    return s;
+    return status;
   }, [flattened, currentIndex]);
 
   const isImage = currentStatus.media_type === "image";
   const isVideo = currentStatus.media_type === "video";
   const isText = currentStatus.media_type === "text";
   const hasMedia = (isImage || isVideo) && !!currentStatus.media;
-  const statusText = currentStatus.text?.trim() ?? "";
 
-  const { shopStatuses, effectiveIndex } = useMemo(() => {
-    const shopId = currentStatus.shop?.id ?? 0;
-    const list = flattened.filter((s: any) => s.shop?.id === shopId);
-    const start = flattened.findIndex((s: any) => s.shop?.id === shopId);
-    const effIdx = currentIndex - start;
-    return {
-      shopStatuses: list,
-      effectiveIndex: effIdx >= 0 ? effIdx : 0,
-    };
-  }, [currentStatus, flattened, currentIndex]);
+  const shopStatuses = useMemo(() => {
+    const shopId = currentStatus.shop?.id;
+    if (!shopId) return [];
+    return flattened.filter((s: any) => s.shop?.id === shopId);
+  }, [flattened, currentStatus.shop?.id]);
 
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const effectiveIndex = useMemo(() => {
+    const shopId = currentStatus.shop?.id;
+    if (!shopId) return 0;
+    return shopStatuses.findIndex((s: any) => s.id === currentStatus.id);
+  }, [shopStatuses, currentStatus]);
 
-  const getStatusDuration = useCallback(() => {
-    return IMAGE_TEXT_DURATION; // You can make this dynamic later
+  const getDuration = useCallback(() => {
+    return isVideo ? VIDEO_MAX_DURATION : IMAGE_TEXT_DURATION;
+  }, [isVideo]);
+
+  const clearProgress = useCallback(() => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
   }, []);
 
-  // ── 1. handleNext ──
-  const handleNext = useCallback(
-    (fromTimer = false) => {
-      if (isNavigatingRef.current) return;
-      isNavigatingRef.current = true;
+  const startProgress = useCallback(() => {
+    clearProgress();
+    setIsPaused(false);
+    pausedTimeRef.current = 0;
+    startTimeRef.current = Date.now();
+    durationRef.current = getDuration();
 
-      if (!fromTimer && isPausedRef.current) {
-        isPausedRef.current = false;
-        isNavigatingRef.current = false;
-        return;
+    progressIntervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTimeRef.current;
+      if (elapsed >= durationRef.current) {
+        clearProgress();
+        handleNext(true);
       }
+    }, 50);
+  }, [getDuration, clearProgress]);
 
-      const video = videoRef.current;
-      if (video) video.pause();
+  // WhatsApp-like navigation: finish current shop → go to next shop with unread
+  const handleNext = useCallback((fromTimer = false) => {
+    if (isNavigatingRef.current) return;
+    isNavigatingRef.current = true;
 
-      setIsLoading(false);
-      setLoadError(null);
+    clearProgress();
+    const video = videoRef.current;
+    if (video) {
+      video.pause();
+      video.src = "";
+    }
 
-      let nextIdx = currentIndexRef.current + 1;
+    // Mark current status as viewed
+    const currentId = currentStatus.id;
+    const shopId = currentStatus.shop?.id;
+    if (currentId && shopId) {
+      finishedIdsRef.current.add(currentId);
+      onSingleStatusViewed?.(currentId, shopId);
+    }
 
-      // Skip to next shop with unviewed content if possible
-      while (nextIdx < flattened.length) {
-        const nxt = flattened[nextIdx];
-        const shopId = nxt.shop?.id;
-        const shopStart = flattened.findIndex((s: any) => s.shop?.id === shopId);
-        const shopEndIndex = flattened.slice(shopStart).findIndex((s: any) => s.shop?.id !== shopId);
-        const shopEnd = shopEndIndex === -1 ? flattened.length : shopStart + shopEndIndex;
+    // Check if entire current shop is finished
+    let nextIdx = currentIndex + 1;
 
-        const shopSlice = flattened.slice(shopStart, shopEnd);
-        const hasUnviewed = shopSlice.some(
-          (s: any) => !s.viewed && !finishedIdsRef.current.has(s.id)
-        );
+    if (shopId) {
+      const currentShopSlice = flattened.filter((s: any) => s.shop?.id === shopId);
+      const allDoneInShop = currentShopSlice.every(
+        (s: any) => s.viewed || finishedIdsRef.current.has(s.id)
+      );
 
-        if (hasUnviewed) {
-          const firstUnviewed = shopSlice.findIndex(
+      if (allDoneInShop) {
+        // Find next shop that still has unread statuses
+        let foundNextShop = false;
+        for (let i = nextIdx; i < flattened.length; i++) {
+          const candidate = flattened[i];
+          if (!candidate?.shop?.id) continue;
+
+          const candidateShopSlice = flattened.filter((s: any) => s.shop?.id === candidate.shop.id);
+          const hasUnread = candidateShopSlice.some(
             (s: any) => !s.viewed && !finishedIdsRef.current.has(s.id)
           );
-          nextIdx = shopStart + firstUnviewed;
-          break;
-        } else {
-          nextIdx = shopEnd;
-        }
-      }
 
-      if (nextIdx >= flattened.length) {
-        onClose();
-        isNavigatingRef.current = false;
-        return;
-      }
-
-      currentIndexRef.current = nextIdx;
-      setCurrentIndex(nextIdx);
-      isNavigatingRef.current = false;
-    },
-    [flattened, onClose]
-  );
-
-  // ── 2. startProgress (depends on handleNext) ──
-  const startProgress = useCallback(
-    (overrideDuration?: number) => {
-      if (isPausedRef.current || isNavigatingRef.current) return;
-
-      const duration = overrideDuration ?? getStatusDuration();
-      const startTime = Date.now();
-
-      const animate = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
-
-        if (progress < 1 && !isPausedRef.current && !isNavigatingRef.current) {
-          animationRef.current = requestAnimationFrame(animate);
-        } else if (progress >= 1) {
-          const statusId = currentStatus.id;
-          const shopId = currentStatus.shop?.id;
-
-          if (statusId && shopId) {
-            onSingleStatusViewed?.(statusId, shopId);
-          }
-          finishedIdsRef.current.add(statusId);
-
-          if (shopId) {
-            const shopSlice = flattened.filter((s: any) => s.shop?.id === shopId);
-            const allDone = shopSlice.every(
-              (s: any) => s.viewed || finishedIdsRef.current.has(s.id)
+          if (hasUnread) {
+            const firstUnread = candidateShopSlice.findIndex(
+              (s: any) => !s.viewed && !finishedIdsRef.current.has(s.id)
             );
-            if (allDone) {
-              onStatusViewed?.({
-                shopId,
-                shop: currentStatus.shop?.name,
-                shopImage: currentStatus.shop?.image,
-                statuses: shopSlice.map((s: any) => ({ ...s, viewed: true })),
-              });
-            }
+            const shopStart = flattened.findIndex((s: any) => s.shop?.id === candidate.shop.id);
+            nextIdx = shopStart + firstUnread;
+            foundNextShop = true;
+            break;
           }
-
-          handleNext(true);
         }
-      };
 
-      animationRef.current = requestAnimationFrame(animate);
-    },
-    [currentStatus, onSingleStatusViewed, onStatusViewed, flattened, handleNext, getStatusDuration]
-  );
+        if (!foundNextShop) {
+          onClose();
+          isNavigatingRef.current = false;
+          return;
+        }
+      }
+    }
 
-  // ── 3. handlePrev ──
+    if (nextIdx >= flattened.length) {
+      onClose();
+      isNavigatingRef.current = false;
+      return;
+    }
+
+    setCurrentIndex(nextIdx);
+    isNavigatingRef.current = false;
+  }, [flattened, currentIndex, currentStatus, onClose, onSingleStatusViewed]);
+
   const handlePrev = useCallback(() => {
-    if (isNavigatingRef.current || currentIndexRef.current <= 0) {
+    if (isNavigatingRef.current || currentIndex <= 0) {
       onClose();
       return;
     }
     isNavigatingRef.current = true;
+    clearProgress();
 
     const video = videoRef.current;
-    if (video) video.pause();
-
-    let prevIdx = currentIndexRef.current - 1;
-    const curShopId = flattened[currentIndexRef.current]?.shop?.id;
-
-    if (curShopId) {
-      const shopStart = flattened.findIndex((s: any) => s.shop?.id === curShopId);
-      if (prevIdx < shopStart) {
-        const prevShopId = flattened[prevIdx]?.shop?.id;
-        const lastInPrev = flattened
-          .slice(0, shopStart)
-          .findLastIndex((s: any) => s.shop?.id === prevShopId);
-        prevIdx = lastInPrev >= 0 ? lastInPrev : prevIdx;
-      }
+    if (video) {
+      video.pause();
+      video.src = "";
     }
 
-    currentIndexRef.current = prevIdx;
-    setCurrentIndex(prevIdx);
-    isPausedRef.current = false;
+    setCurrentIndex((prev) => Math.max(0, prev - 1));
     isNavigatingRef.current = false;
-  }, [flattened, onClose]);
+  }, [currentIndex, onClose, clearProgress]);
 
-  // ── 4. togglePause (depends on startProgress) ──
   const togglePause = useCallback(() => {
-    isPausedRef.current = !isPausedRef.current;
     const video = videoRef.current;
 
-    if (isPausedRef.current) {
-      pausedTimeRef.current = progressRef.current * getStatusDuration();
-      if (video) video.pause();
-      if (animationRef.current !== null) {
-        cancelAnimationFrame(animationRef.current);
-        animationRef.current = null;
-      }
+    if (isPaused) {
+      // Resume
+      setIsPaused(false);
+      startTimeRef.current = Date.now() - pausedTimeRef.current;
+      startProgress();
+      if (video && isVideo) video.play().catch(console.error);
     } else {
-      const dur = getStatusDuration();
-      const rem = dur - pausedTimeRef.current;
-      startProgress(rem);
-      if (video) video.play().catch(console.error);
+      // Pause
+      setIsPaused(true);
+      pausedTimeRef.current = Date.now() - startTimeRef.current;
+      clearProgress();
+      if (video) video.pause();
     }
-  }, [getStatusDuration, startProgress]);
+  }, [isPaused, isVideo, startProgress, clearProgress]);
 
-  const markStatusAsViewed = useCallback(
-    async (status: any) => {
-      if (!status || status.viewed || !userId) return;
-      try {
-        const formData = new FormData();
-        formData.append("user_id", String(userId));
-        formData.append("status_ids[]", String(status.id));
+  const markStatusAsViewed = useCallback(async (status: any) => {
+    if (!status || status.viewed || !userId) return;
+    try {
+      const formData = new FormData();
+      formData.append("user_id", String(userId));
+      formData.append("status_ids[]", String(status.id));
 
-        await fetch('/api/mark_status_viewed/', {
-          method: 'POST',
-          headers: {
-            Authorization: authToken || '',
-          },
-          body: formData,
-        });
-      } catch (e) {
-        console.error('Failed to mark status as viewed:', e);
-      }
-    },
-    [userId, authToken]
-  );
+      await fetch('/api/mark_status_viewed/', {
+        method: 'POST',
+        headers: { Authorization: authToken || '' },
+        body: formData,
+      });
+    } catch (e) {
+      console.error('Failed to mark status as viewed:', e);
+    }
+  }, [userId, authToken]);
 
-  // Main lifecycle effect
+  // Main effect - runs when current status changes
   useEffect(() => {
     if (!visible || currentIndex >= flattened.length) {
       onClose();
@@ -300,99 +265,69 @@ const StatusViewer: React.FC<StatusViewerProps> = ({
     }
 
     const status = flattened[currentIndex];
-    progressRef.current = 0;
-    pausedTimeRef.current = 0;
-    isPausedRef.current = false;
+    if (!status) return;
+
+    clearProgress();
     setIsLoading(false);
     setLoadError(null);
-
-    if (animationRef.current !== null) {
-      cancelAnimationFrame(animationRef.current);
-      animationRef.current = null;
-    }
-
-    // Mark earlier items in same shop
-    const shopId = status.shop?.id;
-    if (shopId) {
-      const shopStart = flattened.findIndex((s: any) => s.shop?.id === shopId);
-      for (let i = shopStart; i < currentIndex; i++) {
-        finishedIdsRef.current.add(flattened[i].id);
-      }
-    }
+    setIsPaused(false);
 
     markStatusAsViewed(status);
 
     if (isVideo && status.media && videoRef.current) {
       setIsLoading(true);
       const video = videoRef.current;
-
       video.src = status.media;
       video.load();
 
-      const timeout = setTimeout(() => {
-        setLoadError("Video load timeout");
+      const timeoutId = setTimeout(() => {
+        setLoadError("Video failed to load");
         handleNext(true);
       }, LOAD_TIMEOUT);
 
-      const onLoaded = () => {
-        clearTimeout(timeout);
+      const onCanPlay = () => {
+        clearTimeout(timeoutId);
         setIsLoading(false);
-        if (!isPausedRef.current) {
-          video.play().catch(() => handleNext(true));
-          startProgress();
-        }
+        video.play().catch(() => handleNext(true));
+        startProgress();
       };
 
       const onError = () => {
-        clearTimeout(timeout);
-        setLoadError("Video failed to load");
-        setTimeout(() => handleNext(true), 2000);
+        clearTimeout(timeoutId);
+        setLoadError("Failed to load video");
+        setTimeout(() => handleNext(true), 1500);
       };
 
-      video.addEventListener('loadeddata', onLoaded, { once: true });
+      video.addEventListener('canplay', onCanPlay, { once: true });
       video.addEventListener('error', onError, { once: true });
 
       return () => {
-        video.removeEventListener('loadeddata', onLoaded);
+        video.removeEventListener('canplay', onCanPlay);
         video.removeEventListener('error', onError);
       };
     } else {
-      setIsLoading(false);
       startProgress();
     }
 
     return () => {
-      if (animationRef.current !== null) {
-        cancelAnimationFrame(animationRef.current);
-      }
+      clearProgress();
       if (videoRef.current) {
         videoRef.current.pause();
-        videoRef.current.src = '';
+        videoRef.current.src = "";
       }
     };
-  }, [
-    currentIndex,
-    visible,
-    flattened,
-    isVideo,
-    markStatusAsViewed,
-    startProgress,
-    handleNext,
-    onClose,
-  ]);
+  }, [currentIndex, visible, flattened, isVideo, markStatusAsViewed, startProgress, handleNext, onClose]);
 
   // Final cleanup
   useEffect(() => {
     return () => {
-      if (animationRef.current !== null) {
-        cancelAnimationFrame(animationRef.current);
-      }
+      clearProgress();
       if (videoRef.current) {
         videoRef.current.pause();
-        videoRef.current.src = '';
+        videoRef.current.src = "";
       }
     };
-  }, []);
+  }, [clearProgress]);
 
   if (!visible || currentIndex >= flattened.length) return null;
 
@@ -400,7 +335,8 @@ const StatusViewer: React.FC<StatusViewerProps> = ({
     <div className={`status-viewer ${visible ? 'visible' : ''}`}>
       <div className="stv-backdrop" onClick={onClose} />
 
-      <div className="stv-viewer-container">
+      <div className={`stv-viewer-container ${isPaused ? 'paused' : ''}`}>
+        {/* Header */}
         <div className="stv-header">
           <div className="stv-shop-info">
             <span className="stv-shop-name">{currentStatus.shop?.name ?? "Unknown Shop"}</span>
@@ -409,16 +345,19 @@ const StatusViewer: React.FC<StatusViewerProps> = ({
           <button className="stv-close-btn" onClick={onClose}>×</button>
         </div>
 
+        {/* Progress Bars */}
         <div className="stv-progress-container">
           {shopStatuses.map((status: any, i: number) => {
             const isCurrent = i === effectiveIndex;
             const isPast = i < effectiveIndex;
-            const isViewed = status.viewed || finishedIdsRef.current.has(status.id);
-            const progress = isCurrent
-              ? progressRef.current
-              : isPast || (isViewed && !isCurrent)
-              ? 1
-              : 0;
+            const isFinished = status.viewed || finishedIdsRef.current.has(status.id);
+
+            let progress = 0;
+            if (isPast || isFinished) progress = 1;
+            else if (isCurrent) {
+              const elapsed = Date.now() - startTimeRef.current;
+              progress = Math.min(elapsed / durationRef.current, 1);
+            }
 
             return (
               <div key={status.id} className="stv-progress-background">
@@ -426,7 +365,7 @@ const StatusViewer: React.FC<StatusViewerProps> = ({
                   className="stv-progress-bar"
                   style={{
                     transform: `scaleX(${progress})`,
-                    backgroundColor: isCurrent ? 'white' : 'rgba(255,255,255,0.6)',
+                    backgroundColor: isCurrent ? "#fff" : "rgba(255,255,255,0.65)",
                   }}
                 />
               </div>
@@ -434,50 +373,52 @@ const StatusViewer: React.FC<StatusViewerProps> = ({
           })}
         </div>
 
+        {/* Content */}
         <div className="stv-content-wrapper">
-          {isText && statusText ? (
+          {isText && currentStatus.text ? (
             <div className="stv-text-status">
-              <p>{statusText}</p>
+              <p>{currentStatus.text}</p>
             </div>
           ) : isLoading && isVideo ? (
             <div className="stv-loading-container">
               <div className="stv-spinner" />
+              <p>Loading video...</p>
             </div>
-          ) : loadError && isVideo ? (
+          ) : loadError ? (
             <div className="stv-error-container">
               <p>{loadError}</p>
             </div>
           ) : hasMedia ? (
-            <>
-              {isVideo ? (
-                <video
-                  ref={videoRef}
-                  className="stv-media video"
-                  playsInline
-                  muted
-                  preload="metadata"
-                  disablePictureInPicture
-                />
-              ) : isImage ? (
-                <img
-                  src={currentStatus.media}
-                  className="stv-media image"
-                  alt="Status content"
-                  loading="eager"
-                />
-              ) : null}
-            </>
+            isVideo ? (
+              <video
+                ref={videoRef}
+                className="stv-media video"
+                playsInline
+                muted
+                preload="metadata"
+                disablePictureInPicture
+              />
+            ) : (
+              <img
+                src={currentStatus.media}
+                className="stv-media image"
+                alt="Status"
+                loading="eager"
+              />
+            )
           ) : null}
         </div>
 
-        {hasMedia && statusText && (
+        {/* Caption */}
+        {currentStatus.text && (isImage || isVideo) && (
           <div className="stv-caption-container">
             <div className="stv-caption-bubble">
-              <p>{statusText}</p>
+              <p>{currentStatus.text}</p>
             </div>
           </div>
         )}
 
+        {/* Tap Zones - WhatsApp Style */}
         <button className="stv-tap-zone left" onClick={handlePrev} />
         <button className="stv-tap-zone center" onClick={togglePause} />
         <button className="stv-tap-zone right" onClick={() => handleNext(false)} />
