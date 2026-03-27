@@ -10,6 +10,7 @@ import {
   RefreshCw,
   Loader2,
 } from 'lucide-react';
+import PageShell from '../../components/PageShell';
 import '../../css/shop/FullShopPosts.css';
 
 const BASE_URL = 'https://retail-alvinia-goza-f6a0e4f7.koyeb.app';
@@ -338,18 +339,12 @@ const FullShopPosts: React.FC = () => {
   const type = searchParams.get('type') || 'posts';
 
   return (
+    <PageShell
+          title="Give Feedback"
+          showBackButton={true}
+          isLoading={false}
+        >
     <div className="full-shop-posts">
-      <header className="header">
-        <button className="back-btn" onClick={() => navigate(-1)} aria-label="Go back">
-          <ArrowLeft size={24} />
-        </button>
-        <h1 className="header-title">
-          {type === 'followed' ? 'Followed Posts' : type === 'nearby' ? 'Nearby Posts' : 'All Posts'}
-        </h1>
-        <button className="refresh-header-btn" onClick={handleRefresh} disabled={refreshing}>
-          <RefreshCw size={20} className={refreshing ? 'spin' : ''} />
-        </button>
-      </header>
 
       {posts.length === 0 && !loading && !refreshing ? (
         <div className="empty-state">
@@ -474,6 +469,7 @@ const FullShopPosts: React.FC = () => {
         </div>
       )}
     </div>
+    </PageShell>
   );
 };
 
