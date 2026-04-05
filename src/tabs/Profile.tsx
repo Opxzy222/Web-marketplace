@@ -72,7 +72,7 @@ const Profile = () => {
             <MenuItem icon={<FaLock />}       title="Change Password"           onClick={() => handleMenuItemClick("/change-password")} />
             <MenuItem icon={<FaShieldHalved />} title="Account Verification"   onClick={() => handleMenuItemClick("/verification-status")} />
             <MenuItem icon={<FaCommentDots />}  title="Give Feedback"           onClick={() => handleMenuItemClick("/feed-back")} />
-            <MenuItem icon={<FaTrash />}      title="Delete Account"            onClick={() => handleMenuItemClick("/delete-user")} color="var(--danger)" />
+            <MenuItem icon={<FaTrash />}      title="Delete Account"            onClick={() => handleMenuItemClick("/delete-account")} color="var(--danger)" />
 
             {/* ── Logout Button – now styled like other menu items ── */}
             <Logout

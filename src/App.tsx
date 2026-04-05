@@ -66,6 +66,7 @@ import SellerPODashboard from './pages/carts/SellerDashboard';
 import BuyerPODashboard from './pages/carts/BuyerPODashboard';
 import SellerPOCounter from './pages/carts/SellerPOCounter';
 import BuyerCounterEditor from './pages/carts/BuyerCounterEditor';
+import DeleteAccount from './pages/DeleteAccount';
 // import { AdProvider } from './contexts/AdContext';
 // import { AppResetProvider } from './contexts/AppResetContext';
 
@@ -139,7 +140,7 @@ useEffect(() => {
           <Route path="/ID-verification" element={<IDVerification />} />
           <Route path="/notification-settings" element={<NotificationSettings />} />
           <Route path="/feed-back" element={<FeedbackScreen />} />
-          <Route path="/delete-account" element={<NotificationSettings />} />
+          <Route path="/delete-account" element={<DeleteAccount />} />
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/details" element={<Details />} />
           <Route path="/messages" element={<MessageList />} />
